@@ -1,0 +1,10 @@
+.App {
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  background-color: #f7e8df;
+}
+
+.App-header {
+  background-color: #d78f5f;
+}

@@ -1,13 +1,12 @@
 import "./App.css";
+import NavBar from "./components/NavBar";
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <div className="logo">
-          <a href="">Kaillany®</a>
-        </div>
-      </header>
+      <div className="App-header">
+        <NavBar></NavBar>
+      </div>
     </div>
   );
 }
