@@ -1,3 +1,74 @@
+# Dependências e módulos
 node_modules/
+*/node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Variáveis de ambiente
 .env
+.env.local
+.env.*.local
+.env.example
+
+# Build e dist
 dist/
+build/
+*/dist/
+*/build/
+
+# IDEs e Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+
+# IDE específicas
+*.code-workspace
+.vscode/settings.json
+
+# OS
+Thumbs.db
+.DS_Store
+.directory
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Cache
+.cache/
+.eslintcache
+.turbo/
+dist-ssr
+*.local
+
+# Temp
+tmp/
+temp/
+*.tmp
+
+# Arquivos do sistema
+.env.test.local
+coverage/
+junit.xml
+
+# Compilação TypeScript
+*.tsbuildinfo
+
+# Next.js
+.next/
+out/
+.next/*
+
+# Dependências opcionais
+node_modules/.cache/
+node_modules/.bin/
