@@ -1,0 +1,15 @@
+.creations {
+  padding: 96px 0;
+}
+
+.creations-gallery {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding: 0 24px;
+}
+
+.creations-gallery img {
+  width: 300px;
+  border-radius: 16px;
+}
