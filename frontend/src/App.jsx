@@ -12,7 +12,6 @@ function App() {
     <main>
       <Hero></Hero>
       <IndulgeSection></IndulgeSection>
-
       <Testimonials></Testimonials>
       <WhyChoose></WhyChoose>
       <Creations></Creations>
