@@ -40,7 +40,7 @@
 .hero {
   background: var(--bg-main);
   padding: 48px 0;
-  height: 90vh;
+  height: 95vh;
   display: flex;
   align-items: center;
 }
