@@ -1,4 +1,5 @@
 import "./Hero.css";
+import img from "../../assets/imgOvo.jpg";
 
 export default function Hero() {
   return (
@@ -19,27 +20,27 @@ export default function Hero() {
       </header>
 
       <section className="hero">
-        <div className="container hero-card">
+        <div className=" hero-card container">
           <div className="hero-image">
-            <img src="/hero-image.png" alt="Chocolate sweets" />
+            <img src={img} alt="Chocolate sweets" />
           </div>
 
           <div className="hero-text">
             <h1>
-              Handcrafted sweets
+              Doces artesanais
               <br />
-              made with care
+              feitos com carinho
             </h1>
 
             <p>
-              Each egg is filled with the finest ingredients and wrapped in
-              chocolate that melts on your tongue. Order now and taste the
-              difference that craftsmanship brings.
+              Cada ovo é recheado com os melhores ingredientes e envolto em
+              chocolate que derrete na sua língua. Encomende já e sinta a
+              diferença que a arte e a qualidade fazem.
             </p>
 
             <div className="hero-actions">
-              <button className="btn-primary">Order</button>
-              <button className="btn-secondary">Browse</button>
+              <button className="btn-primary">Ordem</button>
+              <button className="btn-secondary">Navegar</button>
             </div>
           </div>
         </div>

@@ -10,8 +10,8 @@ import Creations from "./components/Creations";
 function App() {
   return (
     <main>
-      <Hero></Hero>
-      <IndulgeSection></IndulgeSection>
+      <Hero />
+      <IndulgeSection />
       <Testimonials></Testimonials>
       <WhyChoose></WhyChoose>
       <Creations></Creations>
