@@ -12,11 +12,11 @@ function App() {
     <main>
       <Hero />
       <IndulgeSection />
-      <Testimonials></Testimonials>
-      <WhyChoose></WhyChoose>
-      <Creations></Creations>
-      <CTA></CTA>
-      <Footer></Footer>
+      <Testimonials />
+      <WhyChoose />
+      <Creations />
+      <CTA />
+      <Footer />
     </main>
   );
 }

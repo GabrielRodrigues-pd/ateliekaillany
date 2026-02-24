@@ -10,6 +10,11 @@
   padding: 0 24px;
 }
 
+.creations-header h2 {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
 .creations-gallery img {
   width: 300px;
   border-radius: 16px;

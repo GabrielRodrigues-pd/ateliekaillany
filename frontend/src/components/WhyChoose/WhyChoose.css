@@ -9,6 +9,10 @@
   text-align: center;
   margin-bottom: 56px;
 }
+.why-header h2 {
+  font-size: 36px;
+  margin: 8px 0;
+}
 
 .why-grid {
   display: grid;
