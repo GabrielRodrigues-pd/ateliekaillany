@@ -8,9 +8,9 @@ export default function IndulgeSection() {
   return (
     <section className="indulge">
       <div className="container indulge-header">
-        <span className="indulge-eyebrow">Crafted</span>
-        <h2>Three ways to indulge</h2>
-        <p>Rich chocolate shells hide treasures within each bite</p>
+        <span className="indulge-eyebrow">Feito à mão</span>
+        <h2>Três maneiras de se dar ao luxo de se deliciar</h2>
+        <p>Cascas de chocolate ricas escondem tesouros em cada mordida.</p>
       </div>
 
       <div className="container indulge-grid">
