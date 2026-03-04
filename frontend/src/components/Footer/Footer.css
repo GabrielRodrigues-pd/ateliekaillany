@@ -7,6 +7,22 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 32px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer-top nav {
+  margin-top: 30px;
+  display: flex;
+  gap: 30px;
+}
+
+.footer-top a {
+  text-decoration: none;
+}
+
+.logo {
+  background-color: red;
 }
 
 .footer-bottom {
