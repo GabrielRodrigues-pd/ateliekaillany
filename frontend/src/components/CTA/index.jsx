@@ -1,5 +1,5 @@
 import "./CTA.css";
-import ovoCombo from "../../assets/ovoCombo.jpg";
+import imgOvo from "../../assets/imgOvo.jpg";
 
 export default function CTA() {
   return (
@@ -14,7 +14,7 @@ export default function CTA() {
         <button className="btn-secondary">Browse</button>
       </div>
 
-      <img src={ovoCombo} alt="Chocolate egg" />
+      <img src={imgOvo} alt="Chocolate egg" />
     </section>
   );
 }

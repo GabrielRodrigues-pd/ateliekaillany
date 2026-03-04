@@ -10,8 +10,8 @@ export default function Hero() {
 
           <nav className="nav">
             <a href="#">Home</a>
-            <a href="#">Products</a>
-            <a href="#">About us</a>
+            <a href="#">Produtos</a>
+            <a href="#">Sobre nós</a>
             <a href="#">More ▾</a>
           </nav>
 
