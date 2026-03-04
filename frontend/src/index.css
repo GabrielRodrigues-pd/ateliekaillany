@@ -29,3 +29,7 @@ h2,
 h3 {
   font-family: "Comfortaa", sans-serif;
 }
+
+a {
+  text-decoration: none;
+}

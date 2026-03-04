@@ -6,9 +6,10 @@
 .footer-top {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 32px;
+  padding-bottom: 60px;
   flex-direction: column;
   align-items: center;
+  border-bottom: 1px solid #d2d2d2;
 }
 
 .footer-top nav {
@@ -19,10 +20,12 @@
 
 .footer-top a {
   text-decoration: none;
+  font-weight: bold;
+  color: var(--text-dark);
 }
 
-.logo {
-  background-color: red;
+.footer-top .logo {
+  color: var(--text-dark);
 }
 
 .footer-bottom {
@@ -30,4 +33,14 @@
   justify-content: space-between;
   font-size: 13px;
   color: #6b6b6b;
+  padding-top: 30px;
+}
+
+.links {
+  display: flex;
+  gap: 20px;
+}
+
+.links a {
+  color: var(--text-dark);
 }

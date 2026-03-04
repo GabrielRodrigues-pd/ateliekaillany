@@ -1,10 +1,10 @@
 import "./CardsWhy.css";
-import ovoColher from "../../assets/ovoColher.jpg";
+import material from "../../assets/material.png";
 
 export default function CardsWhy({ subTitle, title, descri }) {
   return (
     <article className="why-card">
-      <img src={ovoColher} />
+      <img src={material} />
       <div className="why-text">
         <span>{subTitle}</span>
         <h3>{title}</h3>
