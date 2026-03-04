@@ -1,5 +1,5 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination } from "swiper/modules";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -11,11 +11,11 @@ export default function Carrossel({ items }) {
   return (
     <div className="carousel-wrapper">
       <Swiper
-        modules={[Navigation, Pagination]}
+        modules={[Navigation, Pagination, Autoplay]}
         spaceBetween={24}
         loop={true}
-        navigation
-        pagination={{ clickable: true }}
+        autoplay={{ delay: 2000 }}
+        pagination={{ dynamicBullets: true, type: "custom" }}
         breakpoints={{
           0: {
             slidesPerView: 1,
