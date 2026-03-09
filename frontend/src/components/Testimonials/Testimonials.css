@@ -1,6 +1,7 @@
 .testimonials {
   background: #f8eaea;
   padding: 96px 0;
+  height: 100vh;
 }
 
 .testimonials-header {
@@ -21,31 +22,4 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 32px;
-}
-
-.testimonial-card {
-  background: #f4dede;
-  padding: 28px;
-  border-radius: 16px;
-}
-
-.stars {
-  margin-bottom: 16px;
-}
-
-.quote {
-  font-size: 15px;
-  margin-bottom: 20px;
-}
-
-.author {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-.author img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
 }

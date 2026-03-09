@@ -10,13 +10,13 @@ import Creations from "./components/Creations";
 function App() {
   return (
     <main>
-      <Hero></Hero>
-      <IndulgeSection></IndulgeSection>
-      <Testimonials></Testimonials>
-      <WhyChoose></WhyChoose>
-      <Creations></Creations>
-      <CTA></CTA>
-      <Footer></Footer>
+      <Hero />
+      <IndulgeSection />
+      <Testimonials />
+      <WhyChoose />
+      <Creations />
+      <CTA />
+      <Footer />
     </main>
   );
 }

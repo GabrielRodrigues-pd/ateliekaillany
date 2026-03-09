@@ -1,9 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Comfortaa:wght@300..700&family=Lora:ital,wght@0,400..700;1,400..700&display=swap");
 /* RESET BÁSICO */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: "Inter", sans-serif;
+  font-family: "Lora", sans-serif;
 }
 
 /* CORES BASE */
@@ -21,4 +22,14 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 24px;
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Comfortaa", sans-serif;
+}
+
+a {
+  text-decoration: none;
 }

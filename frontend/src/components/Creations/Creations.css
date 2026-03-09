@@ -1,5 +1,6 @@
 .creations {
   padding: 96px 0;
+  height: 100%;
 }
 
 .creations-gallery {
@@ -7,6 +8,11 @@
   gap: 24px;
   overflow-x: auto;
   padding: 0 24px;
+}
+
+.creations-header h2 {
+  font-size: 36px;
+  margin-bottom: 8px;
 }
 
 .creations-gallery img {

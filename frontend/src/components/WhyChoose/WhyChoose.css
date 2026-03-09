@@ -2,28 +2,20 @@
   background: #d89463;
   padding: 96px 0;
   color: #fff;
+  min-height: 100vh;
 }
 
 .why-header {
   text-align: center;
   margin-bottom: 56px;
 }
+.why-header h2 {
+  font-size: 36px;
+  margin: 8px 0;
+}
 
 .why-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 32px;
-}
-
-.why-card {
-  background: rgba(0, 0, 0, 0.15);
-  border-radius: 16px;
-  overflow: hidden;
-  padding: 20px;
-}
-
-.why-card img {
-  width: 100%;
-  border-radius: 12px;
-  margin-bottom: 16px;
 }

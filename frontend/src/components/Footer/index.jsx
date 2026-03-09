@@ -4,7 +4,7 @@ export default function Footer() {
   return (
     <footer className="footer">
       <div className="container footer-top">
-        <div className="logo">Logo</div>
+        <div className="logo">Kaillany</div>
 
         <nav>
           <a href="#">Home</a>
