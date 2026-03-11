@@ -3,7 +3,7 @@ import "./WhyChoose.css";
 
 export default function WhyChoose() {
   return (
-    <section className="why">
+    <section className="why" id="sobre-nos">
       <div className="container why-header">
         <span>Por que</span>
         <h2>Por que escolher Kaillany Nunes?</h2>

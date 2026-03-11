@@ -30,7 +30,7 @@ const items = [
 
 export default function Creations() {
   return (
-    <section className="creations">
+    <section className="creations" id="criacoes">
       <div className="container creations-header">
         <h2>Nossas criações</h2>
         <p>Cada ovo é uma pequena obra de arte.</p>

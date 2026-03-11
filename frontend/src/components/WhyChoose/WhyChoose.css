@@ -14,8 +14,25 @@
   margin: 8px 0;
 }
 
+/* GRID */
 .why-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 32px;
+}
+
+@media (max-width: 900px) {
+  .why {
+    padding: 64px 0;
+    min-height: auto;
+  }
+
+  .why-header h2 {
+    font-size: 28px;
+  }
+
+  .why-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }

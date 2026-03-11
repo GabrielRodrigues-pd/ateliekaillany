@@ -36,3 +36,18 @@
   grid-template-columns: repeat(3, 1fr);
   gap: 32px;
 }
+
+@media (max-width: 900px) {
+  .indulge {
+    padding: 64px 0;
+  }
+
+  .indulge-header h2 {
+    font-size: 32px;
+  }
+
+  .indulge-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+}

@@ -1,7 +1,7 @@
 .testimonials {
   background: #f8eaea;
   padding: 96px 0;
-  height: 100vh;
+  min-height: 100vh;
 }
 
 .testimonials-header {
@@ -22,4 +22,20 @@
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 32px;
+}
+
+@media (max-width: 900px) {
+  .testimonials {
+    padding: 64px 0;
+    min-height: auto;
+  }
+
+  .testimonials-header h2 {
+    font-size: 28px;
+  }
+
+  .testimonials-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }

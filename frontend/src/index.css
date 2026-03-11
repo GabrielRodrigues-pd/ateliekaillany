@@ -7,6 +7,28 @@
   font-family: "Lora", sans-serif;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
+/* CUSTOM SCROLLBAR */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-main, #f7e9de);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-header, #d89463);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary, #d96a75);
+}
+
 /* CORES BASE */
 :root {
   --bg-main: #f7e9de;

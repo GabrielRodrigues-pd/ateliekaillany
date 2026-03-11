@@ -1,0 +1,132 @@
+.navbar {
+  background-color: var(--bg-header);
+}
+
+.bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.logo a {
+  color: var(--bg-main);
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.25rem;
+}
+
+.nav {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.nav a {
+  color: var(--bg-main);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: transform 0.2s ease;
+  position: relative;
+}
+
+.nav a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -4px;
+  left: 0;
+  background-color: var(--bg-main);
+  transition: width 0.3s ease;
+}
+
+.nav a:hover {
+  transform: translateY(-2px);
+}
+
+.nav a:hover::after {
+  width: 100%;
+}
+
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: var(--bg-main);
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.cart-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s;
+  z-index: 1001; /* Stay above mobile menu if needed */
+}
+
+.cart-btn:hover {
+  transform: scale(1.1);
+}
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: #ff4d4d;
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* RESPONSIVE NAVBAR */
+@media (max-width: 900px) {
+  .hamburger-btn {
+    display: block;
+    order: 1; /* Place between logo and cart */
+  }
+
+  .nav-actions {
+    order: 2; /* Cart button on the far right */
+  }
+
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: var(--bg-header);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+  }
+
+  .nav.open {
+    transform: translateY(0);
+  }
+
+  .nav a {
+    font-size: 1.5rem;
+  }
+}

@@ -1,47 +1,44 @@
 import "./Hero.css";
 import img from "../../assets/imgOvo.jpg";
+import NavBar from "../NavBar";
+import OptimizedImage from "../OptimizedImage";
 
 export default function Hero() {
   return (
     <>
-      <header className="header">
+      {/* <header className="header">
         <div className="container header-content">
           <div className="logo">Kaillany</div>
 
           <nav className="nav">
             <a href="#">Home</a>
-            <a href="#">Produtos</a>
-            <a href="#">Sobre nós</a>
-            <a href="#">More ▾</a>
+            <a href="#">Treats</a>
+            <a href="#">About</a>
           </nav>
 
           <button className="contact-btn">Contact</button>
         </div>
-      </header>
+      </header> */}
 
-      <section className="hero">
+      <NavBar />
+
+      <section className="hero" id="home">
         <div className=" hero-card container">
-          <div className="hero-image">
-            <img src={img} alt="Chocolate sweets" />
-          </div>
-
-          <div className="hero-text">
-            <h1>
-              Doces artesanais
-              <br />
-              feitos com carinho
-            </h1>
-
+          <div className="hero-text-card">
+            <span className="hero-eyebrow">A arte do chocolate em São Paulo</span>
+            <h1>Ovos de Páscoa & Doces Artesanais</h1>
             <p>
-              Cada ovo é recheado com os melhores ingredientes e envolto em
-              chocolate que derrete na sua língua. Encomende já e sinta a
-              diferença que a arte e a qualidade fazem.
+              Experimente a magia de chocolates artesanais bem pertinho de você. 
+              Cada peça conta uma história de paixão, qualidade premium e muita dedicação 
+              para trazer o melhor sabor de São Paulo até a sua mesa.
             </p>
-
-            <div className="hero-actions">
-              <button className="btn-primary">Ordem</button>
-              <button className="btn-secondary">Navegar</button>
-            </div>
+            <button className="hero-btn">Descubra Nossos Doces</button>
+          </div>
+          <div className="hero-img-card">
+            <OptimizedImage
+              src={img}
+              alt="Ovo de Páscoa Artesanal Ateliê Kaillany Nunes"
+            />
           </div>
         </div>
       </section>

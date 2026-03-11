@@ -1,0 +1,29 @@
+.optimized-image-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--color-background-soft, #f0f0f0);
+}
+
+/* 
+  The image itself has a transition applied to its opacity and filter.
+  Before loading, it's slightly blurred and partly transparent.
+*/
+.optimized-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: opacity 0.5s ease-in-out, filter 0.5s ease-in-out;
+}
+
+.optimized-image.loading {
+  opacity: 0;
+  filter: blur(10px);
+}
+
+.optimized-image.loaded {
+  opacity: 1;
+  filter: blur(0);
+}

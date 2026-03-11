@@ -3,7 +3,7 @@ import imgOvo from "../../assets/imgOvo.jpg";
 
 export default function CTA() {
   return (
-    <section className="cta">
+    <section className="cta" id="contato">
       <h2>Faça seu pedido hoje mesmo</h2>
       <p>
         O melhor chocolate não espera por ninguém. Escolha já os seus favoritos.
