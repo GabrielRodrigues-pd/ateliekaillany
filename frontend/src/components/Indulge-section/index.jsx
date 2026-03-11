@@ -7,10 +7,10 @@ import miniOvoColher from "../../assets/miniOvoColher.png";
 import ovoNinhoNutella from "../../assets/ovoNinhoNutella.png";
 import ovoNinhoMorango from "../../assets/ovoNinhoMorango.png";
 import ovoDoisAmores from "../../assets/ovoDoisAmores.png";
+import sacolinha from "../../assets/sacolinha.png";
 import ovoBrownie from "../../assets/ovoBrownie.png";
 import ovoFerrero from "../../assets/ovoFerrero.png";
 import ovoColher from "../../assets/ovoColher.jpg";
-import ovoTrufado from "../../assets/ovoTrufado.jpg";
 
 // Mock Product Data
 const productsData = [
@@ -23,6 +23,17 @@ const productsData = [
     alt: "Classic Easter eggs",
     price: 89.9,
     prices: { "250g": 69.90, "350g": 89.90 },
+    chocolateType: "Meio Amargo",
+    filling: "Tradicional"
+  },
+  {
+    id: "classic-egg-2",
+    categoria: "Infantil",
+    title: "Sacolinha de Ovos",
+    descri: "Sacolinha de Ovos de 50g cada.",
+    img: sacolinha,
+    alt: "Sacolinha de Ovos",
+    price: 35.0,
     chocolateType: "Meio Amargo",
     filling: "Tradicional"
   },
@@ -41,7 +52,7 @@ const productsData = [
     id: "decadent-egg-1",
     categoria: "Colher 50g",
     title: "Mini Ovos de Colher",
-    descri: "Ovo de colher de 50g.",
+    descri: "Ovo de colher de 50g. Acompanha caixa de sacola luxo.",
     img: miniOvoColher,
     alt: "Mini Ovos de Colher",
     price: 16.0,
