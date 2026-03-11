@@ -10,8 +10,16 @@ export default function CTA() {
       </p>
 
       <div className="cta-actions">
-        <button className="btn-primary">Order</button>
-        <button className="btn-secondary">Browse</button>
+        <a href="#produtos" className="btn-secondary cta-btn">Ver Catálogo</a>
+        <button 
+          className="btn-primary cta-btn whatsapp-btn"
+          onClick={() => {
+            const message = encodeURIComponent("Olá! Vim pelo site e gostaria de fazer uma encomenda no Ateliê Kaillany Nunes.");
+            window.open(`https://wa.me/5583996918173?text=${message}`, "_blank");
+          }}
+        >
+          {" Falar no WhatsApp"}
+        </button>
       </div>
 
       <img src={imgOvo} alt="Chocolate egg" />

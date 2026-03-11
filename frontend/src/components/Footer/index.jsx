@@ -7,9 +7,9 @@ export default function Footer() {
         <div className="footer-brand">
           <div className="logo">Kaillany Nunes Atelier</div>
           <address className="local-seo-address">
-            <p>Rua Exemplo Fictício, 123 - Centro</p>
-            <p>São Paulo, SP - 01000-000</p>
-            <p className="contact-info">📞 WhatsApp: (11) 99999-9999</p>
+            <p>Rua Antônio Lopes da Silva, 180 - Centro</p>
+            <p>Emas, PB - 58763-000</p>
+            <p className="contact-info">📞 WhatsApp: (83) 99691-8173</p>
           </address>
         </div>
 

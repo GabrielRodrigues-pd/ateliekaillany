@@ -26,4 +26,48 @@
   display: flex;
   justify-content: center;
   gap: 18px;
+  flex-wrap: wrap;
+}
+
+.cta-btn {
+  padding: 16px 32px;
+  border-radius: 30px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--text-dark, #333);
+  border: 2px solid var(--text-dark, #333);
+}
+
+.btn-secondary:hover {
+  background-color: var(--text-dark, #333);
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.btn-primary.whatsapp-btn {
+  background-color: #25D366; /* WhatsApp Green */
+  color: white;
+  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+}
+
+.btn-primary.whatsapp-btn:hover {
+  background-color: #128C7E;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
+.cta-btn:active {
+  transform: translateY(0);
 }

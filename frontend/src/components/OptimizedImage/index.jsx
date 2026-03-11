@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./OptimizedImage.css";
 
 /**
@@ -7,10 +7,16 @@ import "./OptimizedImage.css";
  */
 export default function OptimizedImage({ src, alt, className = "", ...props }) {
   const [isLoaded, setIsLoaded] = useState(false);
+  const imgRef = useRef(null);
 
   useEffect(() => {
     // Reset state if src changes
     setIsLoaded(false);
+    
+    // Check if image is already loaded (from cache)
+    if (imgRef.current && imgRef.current.complete) {
+      setIsLoaded(true);
+    }
   }, [src]);
 
   return (
@@ -20,6 +26,7 @@ export default function OptimizedImage({ src, alt, className = "", ...props }) {
         Once onLoad fires, we swap the class to reveal the sharp image smoothly.
       */}
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
         loading="lazy"

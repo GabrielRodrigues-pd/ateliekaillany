@@ -12,8 +12,25 @@ export default function CartSidebar() {
   } = useCart();
 
   const handleCheckout = () => {
-    // Placeholder for future payment integration
-    alert("Checkout functionality will be implemented soon!");
+    const phoneNumber = "5583996918173"; // WhatsApp Number
+    
+    let message = "Olá! Gostaria de fazer o seguinte pedido do Ateliê Kaillany Nunes:\n\n";
+    
+    // Add items to message
+    cartItems.forEach(item => {
+      message += `🛒 *${item.quantity}x* ${item.title} - R$ ${(item.price * item.quantity).toFixed(2)}\n`;
+    });
+
+    // Add total to message
+    message += `\n💰 *Total do Pedido:* R$ ${cartTotal.toFixed(2)}\n\n`;
+    message += "Podem confirmar o pedido e as opções de entrega/retirada para Emas-PB, por favor?";
+
+    // Encode message for URL
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    
+    // Open in new tab
+    window.open(whatsappUrl, "_blank");
   };
 
   return (
@@ -73,7 +90,7 @@ export default function CartSidebar() {
               <span>R$ {cartTotal.toFixed(2)}</span>
             </div>
             <button className="checkout-btn" onClick={handleCheckout}>
-              Finalizar Compra
+              Pedir no WhatsApp
             </button>
           </div>
         )}
