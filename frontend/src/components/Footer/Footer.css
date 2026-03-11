@@ -31,6 +31,17 @@
   color: var(--text-dark);
 }
 
+.local-seo-address .contact-info a {
+  color: #E1306C; /* Instagram brand color */
+  text-decoration: none;
+  transition: color 0.3s ease, opacity 0.3s ease;
+}
+
+.local-seo-address .contact-info a:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
 .footer-top nav {
   margin-top: 30px;
   display: flex;

@@ -10,6 +10,16 @@ export default function Footer() {
             <p>Rua Antônio Lopes da Silva, 180 - Centro</p>
             <p>Emas, PB - 58763-000</p>
             <p className="contact-info">📞 WhatsApp: (83) 99691-8173</p>
+            <p className="contact-info">
+              📸 Instagram:{" "}
+              <a
+                href="https://www.instagram.com/ateliekaillanynunes_/"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                @ateliekaillanynunes_
+              </a>
+            </p>
           </address>
         </div>
 
