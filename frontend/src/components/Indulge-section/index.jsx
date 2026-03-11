@@ -1,7 +1,14 @@
 import { useState } from "react";
 import CardsIndulge from "../CardsIndulge";
 import "./IndulgeSection.css";
-import ovoCombo from "../../assets/ovoCombo.jpg";
+import ovoTrio from "../../assets/ovoTrio.png";
+import ovoChocolatudo from "../../assets/ovoChocolatudo.png";
+import miniOvoColher from "../../assets/miniOvoColher.png";
+import ovoNinhoNutella from "../../assets/ovoNinhoNutella.png";
+import ovoNinhoMorango from "../../assets/ovoNinhoMorango.png";
+import ovoDoisAmores from "../../assets/ovoDoisAmores.png";
+import ovoBrownie from "../../assets/ovoBrownie.png";
+import ovoFerrero from "../../assets/ovoFerrero.png";
 import ovoColher from "../../assets/ovoColher.jpg";
 import ovoTrufado from "../../assets/ovoTrufado.jpg";
 
@@ -9,68 +16,96 @@ import ovoTrufado from "../../assets/ovoTrufado.jpg";
 const productsData = [
   {
     id: "classic-egg-1",
-    categoria: "Clássico",
-    title: "Ovo de Páscoa Tradicional Recheado",
-    descri: "Recheio cremoso envolto em chocolate temperado.",
-    img: ovoCombo,
+    categoria: "Colher",
+    title: "Ovo Chocolatudo",
+    descri: "Casca de chocolate meio amargo, recheio de chocolate com brigadeiro.",
+    img: ovoChocolatudo,
     alt: "Classic Easter eggs",
     price: 89.9,
-    chocolateType: "Ao Leite",
+    prices: { "250g": 69.90, "350g": 89.90 },
+    chocolateType: "Meio Amargo",
     filling: "Tradicional"
   },
   {
     id: "elegant-egg-1",
-    categoria: "Elegante",
-    title: "Ovo com Colher Ninho e Nutella",
-    descri: "Conchas delicadas que se abrem com expectativa.",
-    img: ovoColher,
-    alt: "Elegant spoon eggs",
-    price: 115.0,
+    categoria: "Trio de Ovos",
+    title: "Trio de Ovos",
+    descri: "O kit contém 3 ovos de colher de 50g cada. Recheio a escolha do cliente.",
+    img: ovoTrio,
+    alt: "Trio de Ovos",
+    price: 25.0,
     chocolateType: "Branco",
     filling: "Trufado"
   },
   {
     id: "decadent-egg-1",
-    categoria: "Decadente",
-    title: "Ovo Trufado Frutas Vermelhas",
-    descri: "Centros de ganache que merecem ser saboreados.",
-    img: ovoTrufado,
-    alt: "Decadent truffled eggs",
-    price: 145.5,
+    categoria: "Colher 50g",
+    title: "Mini Ovos de Colher",
+    descri: "Ovo de colher de 50g.",
+    img: miniOvoColher,
+    alt: "Mini Ovos de Colher",
+    price: 16.0,
     chocolateType: "Meio Amargo",
     filling: "Frutas"
   },
   {
     id: "classic-egg-2",
-    categoria: "Clássico",
-    title: "Ovo de Páscoa Crocante Amargo",
-    descri: "Sabor intenso para amantes de cacau.",
-    img: ovoCombo,
-    alt: "Dark Chocolate egg",
-    price: 95.0,
+    categoria: "Colher",
+    title: "Ovo Ferrero",
+    descri: "Casca de chocolate meio amargo com amendoim, recheio chocolate, amendoim e nutella.",
+    img: ovoFerrero,
+    alt: "Ovo de ferrero com amendoim",
+    price: 75.0,
+    prices: { "250g": 55.00, "350g": 75.00 },
     chocolateType: "Meio Amargo",
     filling: "Tradicional"
   },
   {
     id: "elegant-egg-2",
-    categoria: "Elegante",
-    title: "Ovo de Colher Brigadeiro",
-    descri: "O clássico brasileiro na versão de colher.",
-    img: ovoColher,
-    alt: "Brigadeiro spoon eggs",
-    price: 105.0,
+    categoria: "Colher",
+    title: "Ovo Ninho com Nutella",
+    descri: "Casca de chocolate meio amargo, recheio de ninho com nutella.",
+    img: ovoNinhoNutella,
+    alt: "Ovo de ninho com nutella",
+    price: 74.99,
+    prices: { "250g": 54.99, "350g": 74.99 },
     chocolateType: "Ao Leite",
     filling: "Trufado"
   },
   {
     id: "decadent-egg-2",
-    categoria: "Decadente",
-    title: "Ovo Trufado Maracujá Branco",
-    descri: "O contraste perfeito entre o doce e o cítrico.",
-    img: ovoTrufado,
-    alt: "Passion fruit truffled eggs",
-    price: 135.0,
-    chocolateType: "Branco",
+    categoria: "Colher",
+    title: "Ovo Brownie",
+    descri: "Casca brownie com chocolate meio amargo, recheio chocolate e ninho.",
+    img: ovoBrownie,
+    alt: "Ovo brownie",
+    price: 74.99,
+    prices: { "250g": 54.99, "350g": 74.99 },
+    chocolateType: "Meio Amargo",
+    filling: "Frutas"
+  },
+  {
+    id: "decadent-egg-3",
+    categoria: "Colher",
+    title: "Ovo Ninho com Morango",
+    descri: "Casca chocolate meio amargo, recheio ninho e morango.",
+    img: ovoNinhoMorango,
+    alt: "Ovo de ninho com morango",
+    price: 74.99,
+    prices: { "250g": 54.99, "350g": 74.99 },
+    chocolateType: "Meio Amargo",
+    filling: "Frutas"
+  },
+  {
+    id: "decadent-egg-4",
+    categoria: "Colher",
+    title: "Ovo Dois Amores",
+    descri: "Casca chocolate meio amargo, recheio ninho e morango.",
+    img: ovoDoisAmores,
+    alt: "Ovo de ninho com morango",
+    price: 74.99,
+    prices: { "250g": 54.99, "350g": 74.99 },
+    chocolateType: "Meio Amargo",
     filling: "Frutas"
   }
 ];
@@ -157,6 +192,7 @@ export default function IndulgeSection() {
               img={product.img}
               alt={product.alt}
               price={product.price}
+              prices={product.prices}
             />
           ))
         ) : (
