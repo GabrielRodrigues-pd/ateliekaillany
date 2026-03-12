@@ -13,49 +13,49 @@ import ovoFerrero from "../../assets/ovoFerrero.png";
 const items = [
   {
     image: ovoTrio,
-    title: "Ovo Oreo",
-    description: "Chocolate meio amargo com recheio cremoso",
+    title: "Trio de Ovos",
+    description: "O kit contém 3 ovos de colher de 50g cada.",
   },
   {
     image: ovoChocolatudo,
-    title: "Ovo Tradicional",
-    description: "Chocolate ao leite artesanal",
+    title: "Ovo Chocolatudo",
+    description: "Recheio de chocolate com brigadeiro.",
   },
   {
     image: miniOvoColher,
-    title: "Ovo Frutas Vermelhas",
-    description: "Recheio cremoso com frutas",
+    title: "Mini Ovos de Colher",
+    description: "Acompanha caixa de sacola luxo.",
   },
   {
     image: ovoNinhoNutella,
-    title: "Ovo Frutas Vermelhas",
-    description: "Recheio cremoso com frutas",
+    title: "Ovo Ninho com Nutella",
+    description: "Recheio de ninho com nutella.",
   },
   {
     image: ovoNinhoMorango,
-    title: "Ovo Frutas Vermelhas",
-    description: "Recheio cremoso com frutas",
+    title: "Ovo Ninho com Morango",
+    description: "Recheio de ninho com morango.",
   },
   {
     image: ovoDoisAmores,
-    title: "Ovo Frutas Vermelhas",
-    description: "Recheio cremoso com frutas",
+    title: "Ovo Dois Amores", 
+    description: "Recheio de brigadeiro branco e brigadeiro preto.",
   },
   {
     image: sacolinha,
-    title: "Ovo Frutas Vermelhas",
-    description: "Recheio cremoso com frutas",
+    title: "Sacolinha Infantil",
+    description: "Casca deliciosa!",
   },
   {
     image: ovoBrownie,
-    title: "Ovo Frutas Vermelhas",
-    description: "Recheio cremoso com frutas",
+    title: "Ovo Brownie",
+    description: "Casca brownie com chocolate meio amargo",
   }
   ,
   {
     image: ovoFerrero,
-    title: "Ovo Frutas Vermelhas",
-    description: "Recheio cremoso com frutas",
+    title: "Ovo Ferrero",
+    description: "Recheio chocolate, amendoim e nutella.",
   }
 ];
 

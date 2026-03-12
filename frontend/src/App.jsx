@@ -15,10 +15,10 @@ function App() {
     <CartProvider>
       <main>
         <Hero />
-        <IndulgeSection />
-        <Testimonials />
         <WhyChoose />
+        <IndulgeSection />
         <Creations />
+        <Testimonials />
         <CTA />
         <Footer />
       </main>

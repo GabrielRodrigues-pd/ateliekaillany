@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./WhyChoose.css";
-// import fotoConfeiteira from "../../assets/fotoConfeiteira.jpg"; // To be added by user later
+import eu from "../../assets/eu.png"
+import OptimizedImage from "../OptimizedImage";
 
 export default function WhyChoose() {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -9,11 +10,7 @@ export default function WhyChoose() {
     <section className="about" id="sobre-nos">
       <div className="container about-container">
         <div className="about-image-wrapper">
-          {/* Placeholder content until user adds the real image */}
-          <div className="about-image-placeholder">
-            <span>[ Sua Foto Aqui ]</span>
-          </div>
-          {/* <img src={fotoConfeiteira} alt="Kaillany e Gabriel" className="about-image" /> */}
+          <OptimizedImage src={eu} alt="Kaillany Nunes" className="about-image-optimized" />
         </div>
         
         <div className="about-content">

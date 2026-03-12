@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
+import { Trash2 } from "lucide-react";
 import "./CartSidebar.css";
 
 export default function CartSidebar() {
@@ -130,8 +131,9 @@ export default function CartSidebar() {
                 <button
                   className="remove-btn"
                   onClick={() => removeFromCart(item.id)}
+                  title="Remover item"
                 >
-                  &#128465;
+                  <Trash2 size={20} />
                 </button>
               </div>
             ))

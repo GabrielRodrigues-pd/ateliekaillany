@@ -33,12 +33,22 @@
   letter-spacing: 1px;
 }
 
-.about-image {
+.about-image-optimized {
   width: 100%;
   aspect-ratio: 3/4;
-  object-fit: cover;
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  position: relative;
+  display: block; /* Ensures no mysterious whitespace */
+}
+
+/* Target the img tag that OptimizedImage spawns inside the wrapper */
+.about-image-optimized img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .about-content {
@@ -131,8 +141,9 @@
   .about-image-wrapper {
     max-width: 100%;
   }
-  
-  .about-image-placeholder, .about-image {
-    aspect-ratio: 16/9;
+
+  .about-image-placeholder, .about-image-optimized {
+    aspect-ratio: 4/5;
+    max-height: 100%;
   }
 }
