@@ -8,6 +8,10 @@ import ovoDoisAmores from "../assets/ovoDoisAmores.png";
 import sacolinha from "../assets/sacolinha.png";
 import ovoBrownie from "../assets/ovoBrownie.png";
 import ovoFerrero from "../assets/ovoFerrero.png";
+import ovoCasinha from "../assets/ovoCasinha.png";
+import ovoTrufado from "../assets/ovoTrufado.png";
+import ovoTradicional from "../assets/ovoTradicional.png";
+
 
 const imageMapper = {
   "ovoTrio.png": ovoTrio,
@@ -19,6 +23,9 @@ const imageMapper = {
   "sacolinha.png": sacolinha,
   "ovoBrownie.png": ovoBrownie,
   "ovoFerrero.png": ovoFerrero,
+  "ovoCasinha.png": ovoCasinha,
+  "ovoTrufado.png": ovoTrufado,
+  "ovoTradicional.png": ovoTradicional,
 };
 
 export const getImage = (imageName) => {

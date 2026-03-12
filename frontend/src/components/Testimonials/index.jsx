@@ -16,19 +16,19 @@ const testimonialsData = [
   },
   {
     id: 2,
-    descri: "Já provei chocolate em três continentes. Este é o verdadeiro chocolate.",
+    descri: "Fiquei impressionado com a apresentação. Muito bonito e bem feito! O sabor também é ótimo, chocolate bem suave e derrete na boca. Já tem uma cliente certa no ano que vem",
     name: "James Mitchell",
     subTexto: "Chef, Melbourne"
   },
   {
     id: 3,
-    descri: "A atenção aos detalhes em cada ovo é evidente. Vale cada mordida.",
+    descri: "Provei o ovo de Páscoa e gostei bastante. Dá pra ver que o chocolate é de qualidade. O recheio estava bem equilibrado e doce na medida certa. Valeu muito a pena.",
     name: "Ana Costa",
     subTexto: "Restaurant owner, Rio"
   },
   {
     id: 4,
-    descri: "Simplesmente divino! A melhor experiência de chocolate que eu já tive na vida, recomendo muito.",
+    descri: "Comprei e amei! O chocolate é muito gostoso e o recheio veio bem caprichado. Com certeza vou pedir de novo.",
     name: "Lucas Pereira",
     subTexto: "Blogger, Curitiba"
   }

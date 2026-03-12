@@ -8,9 +8,10 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
   
   const isTrio = categoria === "Trio de Ovos";
   const isMini = categoria === "Colher 50g";
+  const isTrufado = categoria === "Ovo Trufado";
   const availableSizes = prices && typeof prices === 'object' ? Object.keys(prices) : [];
   const hasMultiplePrices = availableSizes.length > 0;
-  const hasOptions = hasMultiplePrices || isTrio || isMini;
+  const hasOptions = hasMultiplePrices || isTrio || isMini || isTrufado;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState(hasMultiplePrices ? availableSizes[0] : null);
@@ -22,10 +23,16 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
 
   const flavorOptions = [
     "Chocolatudo",
-    "Ferrero",
+    // "Ferrero", não quer mais o ferreiro rocher
     "Ninho com Nutella",
     "Brownie",
     "Ninho com Morango",
+    "Dois Amores"
+  ];
+
+  const trufadoOptions = [
+    "Chocolate",
+    "Ninho com Nutella",
     "Dois Amores"
   ];
 
@@ -73,11 +80,18 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
       }
       finalId += `-[${selectedFlavors.flavor1}]`;
       finalTitle += ` - Sabor: ${selectedFlavors.flavor1}`;
+    } else if (isTrufado) {
+      if (!selectedFlavors.flavor1) {
+        alert("Por favor, selecione um sabor para o Ovo Trufado.");
+        return;
+      }
+      finalId += `-[${selectedFlavors.flavor1}]`;
+      finalTitle += ` - Sabor: ${selectedFlavors.flavor1}`;
     }
 
     addToCart({ id: finalId, title: finalTitle, price: currentPrice, img });
     
-    if (isTrio || isMini) {
+    if (isTrio || isMini || isTrufado) {
       setSelectedFlavors({ flavor1: "", flavor2: "", flavor3: "" });
     }
     setIsModalOpen(false);
@@ -221,6 +235,22 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
                     <option value="" disabled>Selecione um Sabor</option>
                     {flavorOptions.map((flavor) => (
                       <option key={`m-mini-${flavor}`} value={flavor}>{flavor}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {isTrufado && (
+                <div className="modal-section card-flavors-selector">
+                  <span className="section-label">Escolha o sabor:</span>
+                  <select
+                    value={selectedFlavors.flavor1}
+                    onChange={(e) => handleFlavorChange("flavor1", e.target.value)}
+                    className="flavor-select"
+                  >
+                    <option value="" disabled>Selecione um Sabor</option>
+                    {trufadoOptions.map((flavor) => (
+                      <option key={`m-trufado-${flavor}`} value={flavor}>{flavor}</option>
                     ))}
                   </select>
                 </div>
