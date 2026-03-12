@@ -18,30 +18,6 @@
   gap: 16px;
 }
 
-.local-seo-address {
-  font-style: normal;
-  font-size: 14px;
-  color: var(--text-muted);
-  line-height: 1.6;
-}
-
-.local-seo-address .contact-info {
-  margin-top: 8px;
-  font-weight: 600;
-  color: var(--text-dark);
-}
-
-.local-seo-address .contact-info a {
-  color: #E1306C; /* Instagram brand color */
-  text-decoration: none;
-  transition: color 0.3s ease, opacity 0.3s ease;
-}
-
-.local-seo-address .contact-info a:hover {
-  opacity: 0.8;
-  text-decoration: underline;
-}
-
 .footer-top nav {
   margin-top: 30px;
   display: flex;
