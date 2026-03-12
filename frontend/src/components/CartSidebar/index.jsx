@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
-import { Trash2 } from "lucide-react";
+import { useAuth } from "../../context/AuthContext";
+import { Trash2, CheckCircle } from "lucide-react";
 import api from "../../services/api";
 import "./CartSidebar.css";
 
@@ -11,10 +12,14 @@ export default function CartSidebar() {
     cartItems,
     updateQuantity,
     removeFromCart,
+    clearCart,
     cartTotal,
   } = useCart();
 
+  const { user } = useAuth();
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     nome: "",
     contato: "",
@@ -24,6 +29,15 @@ export default function CartSidebar() {
 
   // Load saved customer data on mount
   useEffect(() => {
+    // Priority: Logged in user info
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        nome: user.name || prev.nome,
+        // We might not have phone from Google Auth usually
+      }));
+    }
+
     const savedData = localStorage.getItem("atelieCustomerData");
     if (savedData) {
       try {
@@ -33,7 +47,7 @@ export default function CartSidebar() {
         console.error("Failed to parse saved customer data", e);
       }
     }
-  }, []);
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -68,7 +82,8 @@ export default function CartSidebar() {
         product: productString,
         quantity: totalQuantity,
         city: formData.cidade,
-        totalPrice: cartTotal
+        totalPrice: cartTotal,
+        userId: user ? user.id : null // Link order to user if logged in
       });
     } catch (err) {
       console.error("Erro ao salvar pedido no painel admin:", err);
@@ -100,10 +115,21 @@ export default function CartSidebar() {
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
     
-    // Close modal, cart, and open WhatsApp
-    setIsCheckoutModalOpen(false);
-    toggleCart(); 
-    window.open(whatsappUrl, "_blank");
+    // Finalize process
+    setIsSubmitting(true);
+    
+    setTimeout(() => {
+      setIsCheckoutModalOpen(false);
+      setIsSubmitting(false);
+      setShowSuccessModal(true); // Exibe o modal de sucesso
+      
+      // Limpa após um tempo e abre o WhatsApp
+      setTimeout(() => {
+        clearCart();
+        setShowSuccessModal(false);
+        window.open(whatsappUrl, "_blank");
+      }, 3000); // 3 segundos para ver a mensagem de sucesso
+    }, 1000);
   };
 
   return (
@@ -238,11 +264,33 @@ export default function CartSidebar() {
                 <button type="button" className="cancel-btn" onClick={closeCheckoutModal}>
                   Cancelar
                 </button>
-                <button type="submit" className="submit-order-btn">
-                  Enviar Pedido
+                <button 
+                  type="submit" 
+                  className={`submit-order-btn ${isSubmitting ? 'loading' : ''}`}
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Processando...' : 'Enviar Pedido'}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+      {/* SUCCESS MODAL */}
+      {showSuccessModal && (
+        <div className="success-modal-overlay">
+          <div className="success-modal">
+            <div className="success-icon-wrapper">
+              <CheckCircle className="success-icon" />
+            </div>
+            <h3>Pedido Recebido!</h3>
+            <p>
+              Obrigado, <strong>{formData.nome}</strong>! <br />
+              Estamos te redirecionando para o WhatsApp para finalizar os detalhes.
+            </p>
+            <div className="success-loader-bar">
+              <div className="loader-progress"></div>
+            </div>
           </div>
         </div>
       )}

@@ -3,6 +3,7 @@ import "./App.css";
 import Home from "./pages/Home";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
+import MyOrders from "./pages/MyOrders";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { CartProvider } from "./context/CartContext";
 import CartSidebar from "./components/CartSidebar";
@@ -15,6 +16,7 @@ function App() {
         <main>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/meus-pedidos" element={<MyOrders />} />
             <Route path="/admin/login" element={<AdminLogin />} />
             
             {/* Protected Routes */}

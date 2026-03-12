@@ -5,10 +5,11 @@
 }
 
 .admin-header {
-  background-color: white;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-  padding: 15px 0;
-  margin-bottom: 30px;
+  background-color: #333;
+  color: white;
+  padding: 0.5rem 0;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .admin-container {
@@ -28,6 +29,98 @@
   font-size: 24px;
   color: var(--primary);
   margin: 0;
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.admin-tabs {
+  display: flex;
+  background: rgba(255,255,255,0.1);
+  padding: 4px;
+  border-radius: 8px;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: #ccc;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.tab-btn.active {
+  background: white;
+  color: #333;
+}
+
+.admin-logout-btn {
+  background: #f44336;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.status-badge.status-cancelado {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.actions-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.delete-item-btn {
+  background: none;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  filter: grayscale(1);
+  transition: all 0.2s;
+}
+
+.delete-item-btn:hover {
+  background: #fff1f1;
+  border-color: #ffcdd2;
+  filter: grayscale(0); transform: scale(1.1);
+}
+
+.cancel-reason-admin {
+  font-size: 0.75rem;
+  color: #d32f2f;
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.row-deleted {
+  background-color: #fafafa;
+  opacity: 0.8;
+}
+
+.deleted-tag {
+  font-size: 0.7rem;
+  background: #eee;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #999;
 }
 
 .logout-btn {
@@ -267,4 +360,96 @@
   100% {
     transform: rotate(360deg);
   }
+}
+
+.scheduled-info-admin {
+  font-size: 0.8rem;
+  color: #128C7E;
+  margin-top: 4px;
+  font-weight: 600;
+  background: #e8f5f2;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.schedule-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  padding: 5px;
+  transition: transform 0.2s;
+}
+
+.schedule-btn:hover {
+  transform: scale(1.2);
+}
+
+/* Modais Admin */
+.admin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.admin-modal {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.admin-modal h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.admin-modal .form-group {
+  margin-bottom: 20px;
+}
+
+.admin-modal label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+}
+
+.admin-modal input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.admin-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-save {
+  padding: 10px 20px;
+  background: #128C7E;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }

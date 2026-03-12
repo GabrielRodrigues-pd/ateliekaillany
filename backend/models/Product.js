@@ -12,7 +12,8 @@ const productSchema = new mongoose.Schema({
   },
   price: {
     type: Number,
-    required: [true, 'O preço do produto é obrigatório']
+    required: [true, 'O preço do produto é obrigatório'],
+    index: true // Adicionado índice para ordenação/filtro de preço
   },
   prices: {
     type: Map,
@@ -23,12 +24,14 @@ const productSchema = new mongoose.Schema({
   category: {
     type: String,
     required: [true, 'Você deve classificar o tipo do ovo ou produto'],
-    default: 'Diversos'
+    default: 'Diversos',
+    index: true // Adicionado índice para filtro por categoria
   },
   // Ex: "Chocolate", "Ninho"
   filling: {
     type: String,
-    default: ""
+    default: "",
+    index: true // Adicionado índice para filtro por recheio
   },
   weight: {
     type: String, // ex: "250g", "350g"
@@ -40,7 +43,8 @@ const productSchema = new mongoose.Schema({
   },
   createdAt: {
     type: Date,
-    default: Date.now
+    default: Date.now,
+    index: true // Adicionado índice para ordenação padrão
   }
 });
 

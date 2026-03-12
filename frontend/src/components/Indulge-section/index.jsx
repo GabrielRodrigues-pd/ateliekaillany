@@ -13,11 +13,17 @@ export default function IndulgeSection() {
   const [filterCategory, setFilterCategory] = useState("Todos");
   const [sortPrice, setSortPrice] = useState("Normal");
 
-  // Fetch products from the backend API
+  // Fetch products from the backend API with server-side filtering and sorting
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await api.get('/products');
+        setIsLoading(true);
+        const params = new URLSearchParams();
+        if (filterCategory !== "Todos") params.append("category", filterCategory);
+        if (filterFilling !== "Todos") params.append("filling", filterFilling);
+        if (sortPrice !== "Normal") params.append("sort", sortPrice);
+
+        const response = await api.get(`/products?${params.toString()}`);
         setProductsData(response.data);
         setIsLoading(false);
       } catch (err) {
@@ -27,23 +33,10 @@ export default function IndulgeSection() {
       }
     };
     fetchProducts();
-  }, []);
+  }, [filterCategory, filterFilling, sortPrice]);
 
-  // Filtering Logic
-  let filteredProducts = productsData.filter((product) => {
-    const matchFilling = filterFilling === "Todos" || product.filling === filterFilling;
-    // Database maps categories like "Trio de Ovos", "Colher", "Infantil"
-    const matchCategory = filterCategory === "Todos" || product.category === filterCategory;
-    return matchFilling && matchCategory;
-  });
-
-  // Sorting Logic - crucial to create a new array copy to avoid mutating the original source
-  const sortedProducts = [...filteredProducts];
-  if (sortPrice === "Crescente") {
-    sortedProducts.sort((a, b) => a.price - b.price);
-  } else if (sortPrice === "Decrescente") {
-    sortedProducts.sort((a, b) => b.price - a.price);
-  }
+  // Sorting and Filtering are now handled by the server
+  const sortedProducts = productsData;
 
   return (
     <section className="indulge" id="produtos">

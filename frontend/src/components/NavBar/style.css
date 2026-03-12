@@ -104,10 +104,13 @@
 
   .nav-actions {
     order: 2; /* Cart button on the far right */
+    display: flex;
+    align-items: center;
+    gap: 15px;
   }
 
   .bar {
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
   }
 
   .nav {
@@ -133,4 +136,106 @@
   .nav a {
     font-size: 1.5rem;
   }
+}
+
+/* User Profile Styles */
+.user-profile {
+  position: relative;
+}
+
+.user-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+}
+
+.user-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.user-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: 2px solid white;
+}
+
+.user-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: white;
+  min-width: 200px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  padding: 15px;
+  margin-top: 10px;
+  z-index: 2000;
+  color: #333;
+}
+
+.user-info {
+  margin-bottom: 10px;
+}
+
+.user-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin: 0;
+  color: #333;
+}
+
+.user-email {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 2px 0 0;
+}
+
+.user-dropdown hr {
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 10px 0;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  background: none;
+  border: none;
+  color: #d32f2f;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background-color 0.2s;
+}
+
+.logout-btn:hover {
+  background-color: #fff1f1;
+}
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.google-login-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+/* User Profile Styles */
+.user-profile {
+  position: relative;
+  display: flex;
+  align-items: center;
 }

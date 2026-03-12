@@ -5,28 +5,54 @@ import './AdminDashboard.css';
 
 export default function AdminDashboard() {
   const [orders, setOrders] = useState([]);
+  const [activeTab, setActiveTab] = useState('ativos'); // 'ativos' ou 'cancelados'
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [schedulingOrder, setSchedulingOrder] = useState(null); // Pedido sendo agendado
+  const [scheduledData, setScheduledData] = useState({ date: '', location: '' });
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [activeTab]);
 
   const fetchOrders = async () => {
+    setIsLoading(true);
     try {
-      const response = await api.get('/orders');
-      setOrders(response.data);
+      const endpoint = activeTab === 'ativos' ? '/orders/admin/all' : '/orders/admin/history?includeDeleted=true';
+      const response = await api.get(endpoint);
+      
+      let data = response.data;
+      if (activeTab === 'cancelados') {
+        // Filtrar apenas cancelados ou deletados
+        data = data.filter(o => o.status === 'cancelado' || o.isDeleted);
+      } else {
+        // Garantir que na aba ativos não apareça o que foi 'soft-deleted' ou cancelado
+        data = data.filter(o => !o.isDeleted && o.status !== 'cancelado');
+      }
+
+      setOrders(data);
       setIsLoading(false);
     } catch (err) {
       if (err.response && err.response.status === 401) {
-        // Token expiado ou inválido
         localStorage.removeItem('adminToken');
         navigate('/admin/login');
       } else {
         setError('Falha ao carregar os pedidos. Tente novamente mais tarde.');
         setIsLoading(false);
       }
+    }
+  };
+
+  const handleDeleteOrder = async (orderId) => {
+    if (!window.confirm('Tem certeza que deseja excluir permanentemente este pedido da visão principal? (Ele continuará na lixeira)')) return;
+
+    try {
+      await api.delete(`/orders/admin/delete/${orderId}`);
+      setOrders(orders.filter(o => o._id !== orderId));
+    } catch (err) {
+      console.error('Erro ao excluir:', err);
+      alert('Não foi possível excluir o pedido.');
     }
   };
 
@@ -46,7 +72,7 @@ export default function AdminDashboard() {
 
   const handleStatusChange = async (orderId, newStatus) => {
     try {
-      await api.patch(`/orders/${orderId}/status`, { status: newStatus });
+      await api.patch(`/orders/admin/status/${orderId}`, { status: newStatus });
       // Update local state directly to be faster, or refetch
       setOrders(orders.map(order => 
         order._id === orderId ? { ...order, status: newStatus } : order
@@ -54,6 +80,29 @@ export default function AdminDashboard() {
     } catch (err) {
       console.error("Erro ao atualizar status:", err);
       alert("Não foi possível atualizar o status. Tente novamente.");
+    }
+  };
+
+  const handleScheduleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      await api.patch(`/orders/admin/schedule/${schedulingOrder._id}`, {
+        date: scheduledData.date,
+        location: scheduledData.location
+      });
+      
+      setOrders(orders.map(order => 
+        order._id === schedulingOrder._id 
+          ? { ...order, scheduledDeliveryDate: scheduledData.date, scheduledDeliveryLocation: scheduledData.location }
+          : order
+      ));
+      
+      setSchedulingOrder(null);
+      setScheduledData({ date: '', location: '' });
+      alert('Entrega agendada com sucesso!');
+    } catch (err) {
+      console.error("Erro ao agendar:", err);
+      alert("Erro ao agendar entrega.");
     }
   };
 
@@ -98,18 +147,28 @@ export default function AdminDashboard() {
                 <th>Produto</th>
                 <th>Qtd</th>
                 <th>Total</th>
-                <th>Status Atual</th>
-                <th>Alterar Status</th>
+                <th>Status</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
               {orderList.map((order) => (
-                <tr key={order._id}>
+                <tr key={order._id} className={order.isDeleted ? 'row-deleted' : ''}>
                   <td>{formatDate(order.createdAt)}</td>
                   <td>{order.customerName}</td>
                   <td>{order.phone}</td>
                   <td>{order.city}</td>
-                  <td>{order.product}</td>
+                  <td>
+                    {order.product}
+                    {order.cancellationReason && (
+                      <div className="cancel-reason-admin">Motivo: {order.cancellationReason}</div>
+                    )}
+                    {(order.scheduledDeliveryDate || order.scheduledDeliveryLocation) && (
+                      <div className="scheduled-info-admin">
+                        📍 {order.scheduledDeliveryLocation} - {order.scheduledDeliveryDate ? formatDate(order.scheduledDeliveryDate) : 'Data não definida'}
+                      </div>
+                    )}
+                  </td>
                   <td>{order.quantity}</td>
                   <td className="price-col">{formatPrice(order.totalPrice)}</td>
                   <td>
@@ -118,16 +177,48 @@ export default function AdminDashboard() {
                     </span>
                   </td>
                   <td>
-                    <select 
-                      className="status-select"
-                      value={order.status}
-                      onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                    >
-                      <option value="novo">Novo</option>
-                      <option value="em_producao">Em Produção</option>
-                      <option value="pronto">Pronto p/ Entrega</option>
-                      <option value="entregue">Entregue</option>
-                    </select>
+                    <div className="actions-cell">
+                      {order.status !== 'cancelado' && !order.isDeleted && (
+                        <select 
+                          className="status-select"
+                          value={order.status}
+                          onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                        >
+                          <option value="novo">Novo</option>
+                          <option value="em_producao">Em Produção</option>
+                          <option value="pronto">Pronto p/ Entrega</option>
+                          <option value="entregue">Entregue</option>
+                        </select>
+                      )}
+                      
+                      {!order.isDeleted && (
+                        <button 
+                          className="delete-item-btn" 
+                          onClick={() => handleDeleteOrder(order._id)}
+                          title="Excluir Pedido"
+                        >
+                          🗑️
+                        </button>
+                      )}
+
+                      {!order.isDeleted && (
+                        <button 
+                          className="schedule-btn" 
+                          onClick={() => {
+                            setSchedulingOrder(order);
+                            setScheduledData({
+                              date: order.scheduledDeliveryDate ? new Date(order.scheduledDeliveryDate).toISOString().split('T')[0] : '',
+                              location: order.scheduledDeliveryLocation || ''
+                            });
+                          }}
+                          title="Agendar Entrega"
+                        >
+                          📅
+                        </button>
+                      )}
+                      
+                      {order.isDeleted && <span className="deleted-tag">EXCLUÍDO</span>}
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -141,9 +232,25 @@ export default function AdminDashboard() {
   return (
     <div className="admin-dashboard">
       <header className="admin-header">
-        <div className="admin-container">
+        <div className="admin-container header-content">
           <h1>Painel de Pedidos</h1>
-          <button onClick={handleLogout} className="logout-btn">Sair</button>
+          <div className="header-right">
+            <nav className="admin-tabs">
+              <button 
+                className={`tab-btn ${activeTab === 'ativos' ? 'active' : ''}`}
+                onClick={() => setActiveTab('ativos')}
+              >
+                Ativos
+              </button>
+              <button 
+                className={`tab-btn ${activeTab === 'cancelados' ? 'active' : ''}`}
+                onClick={() => setActiveTab('cancelados')}
+              >
+                Cancelados / Lixeira
+              </button>
+            </nav>
+            <button onClick={handleLogout} className="admin-logout-btn">Sair</button>
+          </div>
         </div>
       </header>
 
@@ -201,18 +308,60 @@ export default function AdminDashboard() {
             </div>
 
             {orders.length === 0 ? (
-              <div className="empty-state">Nenhum pedido encontrado no sistema.</div>
+              <div className="empty-state">Nenhum pedido encontrado nesta categoria.</div>
             ) : (
               <div className="tables-container">
-                {renderOrderTable(newOrders, "Pedidos Recebidos (Novos)", "Não há novos pedidos no momento.")}
-                {renderOrderTable(productionOrders, "Pedidos em Produção", "Nenhum pedido em produção.")}
-                {renderOrderTable(readyOrders, "Pronto para Entrega/Retirada", "Nenhum pedido aguardando retirada/entrega.")}
-                {renderOrderTable(deliveredOrders, "Pedidos Entregues", "Nenhum pedido finalizado ainda.")}
+                {activeTab === 'ativos' ? (
+                  <>
+                    {renderOrderTable(newOrders, "Pedidos Recebidos (Novos)", "Não há novos pedidos no momento.")}
+                    {renderOrderTable(productionOrders, "Pedidos em Produção", "Nenhum pedido em produção.")}
+                    {renderOrderTable(readyOrders, "Pronto para Entrega/Retirada", "Nenhum pedido aguardando retirada/entrega.")}
+                    {renderOrderTable(deliveredOrders, "Pedidos Entregues", "Nenhum pedido finalizado ainda.")}
+                  </>
+                ) : (
+                  renderOrderTable(orders, "Relatório de Cancelados e Excluídos", "Nenhum registro encontrado.")
+                )}
               </div>
             )}
           </>
         )}
       </main>
+
+      {/* MODAL DE AGENDAMENTO */}
+      {schedulingOrder && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal">
+            <h3>Agendar Entrega</h3>
+            <p>Defina a data e o local da entrega programada para <strong>{schedulingOrder.customerName}</strong>.</p>
+            
+            <form onSubmit={handleScheduleSubmit}>
+              <div className="form-group">
+                <label>Data de Entrega:</label>
+                <input 
+                  type="date" 
+                  value={scheduledData.date}
+                  onChange={(e) => setScheduledData({ ...scheduledData, date: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Local de Entrega (Ponto de Encontro):</label>
+                <input 
+                  type="text" 
+                  placeholder="Ex: Praça Central, Posto X..."
+                  value={scheduledData.location}
+                  onChange={(e) => setScheduledData({ ...scheduledData, location: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="modal-actions">
+                <button type="button" onClick={() => setSchedulingOrder(null)} className="btn-cancel">Cancelar</button>
+                <button type="submit" className="btn-save">Salvar Agendamento</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

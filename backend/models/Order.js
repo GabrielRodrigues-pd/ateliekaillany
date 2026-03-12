@@ -28,13 +28,37 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['novo', 'em_producao', 'pronto', 'entregue'],
+    enum: ['novo', 'em_producao', 'pronto', 'entregue', 'cancelado'],
     default: 'novo'
+  },
+  cancellationReason: {
+    type: String,
+    default: ''
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+    index: true
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    index: true // Índice para busca rápida de pedidos do usuário
+  },
+  scheduledDeliveryDate: {
+    type: Date,
+    default: null
+  },
+  scheduledDeliveryLocation: {
+    type: String,
+    default: ''
   },
   createdAt: {
     type: Date,
     default: Date.now
   }
+}, { 
+  timestamps: true 
 });
 
 const Order = mongoose.model('Order', orderSchema);
