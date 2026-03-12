@@ -61,6 +61,7 @@ export default function AdminDashboard() {
     return {
       novo: orders.filter((o) => o.status === 'novo').length,
       em_producao: orders.filter((o) => o.status === 'em_producao').length,
+      pronto: orders.filter((o) => o.status === 'pronto').length,
       entregue: orders.filter((o) => o.status === 'entregue').length,
     };
   };
@@ -77,6 +78,7 @@ export default function AdminDashboard() {
   // Categorized orders for separate tables
   const newOrders = orders.filter((o) => o.status === 'novo');
   const productionOrders = orders.filter((o) => o.status === 'em_producao');
+  const readyOrders = orders.filter((o) => o.status === 'pronto');
   const deliveredOrders = orders.filter((o) => o.status === 'entregue');
 
   const renderOrderTable = (orderList, title, emptyMessage) => (
@@ -123,6 +125,7 @@ export default function AdminDashboard() {
                     >
                       <option value="novo">Novo</option>
                       <option value="em_producao">Em Produção</option>
+                      <option value="pronto">Pronto p/ Entrega</option>
                       <option value="entregue">Entregue</option>
                     </select>
                   </td>
@@ -172,6 +175,14 @@ export default function AdminDashboard() {
                 <div className="card-icon">🍳</div>
               </div>
 
+              <div className="summary-card card-pronto">
+                <div className="card-info">
+                  <h3>Prontos p/ Entrega</h3>
+                  <p className="card-value">{counts.pronto}</p>
+                </div>
+                <div className="card-icon">🛍️</div>
+              </div>
+
               <div className="summary-card card-entregue">
                 <div className="card-info">
                   <h3>Entregues</h3>
@@ -195,6 +206,7 @@ export default function AdminDashboard() {
               <div className="tables-container">
                 {renderOrderTable(newOrders, "Pedidos Recebidos (Novos)", "Não há novos pedidos no momento.")}
                 {renderOrderTable(productionOrders, "Pedidos em Produção", "Nenhum pedido em produção.")}
+                {renderOrderTable(readyOrders, "Pronto para Entrega/Retirada", "Nenhum pedido aguardando retirada/entrega.")}
                 {renderOrderTable(deliveredOrders, "Pedidos Entregues", "Nenhum pedido finalizado ainda.")}
               </div>
             )}

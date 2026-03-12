@@ -28,7 +28,7 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['novo', 'em_producao', 'entregue'],
+    enum: ['novo', 'em_producao', 'pronto', 'entregue'],
     default: 'novo'
   },
   createdAt: {

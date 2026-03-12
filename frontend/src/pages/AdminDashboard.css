@@ -101,6 +101,10 @@
   border-left-color: #0d6efd;
 }
 
+.card-pronto {
+  border-left-color: #fd7e14;
+}
+
 .card-entregue {
   border-left-color: #198754;
 }
@@ -191,6 +195,11 @@
 .status-em_producao {
   background-color: #cce5ff;
   color: #004085;
+}
+
+.status-pronto {
+  background-color: #ffe8cc;
+  color: #e8590c;
 }
 
 .status-entregue {

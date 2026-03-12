@@ -27,7 +27,7 @@ export const updateOrderStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
-    const validStatuses = ['novo', 'em_producao', 'entregue'];
+    const validStatuses = ['novo', 'em_producao', 'pronto', 'entregue'];
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: 'Status inválido' });
     }
