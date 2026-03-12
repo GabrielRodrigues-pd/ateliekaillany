@@ -34,8 +34,8 @@ function NavBar() {
           <a href="#home" onClick={closeMobileMenu}>Home</a>
           <a href="#produtos" onClick={closeMobileMenu}>Produtos</a>
           <a href="#avaliacoes" onClick={closeMobileMenu}>Avaliações</a>
-          <a href="#criacoes" onClick={closeMobileMenu}>Criações</a>
           <a href="#sobre-nos" onClick={closeMobileMenu}>Sobre nós</a>
+          <a href="#criacoes" onClick={closeMobileMenu}>Criações</a>
           <a href="#contato" onClick={closeMobileMenu}>Contato</a>
         </nav>
         

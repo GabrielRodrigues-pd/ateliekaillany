@@ -10,7 +10,6 @@ import ovoDoisAmores from "../../assets/ovoDoisAmores.png";
 import sacolinha from "../../assets/sacolinha.png";
 import ovoBrownie from "../../assets/ovoBrownie.png";
 import ovoFerrero from "../../assets/ovoFerrero.png";
-import ovoColher from "../../assets/ovoColher.jpg";
 
 // Mock Product Data
 const productsData = [

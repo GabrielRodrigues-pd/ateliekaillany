@@ -1,39 +1,52 @@
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Pagination, Autoplay, EffectCoverflow } from "swiper/modules";
 
 import "swiper/css";
-import "swiper/css/navigation";
 import "swiper/css/pagination";
+import "swiper/css/effect-coverflow";
 
 import "./Carrossel.css";
 
 export default function Carrossel({ items }) {
+  // Duplicating items to ensure infinite loop always has enough cards, even if `items` array is small
+  const safeItems = items && items.length > 0 ? [...items, ...items, ...items] : [];
+
   return (
     <div className="carousel-wrapper">
       <Swiper
-        modules={[Navigation, Pagination, Autoplay]}
-        spaceBetween={24}
+        effect={"coverflow"}
+        grabCursor={true}
+        centeredSlides={true}
         loop={true}
-        autoplay={{ delay: 2000 }}
-        pagination={{ dynamicBullets: true, type: "custom" }}
-        breakpoints={{
-          0: {
-            slidesPerView: 1,
-          },
-          640: {
-            slidesPerView: 2,
-          },
-          1024: {
-            slidesPerView: 3,
-          },
+        slidesPerView={"auto"}
+        coverflowEffect={{
+          rotate: 15,
+          stretch: 0,
+          depth: 250,
+          modifier: 1.5,
+          slideShadows: true,
         }}
+        autoplay={{ 
+          delay: 3000,
+          disableOnInteraction: false,
+        }}
+        pagination={{ 
+          clickable: true,
+          dynamicBullets: true 
+        }}
+        modules={[EffectCoverflow, Pagination, Autoplay]}
+        className="creations-swiper"
       >
-        {items.map((item, index) => (
-          <SwiperSlide key={index}>
-            <div className="card">
-              <img src={item.image} alt={item.title} />
-              <h3>{item.title}</h3>
-              <p>{item.description}</p>
+        {safeItems.map((item, index) => (
+          <SwiperSlide key={`${item.title}-${index}`} className="creation-slide">
+            <div className="creative-card">
+              <div className="card-image-wrapper">
+                <img src={item.image} alt={item.title} />
+                <div className="card-overlay">
+                  <h3>{item.title}</h3>
+                  <p>{item.description}</p>
+                </div>
+              </div>
             </div>
           </SwiperSlide>
         ))}
