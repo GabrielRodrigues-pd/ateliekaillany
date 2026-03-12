@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { Trash2 } from "lucide-react";
+import api from "../../services/api";
 import "./CartSidebar.css";
 
 export default function CartSidebar() {
@@ -50,11 +51,29 @@ export default function CartSidebar() {
     setIsCheckoutModalOpen(false);
   };
 
-  const submitOrder = (e) => {
+  const submitOrder = async (e) => {
     e.preventDefault();
 
     // ---- NEW: Save customer data to localStorage for future orders ----
     localStorage.setItem("atelieCustomerData", JSON.stringify(formData));
+
+    // ---- NEW: Send order to the backend API ----
+    try {
+      const productString = cartItems.map(item => `${item.quantity}x ${item.title}`).join(', ');
+      const totalQuantity = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+      
+      await api.post('/orders', {
+        customerName: formData.nome,
+        phone: formData.contato,
+        product: productString,
+        quantity: totalQuantity,
+        city: formData.cidade,
+        totalPrice: cartTotal
+      });
+    } catch (err) {
+      console.error("Erro ao salvar pedido no painel admin:", err);
+      // We still proceed with the WhatsApp flow even if API fails
+    }
 
     const phoneNumber = "5583996918173"; // Ateliê WhatsApp Number
     

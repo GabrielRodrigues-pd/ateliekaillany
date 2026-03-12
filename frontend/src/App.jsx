@@ -1,11 +1,9 @@
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./App.css";
-import IndulgeSection from "./components/Indulge-section";
-import Hero from "./components/Hero";
-import Testimonials from "./components/Testimonials";
-import WhyChoose from "./components/WhyChoose";
-import CTA from "./components/CTA";
-import Footer from "./components/Footer";
-import Creations from "./components/Creations";
+import Home from "./pages/Home";
+import AdminLogin from "./pages/AdminLogin";
+import AdminDashboard from "./pages/AdminDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { CartProvider } from "./context/CartContext";
 import CartSidebar from "./components/CartSidebar";
 import DeliveryModal from "./components/DeliveryModal";
@@ -13,17 +11,26 @@ import DeliveryModal from "./components/DeliveryModal";
 function App() {
   return (
     <CartProvider>
-      <main>
-        <Hero />
-        <WhyChoose />
-        <IndulgeSection />
-        <Creations />
-        <Testimonials />
-        <CTA />
-        <Footer />
-      </main>
-      <CartSidebar />
-      <DeliveryModal />
+      <BrowserRouter>
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/admin/login" element={<AdminLogin />} />
+            
+            {/* Protected Routes */}
+            <Route 
+              path="/admin" 
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </main>
+        <CartSidebar />
+        <DeliveryModal />
+      </BrowserRouter>
     </CartProvider>
   );
 }

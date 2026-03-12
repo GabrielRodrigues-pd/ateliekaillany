@@ -15,13 +15,13 @@ function CardsTestimon({ descri, name, subTexto }) {
       </div>
       <p className="quote">{descri}</p>
       <hr className="divider" />
-      <div className="author">
+      {/* <div className="author">
         <img src={user} alt={name} />
         <div className="author-info">
           <strong>{name}</strong>
           <span>{subTexto}</span>
         </div>
-      </div>
+      </div> */}
     </article>
   );
 }

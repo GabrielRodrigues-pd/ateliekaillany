@@ -3,6 +3,8 @@ import mongoose from 'mongoose';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import productRoutes from './routes/products.js';
+import adminRoutes from './routes/adminRoutes.js';
+import orderRoutes from './routes/orderRoutes.js';
 
 // Configurações do ambiente
 dotenv.config();
@@ -16,6 +18,8 @@ app.use(express.json()); // Permite ler JSON no corpo das requisições
 
 // Rotas da API
 app.use('/api/products', productRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Rota inicial padrão
 app.get('/', (req, res) => {
