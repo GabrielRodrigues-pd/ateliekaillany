@@ -57,7 +57,14 @@ export const getProfile = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: 'Usuário não encontrado' });
     }
-    res.status(200).json(user);
+    
+    // Normalizar resposta para sempre ter .id no frontend
+    res.status(200).json({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      picture: user.picture
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

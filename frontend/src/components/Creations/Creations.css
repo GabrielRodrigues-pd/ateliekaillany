@@ -19,3 +19,31 @@
   width: 300px;
   border-radius: 16px;
 }
+
+.creations-skeletons {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+  padding: 40px 0;
+}
+
+.skeleton-card {
+  width: 300px;
+  background: white;
+  border-radius: 16px;
+  padding: 15px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+@media (max-width: 768px) {
+  .creations-skeletons {
+    gap: 15px;
+  }
+  .skeleton-card {
+    width: 140px;
+  }
+  .skeleton-rect {
+    height: 140px;
+  }
+}

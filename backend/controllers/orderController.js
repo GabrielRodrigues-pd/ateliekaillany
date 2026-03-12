@@ -153,3 +153,25 @@ export const updateDeliverySchedule = async (req, res) => {
     res.status(500).json({ message: 'Erro ao agendar entrega', error: error.message });
   }
 };
+
+// Update full order details (Admin)
+export const updateOrderAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: 'Pedido não encontrado' });
+    }
+
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao atualizar pedido', error: error.message });
+  }
+};

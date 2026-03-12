@@ -55,3 +55,38 @@ h3 {
 a {
   text-decoration: none;
 }
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* SKELETON LOADING ANIMATION */
+@keyframes skeleton-loading {
+  0% {
+    background-color: #f0f0f0;
+  }
+  100% {
+    background-color: #e0e0e0;
+  }
+}
+
+.skeleton {
+  animation: skeleton-loading 1s linear infinite alternate;
+  border-radius: 4px;
+}
+
+.skeleton-text {
+  height: 1rem;
+  margin-bottom: 0.5rem;
+  width: 100%;
+}
+
+.skeleton-rect {
+  height: 200px;
+  width: 100%;
+}

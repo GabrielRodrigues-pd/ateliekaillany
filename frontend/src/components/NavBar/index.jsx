@@ -35,11 +35,13 @@ function NavBar() {
           className="hamburger-btn" 
           onClick={toggleMobileMenu}
           aria-label="Toggle navigation menu"
+          aria-expanded={isMobileMenuOpen}
+          aria-controls="mobile-nav"
         >
           {isMobileMenuOpen ? "✕" : "☰"}
         </button>
 
-        <nav className={`nav ${isMobileMenuOpen ? "open" : ""}`}>
+        <nav id="mobile-nav" className={`nav ${isMobileMenuOpen ? "open" : ""}`}>
           <a href="/#home" onClick={closeMobileMenu}>Home</a>
           <a href="/#produtos" onClick={closeMobileMenu}>Produtos</a>
           
@@ -62,6 +64,8 @@ function NavBar() {
                 className="user-btn" 
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 title={user.name}
+                aria-label="Abrir menu do usuário"
+                aria-expanded={isUserMenuOpen}
               >
                 {user.picture ? (
                   <img src={user.picture} alt={user.name} className="user-avatar" />
@@ -77,7 +81,7 @@ function NavBar() {
                     <p className="user-email">{user.email}</p>
                   </div>
                   <hr />
-                  <button onClick={logout} className="logout-btn">
+                  <button onClick={logout} className="logout-btn" aria-label="Sair da conta">
                     <LogOut size={16} /> Sair
                   </button>
                 </div>

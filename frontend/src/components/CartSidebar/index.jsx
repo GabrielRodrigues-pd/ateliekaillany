@@ -83,8 +83,9 @@ export default function CartSidebar() {
         quantity: totalQuantity,
         city: formData.cidade,
         totalPrice: cartTotal,
-        userId: user ? user.id : null // Link order to user if logged in
+        userId: user ? (user.id || user._id) : null // Link order to user if logged in (safely)
       });
+      console.log('Pedido salvo com sucesso para o usuário:', user ? (user.id || user._id) : 'Visitante');
     } catch (err) {
       console.error("Erro ao salvar pedido no painel admin:", err);
       // We still proceed with the WhatsApp flow even if API fails
@@ -143,7 +144,7 @@ export default function CartSidebar() {
       <div className={`cart-sidebar ${isCartOpen ? "open" : ""}`}>
         <div className="cart-header">
           <h2>Seu Carrinho</h2>
-          <button className="close-btn" onClick={toggleCart}>
+          <button className="close-btn" onClick={toggleCart} aria-label="Fechar carrinho">
             &times;
           </button>
         </div>
@@ -162,12 +163,16 @@ export default function CartSidebar() {
                   <div className="cart-item-controls">
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      aria-label={`Diminuir quantidade de ${item.title}`}
+                      title="Diminuir quantidade"
                     >
                       -
                     </button>
-                    <span>{item.quantity}</span>
+                    <span aria-live="polite" aria-atomic="true">{item.quantity}</span>
                     <button
                       onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      aria-label={`Aumentar quantidade de ${item.title}`}
+                      title="Aumentar quantidade"
                     >
                       +
                     </button>
@@ -187,7 +192,7 @@ export default function CartSidebar() {
 
         {cartItems.length > 0 && (
           <div className="cart-footer">
-            <div className="cart-total">
+            <div className="cart-total" aria-live="polite">
               <span>Total</span>
               <span>R$ {cartTotal.toFixed(2)}</span>
             </div>

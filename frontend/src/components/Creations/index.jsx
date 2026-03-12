@@ -20,7 +20,8 @@ export default function Creations() {
           .map(product => ({
             image: getImage(product.imageUrl),
             title: product.title,
-            description: product.description
+            description: product.description,
+            altText: `${product.title} - ${product.description.substring(0, 50)}...`
           }));
         
         setCreations(mappedCreations);
@@ -40,7 +41,15 @@ export default function Creations() {
         <p>Cada ovo é uma pequena obra de arte.</p>
         
         {isLoading ? (
-          <p style={{padding: "40px"}}>Carregando...</p>
+          <div className="creations-skeletons" aria-busy="true" aria-label="Carregando criações...">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="skeleton-card">
+                <div className="skeleton skeleton-rect"></div>
+                <div className="skeleton skeleton-text" style={{width: '60%', margin: '15px auto 5px'}}></div>
+                <div className="skeleton skeleton-text" style={{width: '40%', margin: '0 auto'}}></div>
+              </div>
+            ))}
+          </div>
         ) : (
           <Carrossel items={creations} />
         )}

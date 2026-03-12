@@ -41,7 +41,7 @@ export default function Carrossel({ items }) {
           <SwiperSlide key={`${item.title}-${index}`} className="creation-slide">
             <div className="creative-card">
               <div className="card-image-wrapper">
-                <img src={item.image} alt={item.title} />
+                <img src={item.image} alt={item.altText || item.title} />
                 <div className="card-overlay">
                   <h3>{item.title}</h3>
                   <p>{item.description}</p>
