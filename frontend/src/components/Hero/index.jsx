@@ -25,14 +25,14 @@ export default function Hero() {
       <section className="hero" id="home">
         <div className=" hero-card container">
           <div className="hero-text-card">
-            <span className="hero-eyebrow">A arte do chocolate em São Paulo</span>
+            <span className="hero-eyebrow">A arte do chocolate em Emas-PB</span>
             <h1>Ovos de Páscoa & Doces Artesanais</h1>
             <p>
               Experimente a magia de chocolates artesanais bem pertinho de você. 
               Cada peça conta uma história de paixão, qualidade premium e muita dedicação 
-              para trazer o melhor sabor de São Paulo até a sua mesa.
+              para trazer o melhor sabor de Emas-PB até a sua mesa.
             </p>
-            <button className="hero-btn">Descubra Nossos Doces</button>
+            <a href="#produtos" className="hero-btn">Descubra Nossos Doces</a>
           </div>
           <div className="hero-img-card">
             <OptimizedImage

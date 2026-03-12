@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ShoppingCart} from "lucide-react"
 import { useCart } from "../../context/CartContext";
 import "./style.css";
 
@@ -44,7 +45,8 @@ function NavBar() {
             onClick={toggleCart}
             aria-label="Open cart"
           >
-            🛒
+            <ShoppingCart color="white"/>
+
             {cartQuantityCount > 0 && (
               <span className="cart-badge">{cartQuantityCount}</span>
             )}

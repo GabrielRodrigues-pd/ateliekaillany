@@ -8,6 +8,7 @@ import Footer from "./components/Footer";
 import Creations from "./components/Creations";
 import { CartProvider } from "./context/CartContext";
 import CartSidebar from "./components/CartSidebar";
+import DeliveryModal from "./components/DeliveryModal";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Footer />
       </main>
       <CartSidebar />
+      <DeliveryModal />
     </CartProvider>
   );
 }

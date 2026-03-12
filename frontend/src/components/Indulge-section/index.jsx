@@ -15,7 +15,7 @@ import ovoColher from "../../assets/ovoColher.jpg";
 // Mock Product Data
 const productsData = [
   {
-    id: "classic-egg-1",
+    id: "1",
     categoria: "Colher",
     title: "Ovo Chocolatudo",
     descri: "Casca de chocolate meio amargo, recheio de chocolate com brigadeiro.",
@@ -24,10 +24,10 @@ const productsData = [
     price: 89.9,
     prices: { "250g": 69.90, "350g": 89.90 },
     chocolateType: "Meio Amargo",
-    filling: "Tradicional"
+    filling: "Chocolate"
   },
   {
-    id: "classic-egg-2",
+    id: "2",
     categoria: "Infantil",
     title: "Sacolinha de Ovos",
     descri: "Sacolinha de Ovos de 50g cada.",
@@ -38,7 +38,7 @@ const productsData = [
     filling: "Tradicional"
   },
   {
-    id: "elegant-egg-1",
+    id: "3",
     categoria: "Trio de Ovos",
     title: "Trio de Ovos",
     descri: "O kit contém 3 ovos de colher de 50g cada. Recheio a escolha do cliente.",
@@ -46,10 +46,10 @@ const productsData = [
     alt: "Trio de Ovos",
     price: 25.0,
     chocolateType: "Branco",
-    filling: "Trufado"
+    filling: ""
   },
   {
-    id: "decadent-egg-1",
+    id: "4",
     categoria: "Colher 50g",
     title: "Mini Ovos de Colher",
     descri: "Ovo de colher de 50g. Acompanha caixa de sacola luxo.",
@@ -57,10 +57,10 @@ const productsData = [
     alt: "Mini Ovos de Colher",
     price: 16.0,
     chocolateType: "Meio Amargo",
-    filling: "Frutas"
+    filling: ""
   },
   {
-    id: "classic-egg-2",
+    id: "5",
     categoria: "Colher",
     title: "Ovo Ferrero",
     descri: "Casca de chocolate meio amargo com amendoim, recheio chocolate, amendoim e nutella.",
@@ -69,10 +69,10 @@ const productsData = [
     price: 75.0,
     prices: { "250g": 55.00, "350g": 75.00 },
     chocolateType: "Meio Amargo",
-    filling: "Tradicional"
+    filling: "Chocolate"
   },
   {
-    id: "elegant-egg-2",
+    id: "6",
     categoria: "Colher",
     title: "Ovo Ninho com Nutella",
     descri: "Casca de chocolate meio amargo, recheio de ninho com nutella.",
@@ -81,10 +81,10 @@ const productsData = [
     price: 74.99,
     prices: { "250g": 54.99, "350g": 74.99 },
     chocolateType: "Ao Leite",
-    filling: "Trufado"
+    filling: "Ninho"
   },
   {
-    id: "decadent-egg-2",
+    id: "7",
     categoria: "Colher",
     title: "Ovo Brownie",
     descri: "Casca brownie com chocolate meio amargo, recheio chocolate e ninho.",
@@ -93,10 +93,10 @@ const productsData = [
     price: 74.99,
     prices: { "250g": 54.99, "350g": 74.99 },
     chocolateType: "Meio Amargo",
-    filling: "Frutas"
+    filling: "Chocolate"
   },
   {
-    id: "decadent-egg-3",
+    id: "8",
     categoria: "Colher",
     title: "Ovo Ninho com Morango",
     descri: "Casca chocolate meio amargo, recheio ninho e morango.",
@@ -105,10 +105,10 @@ const productsData = [
     price: 74.99,
     prices: { "250g": 54.99, "350g": 74.99 },
     chocolateType: "Meio Amargo",
-    filling: "Frutas"
+    filling: "Ninho"
   },
   {
-    id: "decadent-egg-4",
+    id: "9",
     categoria: "Colher",
     title: "Ovo Dois Amores",
     descri: "Casca chocolate meio amargo, recheio ninho e morango.",
@@ -117,27 +117,28 @@ const productsData = [
     price: 74.99,
     prices: { "250g": 54.99, "350g": 74.99 },
     chocolateType: "Meio Amargo",
-    filling: "Frutas"
+    filling: "Ninho"
   }
 ];
 
 export default function IndulgeSection() {
-  const [filterChocolate, setFilterChocolate] = useState("Todos");
   const [filterFilling, setFilterFilling] = useState("Todos");
+  const [filterCategory, setFilterCategory] = useState("Todos");
   const [sortPrice, setSortPrice] = useState("Normal");
 
   // Filtering Logic
   let filteredProducts = productsData.filter((product) => {
-    const matchChocolate = filterChocolate === "Todos" || product.chocolateType === filterChocolate;
     const matchFilling = filterFilling === "Todos" || product.filling === filterFilling;
-    return matchChocolate && matchFilling;
+    const matchCategory = filterCategory === "Todos" || product.categoria === filterCategory;
+    return matchFilling && matchCategory;
   });
 
-  // Sorting Logic
+  // Sorting Logic - crucial to create a new array copy to avoid mutating the original source
+  const sortedProducts = [...filteredProducts];
   if (sortPrice === "Crescente") {
-    filteredProducts.sort((a, b) => a.price - b.price);
+    sortedProducts.sort((a, b) => a.price - b.price);
   } else if (sortPrice === "Decrescente") {
-    filteredProducts.sort((a, b) => b.price - a.price);
+    sortedProducts.sort((a, b) => b.price - a.price);
   }
 
   return (
@@ -150,18 +151,20 @@ export default function IndulgeSection() {
 
       <div className="container filters-container">
         <div className="filter-group">
-          <label htmlFor="chocolate-type">Chocolate:</label>
+          <label htmlFor="egg-type">Tipo de ovo:</label>
           <select 
-            id="chocolate-type" 
-            value={filterChocolate} 
-            onChange={(e) => setFilterChocolate(e.target.value)}
+            id="egg-type" 
+            value={filterCategory} 
+            onChange={(e) => setFilterCategory(e.target.value)}
           >
             <option value="Todos">Todos</option>
-            <option value="Ao Leite">Ao Leite</option>
-            <option value="Meio Amargo">Meio Amargo</option>
-            <option value="Branco">Branco</option>
+            <option value="Colher">Colher</option>
+            <option value="Trufado">Trufado</option>
+            <option value="Trio de Ovos">Trio de ovos</option>
+            <option value="Infantil">Infantil</option>
           </select>
         </div>
+
 
         <div className="filter-group">
           <label htmlFor="filling-type">Recheio:</label>
@@ -171,9 +174,8 @@ export default function IndulgeSection() {
             onChange={(e) => setFilterFilling(e.target.value)}
           >
             <option value="Todos">Todos</option>
-            <option value="Tradicional">Tradicional</option>
-            <option value="Trufado">Trufado</option>
-            <option value="Frutas">Frutas</option>
+            <option value="Chocolate">Chocolate</option>
+            <option value="Ninho">Ninho</option>
           </select>
         </div>
 
@@ -192,8 +194,8 @@ export default function IndulgeSection() {
       </div>
 
       <div className="container indulge-grid">
-        {filteredProducts.length > 0 ? (
-          filteredProducts.map((product) => (
+        {sortedProducts.length > 0 ? (
+          sortedProducts.map((product) => (
             <CardsIndulge
               key={product.id}
               id={product.id}
