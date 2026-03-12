@@ -14,6 +14,11 @@ const productSchema = new mongoose.Schema({
     type: Number,
     required: [true, 'O preço do produto é obrigatório']
   },
+  prices: {
+    type: Map,
+    of: Number,
+    default: undefined
+  },
   // Por exemplo, "Colher", "Trufado", "Trio de Ovos", "Infantil"
   category: {
     type: String,

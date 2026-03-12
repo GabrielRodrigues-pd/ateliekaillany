@@ -1,134 +1,39 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CardsIndulge from "../CardsIndulge";
+import { getImage } from "../../utils/imageMapper";
+import api from "../../services/api";
 import "./IndulgeSection.css";
-import ovoTrio from "../../assets/ovoTrio.png";
-import ovoChocolatudo from "../../assets/ovoChocolatudo.png";
-import miniOvoColher from "../../assets/miniOvoColher.png";
-import ovoNinhoNutella from "../../assets/ovoNinhoNutella.png";
-import ovoNinhoMorango from "../../assets/ovoNinhoMorango.png";
-import ovoDoisAmores from "../../assets/ovoDoisAmores.png";
-import sacolinha from "../../assets/sacolinha.png";
-import ovoBrownie from "../../assets/ovoBrownie.png";
-import ovoFerrero from "../../assets/ovoFerrero.png";
-
-// Mock Product Data
-const productsData = [
-  {
-    id: "1",
-    categoria: "Colher",
-    title: "Ovo Chocolatudo",
-    descri: "Casca de chocolate meio amargo, recheio de chocolate com brigadeiro.",
-    img: ovoChocolatudo,
-    alt: "Classic Easter eggs",
-    price: 89.9,
-    prices: { "250g": 69.90, "350g": 89.90 },
-    chocolateType: "Meio Amargo",
-    filling: "Chocolate"
-  },
-  {
-    id: "2",
-    categoria: "Infantil",
-    title: "Sacolinha de Ovos",
-    descri: "Sacolinha de Ovos de 50g cada.",
-    img: sacolinha,
-    alt: "Sacolinha de Ovos",
-    price: 35.0,
-    chocolateType: "Meio Amargo",
-    filling: "Tradicional"
-  },
-  {
-    id: "3",
-    categoria: "Trio de Ovos",
-    title: "Trio de Ovos",
-    descri: "O kit contém 3 ovos de colher de 50g cada. Recheio a escolha do cliente.",
-    img: ovoTrio,
-    alt: "Trio de Ovos",
-    price: 25.0,
-    chocolateType: "Branco",
-    filling: ""
-  },
-  {
-    id: "4",
-    categoria: "Colher 50g",
-    title: "Mini Ovos de Colher",
-    descri: "Ovo de colher de 50g. Acompanha caixa de sacola luxo.",
-    img: miniOvoColher,
-    alt: "Mini Ovos de Colher",
-    price: 16.0,
-    chocolateType: "Meio Amargo",
-    filling: ""
-  },
-  {
-    id: "5",
-    categoria: "Colher",
-    title: "Ovo Ferrero",
-    descri: "Casca de chocolate meio amargo com amendoim, recheio chocolate, amendoim e nutella.",
-    img: ovoFerrero,
-    alt: "Ovo de ferrero com amendoim",
-    price: 75.0,
-    prices: { "250g": 55.00, "350g": 75.00 },
-    chocolateType: "Meio Amargo",
-    filling: "Chocolate"
-  },
-  {
-    id: "6",
-    categoria: "Colher",
-    title: "Ovo Ninho com Nutella",
-    descri: "Casca de chocolate meio amargo, recheio de ninho com nutella.",
-    img: ovoNinhoNutella,
-    alt: "Ovo de ninho com nutella",
-    price: 74.99,
-    prices: { "250g": 54.99, "350g": 74.99 },
-    chocolateType: "Ao Leite",
-    filling: "Ninho"
-  },
-  {
-    id: "7",
-    categoria: "Colher",
-    title: "Ovo Brownie",
-    descri: "Casca brownie com chocolate meio amargo, recheio chocolate e ninho.",
-    img: ovoBrownie,
-    alt: "Ovo brownie",
-    price: 74.99,
-    prices: { "250g": 54.99, "350g": 74.99 },
-    chocolateType: "Meio Amargo",
-    filling: "Chocolate"
-  },
-  {
-    id: "8",
-    categoria: "Colher",
-    title: "Ovo Ninho com Morango",
-    descri: "Casca chocolate meio amargo, recheio ninho e morango.",
-    img: ovoNinhoMorango,
-    alt: "Ovo de ninho com morango",
-    price: 74.99,
-    prices: { "250g": 54.99, "350g": 74.99 },
-    chocolateType: "Meio Amargo",
-    filling: "Ninho"
-  },
-  {
-    id: "9",
-    categoria: "Colher",
-    title: "Ovo Dois Amores",
-    descri: "Casca chocolate meio amargo, recheio ninho e morango.",
-    img: ovoDoisAmores,
-    alt: "Ovo de ninho com morango",
-    price: 74.99,
-    prices: { "250g": 54.99, "350g": 74.99 },
-    chocolateType: "Meio Amargo",
-    filling: "Ninho"
-  }
-];
 
 export default function IndulgeSection() {
+  const [productsData, setProductsData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
   const [filterFilling, setFilterFilling] = useState("Todos");
   const [filterCategory, setFilterCategory] = useState("Todos");
   const [sortPrice, setSortPrice] = useState("Normal");
 
+  // Fetch products from the backend API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await api.get('/products');
+        setProductsData(response.data);
+        setIsLoading(false);
+      } catch (err) {
+        console.error("Erro ao buscar produtos:", err);
+        setError("Não foi possível carregar os produtos. Tente novamente mais tarde.");
+        setIsLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
+
   // Filtering Logic
   let filteredProducts = productsData.filter((product) => {
     const matchFilling = filterFilling === "Todos" || product.filling === filterFilling;
-    const matchCategory = filterCategory === "Todos" || product.categoria === filterCategory;
+    // Database maps categories like "Trio de Ovos", "Colher", "Infantil"
+    const matchCategory = filterCategory === "Todos" || product.category === filterCategory;
     return matchFilling && matchCategory;
   });
 
@@ -144,8 +49,8 @@ export default function IndulgeSection() {
     <section className="indulge" id="produtos">
       <div className="container indulge-header">
         <span className="indulge-eyebrow">Feito à mão com muito carinho</span>
-        <h2>Três maneiras luxuosas de saborear nossos Ovos de Páscoa</h2>
-        <p>Cascas ricas de chocolate belga escondem verdadeiros tesouros a cada mordida.</p>
+        <h2>Faça seu Pedido</h2>
+        <p>Escolha seu doce favorito e finalize o pedido pelo WhatsApp.</p>
       </div>
 
       <div className="container filters-container">
@@ -193,16 +98,20 @@ export default function IndulgeSection() {
       </div>
 
       <div className="container indulge-grid">
-        {sortedProducts.length > 0 ? (
+        {isLoading ? (
+          <p className="loading-msg" style={{textAlign: "center", width: "100%", padding: "40px"}}>Carregando produtos deliciosos...</p>
+        ) : error ? (
+           <p className="error-msg" style={{textAlign: "center", width: "100%", padding: "40px", color: "var(--primary)"}}>{error}</p>
+        ) : sortedProducts.length > 0 ? (
           sortedProducts.map((product) => (
             <CardsIndulge
-              key={product.id}
-              id={product.id}
-              categoria={product.categoria}
+              key={product._id}
+              id={product._id}
+              categoria={product.category}
               title={product.title}
-              descri={product.descri}
-              img={product.img}
-              alt={product.alt}
+              descri={product.description}
+              img={getImage(product.imageUrl)}
+              alt={product.title}
               price={product.price}
               prices={product.prices}
             />

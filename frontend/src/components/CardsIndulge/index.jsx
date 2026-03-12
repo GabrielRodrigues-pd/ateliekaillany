@@ -8,10 +8,12 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
   
   const isTrio = categoria === "Trio de Ovos";
   const isMini = categoria === "Colher 50g";
-  const hasOptions = prices || isTrio || isMini;
+  const availableSizes = prices && typeof prices === 'object' ? Object.keys(prices) : [];
+  const hasMultiplePrices = availableSizes.length > 0;
+  const hasOptions = hasMultiplePrices || isTrio || isMini;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedSize, setSelectedSize] = useState(prices ? "250g" : null);
+  const [selectedSize, setSelectedSize] = useState(hasMultiplePrices ? availableSizes[0] : null);
   const [selectedFlavors, setSelectedFlavors] = useState({
     flavor1: "",
     flavor2: "",
@@ -43,7 +45,7 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
     setSelectedFlavors(prev => ({ ...prev, [field]: value }));
   };
 
-  const currentPrice = prices ? prices[selectedSize] : price;
+  const currentPrice = hasMultiplePrices ? prices[selectedSize] : price;
 
   const handleAddToCart = (e) => {
     e.preventDefault();
@@ -81,10 +83,14 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
     setIsModalOpen(false);
   };
 
+  const basePriceValue = hasMultiplePrices 
+    ? Math.min(...availableSizes.map(size => prices[size])) 
+    : (price || 0);
+
   const formattedBasePrice = new Intl.NumberFormat("pt-BR", {
     style: "currency",
     currency: "BRL",
-  }).format(prices ? prices["250g"] : (price || 0));
+  }).format(basePriceValue);
 
   const formattedCurrentPrice = new Intl.NumberFormat("pt-BR", {
     style: "currency",
@@ -101,7 +107,7 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
 
           <div className="card-footer">
             <span className="card-price" aria-label={`Preço a partir de: ${formattedBasePrice}`}>
-              {prices ? `A partir de ${formattedBasePrice}` : formattedBasePrice}
+              {hasMultiplePrices ? `A partir de ${formattedBasePrice}` : formattedBasePrice}
             </span>
             {hasOptions ? (
               <button
@@ -148,30 +154,22 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
             </div>
 
             <div className="modal-body">
-              {prices && (
+              {hasMultiplePrices && (
                 <div className="modal-section card-size-selector">
                   <span className="section-label">Escolha o Tamanho:</span>
                   <div className="size-options">
-                    <label className={`size-option ${selectedSize === "250g" ? "active" : ""}`}>
-                      <input
-                        type="radio"
-                        name={`size-modal-${id}`}
-                        value="250g"
-                        checked={selectedSize === "250g"}
-                        onChange={() => setSelectedSize("250g")}
-                      />
-                      250g
-                    </label>
-                    <label className={`size-option ${selectedSize === "350g" ? "active" : ""}`}>
-                      <input
-                        type="radio"
-                        name={`size-modal-${id}`}
-                        value="350g"
-                        checked={selectedSize === "350g"}
-                        onChange={() => setSelectedSize("350g")}
-                      />
-                      350g
-                    </label>
+                    {availableSizes.map((size) => (
+                      <label key={`size-${id}-${size}`} className={`size-option ${selectedSize === size ? "active" : ""}`}>
+                        <input
+                          type="radio"
+                          name={`size-modal-${id}`}
+                          value={size}
+                          checked={selectedSize === size}
+                          onChange={() => setSelectedSize(size)}
+                        />
+                        {size}
+                      </label>
+                    ))}
                   </div>
                 </div>
               )}

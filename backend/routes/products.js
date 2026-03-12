@@ -4,6 +4,7 @@ import Product from '../models/Product.js';
 const router = express.Router();
 
 // 1. Criar novo produto (POST)
+// http://localhost:5000/api/products
 router.post('/', async (req, res) => {
   try {
     const newProduct = new Product(req.body);
