@@ -39,6 +39,7 @@ export default function Creations() {
       <div className="container creations-header">
         <h2>Nossas criações</h2>
         <p>Cada ovo é uma pequena obra de arte.</p>
+        <p className="creations-disclaimer">* Imagens meramente ilustrativas para referência de modelos e sabores.</p>
         
         {isLoading ? (
           <div className="creations-skeletons" aria-busy="true" aria-label="Carregando criações...">

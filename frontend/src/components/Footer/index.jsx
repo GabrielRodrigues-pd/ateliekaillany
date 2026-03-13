@@ -20,6 +20,7 @@ export default function Footer() {
 
       <div className="container footer-bottom">
         <span>© 2025 Ateliê Kaillany Nunes. Todos os direitos reservados.</span>
+        <span className="disclaimer">* Imagens meramente ilustrativas.</span>
         <div className="links">
           <a href="#">Política de Privacidade</a>
           <a href="#">Termos de Serviço</a>
