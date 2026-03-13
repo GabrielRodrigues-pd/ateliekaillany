@@ -58,17 +58,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Conexão com o MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  // Configurações de conexão padrão (não são mais obrigatórias no mongoose 6+ mas ajudam a evitar avisos)
-})
-.then(() => {
-  console.log('Conectado ao MongoDB com sucesso!');
-  // Iniciar servidor apenas se conectar ao banco de dados com sucesso
-  app.listen(PORT, () => {
-    console.log(`Servidor rodando na porta ${PORT}`);
-  });
-})
-.catch((err) => {
-  console.error('Erro ao conectar ao MongoDB:', err.message);
+// Iniciar servidor imediatamente para evitar timeout no deploy
+app.listen(PORT, () => {
+  console.log(`Servidor rodando na porta ${PORT}`);
+  
+  // Conectar ao MongoDB em segundo plano
+  mongoose.connect(process.env.MONGO_URI)
+    .then(() => console.log('Conectado ao MongoDB com sucesso!'))
+    .catch((err) => console.error('Erro ao conectar ao MongoDB:', err.message));
 });
