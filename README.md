@@ -80,7 +80,7 @@ Desenvolvi um Dashboard completo onde o lojista pode gerenciar pedidos por statu
 ## 👨‍💻 Autor
 
 **Seu Nome** - Desenvolvedor Full Stack
-- [LinkedIn](https://linkedin.com/in/seu-linkedin)
+- [LinkedIn]([https://linkedin.com/in/seu-linkedin](https://www.linkedin.com/in/gabriel-rodrigues-873075236/))
 - [Portfólio](https://seu-portfolio.com)
 
 ---
