@@ -5,17 +5,39 @@ import './AdminDashboard.css';
 
 export default function AdminDashboard() {
   const [orders, setOrders] = useState([]);
-  const [activeTab, setActiveTab] = useState('ativos'); // 'ativos' ou 'cancelados'
+  const [products, setProducts] = useState([]);
+  const [activeTab, setActiveTab] = useState('ativos'); // 'ativos', 'cancelados', 'produtos'
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [schedulingOrder, setSchedulingOrder] = useState(null); // Pedido sendo agendado
+  
+  // Modals for Orders
+  const [schedulingOrder, setSchedulingOrder] = useState(null);
   const [scheduledData, setScheduledData] = useState({ date: '', location: '' });
-  const [editingOrder, setEditingOrder] = useState(null); // Pedido sendo editado
-  const [editFormData, setEditFormData] = useState({}); // Dados do formulário de edição
+  const [editingOrder, setEditingOrder] = useState(null);
+  const [editFormData, setEditFormData] = useState({});
+
+  // Modals for Products
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [productFormData, setProductFormData] = useState({
+    title: '',
+    description: '',
+    price: 0,
+    category: 'Ovos de Colher',
+    filling: '',
+    weight: '',
+    imageUrl: '',
+    isAvailable: true
+  });
+  const [isAddingProduct, setIsAddingProduct] = useState(false);
+
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchOrders();
+    if (activeTab === 'produtos') {
+      fetchProducts();
+    } else {
+      fetchOrders();
+    }
   }, [activeTab]);
 
   const fetchOrders = async () => {
@@ -142,6 +164,84 @@ export default function AdminDashboard() {
     setEditFormData(prev => ({
       ...prev,
       [name]: name === 'quantity' || name === 'totalPrice' ? Number(value) : value
+    }));
+  };
+
+  // --- PRODUCT MANAGEMENT LOGIC ---
+
+  const fetchProducts = async () => {
+    setIsLoading(true);
+    try {
+      const response = await api.get('/products');
+      setProducts(response.data);
+      setIsLoading(false);
+    } catch (err) {
+      setError('Falha ao carregar os produtos.');
+      setIsLoading(false);
+    }
+  };
+
+  const handleEditProductClick = (product) => {
+    setEditingProduct(product);
+    setProductFormData({
+      title: product.title,
+      description: product.description,
+      price: product.price,
+      category: product.category || 'Ovos de Colher',
+      filling: product.filling || '',
+      weight: product.weight || '',
+      imageUrl: product.imageUrl || '',
+      isAvailable: product.isAvailable !== undefined ? product.isAvailable : true
+    });
+  };
+
+  const handleProductSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingProduct) {
+        // Update
+        const response = await api.put(`/products/${editingProduct._id}`, productFormData);
+        setProducts(products.map(p => p._id === editingProduct._id ? response.data : p));
+        alert('Produto atualizado!');
+      } else {
+        // Create
+        const response = await api.post('/products', productFormData);
+        setProducts([response.data, ...products]);
+        alert('Produto criado com sucesso!');
+      }
+      setEditingProduct(null);
+      setIsAddingProduct(false);
+    } catch (err) {
+      console.error('Erro ao salvar produto:', err);
+      alert('Erro ao salvar produto.');
+    }
+  };
+
+  const handleToggleAvailability = async (product) => {
+    try {
+      const newStatus = !product.isAvailable;
+      const response = await api.put(`/products/${product._id}`, { isAvailable: newStatus });
+      setProducts(products.map(p => p._id === product._id ? response.data : p));
+    } catch (err) {
+      alert('Erro ao mudar disponibilidade.');
+    }
+  };
+
+  const handleDeleteProduct = async (productId) => {
+    if (!window.confirm('Excluir este produto permanentemente?')) return;
+    try {
+      await api.delete(`/products/${productId}`);
+      setProducts(products.filter(p => p._id !== productId));
+    } catch (err) {
+      alert('Erro ao excluir produto.');
+    }
+  };
+
+  const handleProductChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setProductFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : (name === 'price' ? Number(value) : value)
     }));
   };
 
@@ -290,12 +390,30 @@ export default function AdminDashboard() {
                 Ativos
               </button>
               <button 
+                className={`tab-btn ${activeTab === 'produtos' ? 'active' : ''}`}
+                onClick={() => setActiveTab('produtos')}
+              >
+                Produtos
+              </button>
+              <button 
                 className={`tab-btn ${activeTab === 'cancelados' ? 'active' : ''}`}
                 onClick={() => setActiveTab('cancelados')}
               >
-                Cancelados / Lixeira
+                Lixeira
               </button>
             </nav>
+            {activeTab === 'produtos' && (
+              <button className="add-product-btn" onClick={() => {
+                setIsAddingProduct(true);
+                setEditingProduct(null);
+                setProductFormData({
+                  title: '', description: '', price: 0, category: 'Ovos de Colher',
+                  filling: '', weight: '', imageUrl: '', isAvailable: true
+                });
+              }}>
+                + Novo Ovo
+              </button>
+            )}
             <button onClick={handleLogout} className="admin-logout-btn">Sair</button>
           </div>
         </div>
@@ -305,70 +423,121 @@ export default function AdminDashboard() {
         {isLoading ? (
           <div className="loading-state">
             <div className="loader"></div>
-            <p>Carregando pedidos...</p>
+            <p>Carregando...</p>
           </div>
         ) : error ? (
           <div className="error-state">{error}</div>
         ) : (
           <>
-            {/* Summary Cards */}
-            <div className="summary-cards">
-              <div className="summary-card card-novo">
-                <div className="card-info">
-                  <h3>Pedidos Recebidos</h3>
-                  <p className="card-value">{counts.novo}</p>
+            {activeTab === 'produtos' ? (
+              <div className="table-section">
+                <h2 className="table-title">Gerenciar Estoque ({products.length})</h2>
+                <div className="table-wrapper">
+                  <table className="orders-table">
+                    <thead>
+                      <tr>
+                        <th>Imagem</th>
+                        <th>Ovo / Produto</th>
+                        <th>Categoria</th>
+                        <th>Preço</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {products.map(p => (
+                        <tr key={p._id}>
+                          <td>
+                            <img src={p.imageUrl} alt={p.title} className="admin-prod-thumb" />
+                          </td>
+                          <td>
+                            <strong>{p.title}</strong>
+                            <div className="admin-prod-meta">{p.weight} | {p.filling}</div>
+                          </td>
+                          <td>{p.category}</td>
+                          <td className="price-col">{formatPrice(p.price)}</td>
+                          <td>
+                            <button 
+                              className={`stock-badge ${p.isAvailable ? 'in-stock' : 'out-of-stock'}`}
+                              onClick={() => handleToggleAvailability(p)}
+                            >
+                              {p.isAvailable ? 'DISPONÍVEL' : 'ESGOTADO'}
+                            </button>
+                          </td>
+                          <td>
+                            <div className="actions-cell">
+                              <button className="edit-order-btn" onClick={() => handleEditProductClick(p)}>✏️</button>
+                              <button className="delete-item-btn" onClick={() => handleDeleteProduct(p._id)}>🗑️</button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
-                <div className="card-icon">🚀</div>
               </div>
-              
-              <div className="summary-card card-producao">
-                <div className="card-info">
-                  <h3>Em Produção</h3>
-                  <p className="card-value">{counts.em_producao}</p>
-                </div>
-                <div className="card-icon">🍳</div>
-              </div>
-
-              <div className="summary-card card-pronto">
-                <div className="card-info">
-                  <h3>Prontos p/ Entrega</h3>
-                  <p className="card-value">{counts.pronto}</p>
-                </div>
-                <div className="card-icon">🛍️</div>
-              </div>
-
-              <div className="summary-card card-entregue">
-                <div className="card-info">
-                  <h3>Entregues</h3>
-                  <p className="card-value">{counts.entregue}</p>
-                </div>
-                <div className="card-icon">✅</div>
-              </div>
-
-              <div className="summary-card card-revenue">
-                <div className="card-info">
-                  <h3>Faturamento (Entregues)</h3>
-                  <p className="card-value revenue-text">{formatPrice(revenue)}</p>
-                </div>
-                <div className="card-icon">💰</div>
-              </div>
-            </div>
-
-            {orders.length === 0 ? (
-              <div className="empty-state">Nenhum pedido encontrado nesta categoria.</div>
             ) : (
-              <div className="tables-container">
-                {activeTab === 'ativos' ? (
-                  <>
-                    {renderOrderTable(newOrders, "Pedidos Recebidos (Novos)", "Não há novos pedidos no momento.")}
-                    {renderOrderTable(productionOrders, "Pedidos em Produção", "Nenhum pedido em produção.")}
-                    {renderOrderTable(readyOrders, "Pronto para Entrega/Retirada", "Nenhum pedido aguardando retirada/entrega.")}
-                    {renderOrderTable(deliveredOrders, "Pedidos Entregues", "Nenhum pedido finalizado ainda.")}
-                  </>
+              <>
+                {/* Summary Cards */}
+                <div className="summary-cards">
+                  <div className="summary-card card-novo">
+                    <div className="card-info">
+                      <h3>Pedidos Recebidos</h3>
+                      <p className="card-value">{counts.novo}</p>
+                    </div>
+                    <div className="card-icon">🚀</div>
+                  </div>
+                  
+                  <div className="summary-card card-producao">
+                    <div className="card-info">
+                      <h3>Em Produção</h3>
+                      <p className="card-value">{counts.em_producao}</p>
+                    </div>
+                    <div className="card-icon">🍳</div>
+                  </div>
+
+                  <div className="summary-card card-pronto">
+                    <div className="card-info">
+                      <h3>Prontos p/ Entrega</h3>
+                      <p className="card-value">{counts.pronto}</p>
+                    </div>
+                    <div className="card-icon">🛍️</div>
+                  </div>
+
+                  <div className="summary-card card-entregue">
+                    <div className="card-info">
+                      <h3>Entregues</h3>
+                      <p className="card-value">{counts.entregue}</p>
+                    </div>
+                    <div className="card-icon">✅</div>
+                  </div>
+
+                  <div className="summary-card card-revenue">
+                    <div className="card-info">
+                      <h3>Faturamento (Entregues)</h3>
+                      <p className="card-value revenue-text">{formatPrice(revenue)}</p>
+                    </div>
+                    <div className="card-icon">💰</div>
+                  </div>
+                </div>
+
+                {orders.length === 0 ? (
+                  <div className="empty-state">Nenhum pedido encontrado nesta categoria.</div>
                 ) : (
-                  renderOrderTable(orders, "Relatório de Cancelados e Excluídos", "Nenhum registro encontrado.")
+                  <div className="tables-container">
+                    {activeTab === 'ativos' ? (
+                      <>
+                        {renderOrderTable(newOrders, "Pedidos Recebidos (Novos)", "Não há novos pedidos no momento.")}
+                        {renderOrderTable(productionOrders, "Pedidos em Produção", "Nenhum pedido em produção.")}
+                        {renderOrderTable(readyOrders, "Pronto para Entrega/Retirada", "Nenhum pedido aguardando retirada/entrega.")}
+                        {renderOrderTable(deliveredOrders, "Pedidos Entregues", "Nenhum pedido finalizado ainda.")}
+                      </>
+                    ) : (
+                      renderOrderTable(orders, "Relatório de Cancelados e Excluídos", "Nenhum registro encontrado.")
+                    )}
+                  </div>
                 )}
-              </div>
+              </>
             )}
           </>
         )}
@@ -410,80 +579,60 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* MODAL DE EDIÇÃO DE PEDIDO */}
-      {editingOrder && (
+      {/* MODAL DE EDIÇÃO/CRIAÇÃO DE PRODUTO */}
+      {(editingProduct || isAddingProduct) && (
         <div className="admin-modal-overlay">
           <div className="admin-modal wide-modal">
-            <h3>Editar Pedido</h3>
-            <p>Altere os detalhes do pedido de <strong>{editingOrder.customerName}</strong>.</p>
+            <h3>{editingProduct ? 'Editar Ovo' : 'Novo Ovo / Produto'}</h3>
+            <p>Preencha as informações que aparecerão no site.</p>
             
-            <form onSubmit={handleEditSubmit}>
+            <form onSubmit={handleProductSubmit}>
               <div className="grid-form">
                 <div className="form-group">
-                  <label>Nome do Cliente:</label>
-                  <input 
-                    type="text" 
-                    name="customerName"
-                    value={editFormData.customerName}
-                    onChange={handleEditChange}
-                    required
-                  />
+                  <label>Título:</label>
+                  <input type="text" name="title" value={productFormData.title} onChange={handleProductChange} required />
                 </div>
                 <div className="form-group">
-                  <label>Telefone:</label>
-                  <input 
-                    type="text" 
-                    name="phone"
-                    value={editFormData.phone}
-                    onChange={handleEditChange}
-                    required
-                  />
+                  <label>Preço (R$):</label>
+                  <input type="number" step="0.01" name="price" value={productFormData.price} onChange={handleProductChange} required />
                 </div>
                 <div className="form-group">
-                  <label>Cidade:</label>
-                  <input 
-                    type="text" 
-                    name="city"
-                    value={editFormData.city}
-                    onChange={handleEditChange}
-                    required
-                  />
+                  <label>Categoria:</label>
+                  <select name="category" value={productFormData.category} onChange={handleProductChange}>
+                    <option value="Ovos de Colher">Ovos de Colher</option>
+                    <option value="Trufados">Trufados</option>
+                    <option value="Trio de Ovos">Trio de Ovos</option>
+                    <option value="Infantil">Infantil</option>
+                    <option value="Diversos">Diversos</option>
+                  </select>
                 </div>
                 <div className="form-group">
-                  <label>Total (R$):</label>
-                  <input 
-                    type="number" 
-                    step="0.01"
-                    name="totalPrice"
-                    value={editFormData.totalPrice}
-                    onChange={handleEditChange}
-                    required
-                  />
+                  <label>Peso (ex: 250g):</label>
+                  <input type="text" name="weight" value={productFormData.weight} onChange={handleProductChange} />
                 </div>
                 <div className="form-group full-width">
-                  <label>Produtos / Detalhes:</label>
-                  <textarea 
-                    name="product"
-                    value={editFormData.product}
-                    onChange={handleEditChange}
-                    required
-                  ></textarea>
+                  <label>Descrição:</label>
+                  <textarea name="description" value={productFormData.description} onChange={handleProductChange} required></textarea>
                 </div>
                 <div className="form-group">
-                  <label>Quantidade Total:</label>
-                  <input 
-                    type="number" 
-                    name="quantity"
-                    value={editFormData.quantity}
-                    onChange={handleEditChange}
-                    required
-                  />
+                  <label>Recheio:</label>
+                  <input type="text" name="filling" value={productFormData.filling} onChange={handleProductChange} />
+                </div>
+                <div className="form-group">
+                  <label>URL da Imagem:</label>
+                  <input type="text" name="imageUrl" value={productFormData.imageUrl} onChange={handleProductChange} placeholder="Ex: /uploads/ovo.jpg" />
+                </div>
+                <div className="form-group checkbox-group">
+                  <label>
+                    <input type="checkbox" name="isAvailable" checked={productFormData.isAvailable} onChange={handleProductChange} />
+                    Disponível para venda
+                  </label>
                 </div>
               </div>
 
               <div className="modal-actions">
-                <button type="button" onClick={() => setEditingOrder(null)} className="btn-cancel">Cancelar</button>
-                <button type="submit" className="btn-save">Salvar Alterações</button>
+                <button type="button" onClick={() => { setEditingProduct(null); setIsAddingProduct(false); }} className="btn-cancel">Cancelar</button>
+                <button type="submit" className="btn-save">Salvar Produto</button>
               </div>
             </form>
           </div>

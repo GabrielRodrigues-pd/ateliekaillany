@@ -41,6 +41,11 @@ const productSchema = new mongoose.Schema({
     type: String, // String para a URL da imagem ou import static no frontend 
     default: ""
   },
+  isAvailable: {
+    type: Boolean,
+    default: true,
+    index: true
+  },
   createdAt: {
     type: Date,
     default: Date.now,
