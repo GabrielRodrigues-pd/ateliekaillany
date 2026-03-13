@@ -7,7 +7,7 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, i
   const { addToCart } = useCart();
   
   const isTrio = categoria === "Trio de Ovos";
-  const isMini = categoria === "Colher 50g";
+  const isMini = categoria === "Ovos de Colher";
   const isTrufado = categoria === "Trufados";
   const availableSizes = prices && typeof prices === 'object' ? Object.keys(prices) : [];
   const hasMultiplePrices = availableSizes.length > 0;
@@ -31,9 +31,10 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, i
   ];
 
   const trufadoOptions = [
-    "Chocolate",
     "Ninho com Nutella",
-    "Dois Amores"
+    "Chocolate",
+    "Dois Amores",
+    "Ninho"
   ];
 
   // Block body scroll when modal is open

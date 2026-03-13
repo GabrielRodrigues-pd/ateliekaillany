@@ -56,8 +56,8 @@ export default function IndulgeSection() {
             onChange={(e) => setFilterCategory(e.target.value)}
           >
             <option value="Todos">Todos</option>
-            <option value="Colher">Colher</option>
-            <option value="Trufado">Trufado</option>
+            <option value="Ovos de Colher">Ovos de Colher</option>
+            <option value="Trufados">Trufados</option>
             <option value="Trio de Ovos">Trio de ovos</option>
             <option value="Infantil">Infantil</option>
           </select>
