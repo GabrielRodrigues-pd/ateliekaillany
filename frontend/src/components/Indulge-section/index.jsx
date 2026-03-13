@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import CardsIndulge from "../CardsIndulge";
 import { getImage } from "../../utils/imageMapper";
 import api from "../../services/api";
+import LoadingOverlay from "../LoadingOverlay";
 import "./IndulgeSection.css";
 
 export default function IndulgeSection() {
@@ -92,7 +93,7 @@ export default function IndulgeSection() {
 
       <div className="container indulge-grid">
         {isLoading ? (
-          <p className="loading-msg" style={{textAlign: "center", width: "100%", padding: "40px"}}>Carregando produtos deliciosos...</p>
+          <LoadingOverlay message="Preparando nossa vitrine de delícias..." />
         ) : error ? (
            <p className="error-msg" style={{textAlign: "center", width: "100%", padding: "40px", color: "var(--primary)"}}>{error}</p>
         ) : sortedProducts.length > 0 ? (
@@ -111,7 +112,9 @@ export default function IndulgeSection() {
             />
           ))
         ) : (
-          <p className="no-products-msg">Nenhum produto encontrado com esses filtros.</p>
+          <div className="no-products-container" style={{width: '100%', textAlign: 'center', padding: '40px'}}>
+             <p className="no-products-msg">Nenhum produto encontrado com esses filtros.</p>
+          </div>
         )}
       </div>
     </section>

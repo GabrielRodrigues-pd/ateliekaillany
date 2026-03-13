@@ -3,6 +3,7 @@ import "./Creations.css";
 import Carrossel from "../Carrossel";
 import api from "../../services/api";
 import { getImage } from "../../utils/imageMapper";
+import LoadingOverlay from "../LoadingOverlay";
 
 
 
@@ -42,15 +43,7 @@ export default function Creations() {
         <p className="creations-disclaimer">* Imagens meramente ilustrativas para referência de modelos e sabores.</p>
         
         {isLoading ? (
-          <div className="creations-skeletons" aria-busy="true" aria-label="Carregando criações...">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="skeleton-card">
-                <div className="skeleton skeleton-rect"></div>
-                <div className="skeleton skeleton-text" style={{width: '60%', margin: '15px auto 5px'}}></div>
-                <div className="skeleton skeleton-text" style={{width: '40%', margin: '0 auto'}}></div>
-              </div>
-            ))}
-          </div>
+          <LoadingOverlay message="Nossas criações estão chegando..." />
         ) : (
           <Carrossel items={creations} />
         )}
