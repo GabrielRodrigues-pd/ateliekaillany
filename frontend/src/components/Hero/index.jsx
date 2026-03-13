@@ -21,7 +21,7 @@ export default function Hero() {
             </p>
             <a href="#produtos" className="hero-btn">
               <span>Descubra Nossos Doces</span>
-              <ArrowRight size={20} className="ml-2" />
+              <ArrowRight size={20} />
             </a>
           </div>
           <div className="hero-img-card">
