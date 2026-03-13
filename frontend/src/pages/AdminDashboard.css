@@ -393,20 +393,29 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(2px);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2000;
+  padding: 20px;
 }
 
 .admin-modal {
   background: white;
-  padding: 30px;
+  padding: 25px;
   border-radius: 12px;
-  width: 90%;
-  max-width: 400px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  position: relative;
+}
+
+.admin-modal.wide-modal {
+  max-width: 800px;
 }
 
 .admin-modal h3 {
@@ -577,4 +586,54 @@
   font-size: 0.8rem;
   color: #777;
   margin-bottom: 12px;
+}
+.grid-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.admin-modal textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  resize: vertical;
+}
+
+.admin-modal select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background: white;
+}
+
+@media (max-width: 768px) {
+  .grid-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .admin-modal {
+    padding: 20px;
+    max-height: 95vh;
+  }
+
+  .price-row {
+    flex-wrap: wrap;
+    background: #fcfcfc;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+  }
+
+  .price-row input {
+    flex: 1 1 40%;
+    min-width: 80px;
+  }
 }
