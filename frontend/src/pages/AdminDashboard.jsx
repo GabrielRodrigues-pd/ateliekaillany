@@ -191,21 +191,32 @@ export default function AdminDashboard() {
       filling: product.filling || '',
       weight: product.weight || '',
       imageUrl: product.imageUrl || '',
-      isAvailable: product.isAvailable !== undefined ? product.isAvailable : true
+      isAvailable: product.isAvailable !== undefined ? product.isAvailable : true,
+      prices: product.prices || {}
     });
   };
 
   const handleProductSubmit = async (e) => {
     e.preventDefault();
     try {
+      // Basic validation: ensure prices Map doesn't have empty keys if hasMultiplePrices
+      const cleanedPrices = {};
+      Object.entries(productFormData.prices).forEach(([w, p]) => {
+        if (w.trim() && p > 0) {
+          cleanedPrices[w.trim()] = p;
+        }
+      });
+
+      const finalData = { ...productFormData, prices: cleanedPrices };
+
       if (editingProduct) {
         // Update
-        const response = await api.put(`/products/${editingProduct._id}`, productFormData);
+        const response = await api.put(`/products/${editingProduct._id}`, finalData);
         setProducts(products.map(p => p._id === editingProduct._id ? response.data : p));
         alert('Produto atualizado!');
       } else {
         // Create
-        const response = await api.post('/products', productFormData);
+        const response = await api.post('/products', finalData);
         setProducts([response.data, ...products]);
         alert('Produto criado com sucesso!');
       }
@@ -215,6 +226,32 @@ export default function AdminDashboard() {
       console.error('Erro ao salvar produto:', err);
       alert('Erro ao salvar produto.');
     }
+  };
+
+  const handlePriceRowChange = (oldWeight, newWeight, newPrice) => {
+    setProductFormData(prev => {
+      const newPrices = { ...prev.prices };
+      if (oldWeight !== newWeight) {
+        delete newPrices[oldWeight];
+      }
+      newPrices[newWeight] = newPrice;
+      return { ...prev, prices: newPrices };
+    });
+  };
+
+  const addPriceRow = () => {
+    setProductFormData(prev => ({
+      ...prev,
+      prices: { ...prev.prices, "": 0 }
+    }));
+  };
+
+  const removePriceRow = (weight) => {
+    setProductFormData(prev => {
+      const newPrices = { ...prev.prices };
+      delete newPrices[weight];
+      return { ...prev, prices: newPrices };
+    });
   };
 
   const handleToggleAvailability = async (product) => {
@@ -627,6 +664,35 @@ export default function AdminDashboard() {
                     <input type="checkbox" name="isAvailable" checked={productFormData.isAvailable} onChange={handleProductChange} />
                     Disponível para venda
                   </label>
+                </div>
+
+                <div className="form-group full-width prices-management">
+                  <label>Variações de Peso e Preço:</label>
+                  <p className="form-help">Utilize esta seção para ovos que possuem tamanhos diferentes (Ex: 250g, 350g).</p>
+                  
+                  <div className="prices-list">
+                    {Object.entries(productFormData.prices).map(([weight, price], index) => (
+                      <div key={index} className="price-row">
+                        <input 
+                          type="text" 
+                          placeholder="Peso (ex: 250g)" 
+                          value={weight} 
+                          onChange={(e) => handlePriceRowChange(weight, e.target.value, price)}
+                        />
+                        <input 
+                          type="number" 
+                          placeholder="Preço (R$)" 
+                          value={price} 
+                          step="0.01"
+                          onChange={(e) => handlePriceRowChange(weight, weight, Number(e.target.value))}
+                        />
+                        <button type="button" className="remove-price-btn" onClick={() => removePriceRow(weight)}>✕</button>
+                      </div>
+                    ))}
+                  </div>
+                  <button type="button" className="add-price-row-btn" onClick={addPriceRow}>
+                    + Adicionar Variação de Peso
+                  </button>
                 </div>
               </div>
 

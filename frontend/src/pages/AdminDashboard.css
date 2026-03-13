@@ -520,3 +520,61 @@
   gap: 10px;
   margin: 0 !important;
 }
+.prices-management {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.prices-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.price-row {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.price-row input {
+  flex: 1;
+}
+
+.remove-price-btn {
+  background: #ff5252;
+  color: white;
+  border: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.add-price-row-btn {
+  background: transparent;
+  color: #128C7E;
+  border: 1.5px dashed #128C7E;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.add-price-row-btn:hover {
+  background: #f0fdf4;
+}
+
+.form-help {
+  font-size: 0.8rem;
+  color: #777;
+  margin-bottom: 12px;
+}
