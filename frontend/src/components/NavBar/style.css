@@ -103,14 +103,14 @@
   }
 
   .nav-actions {
-    order: 2; /* Cart button on the far right */
+    order: 2;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 8px;
   }
 
   .bar {
-    padding: 1rem 1.5rem;
+    padding: 0.75rem 1rem;
   }
 
   .nav {
