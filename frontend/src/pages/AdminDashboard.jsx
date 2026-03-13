@@ -10,6 +10,8 @@ export default function AdminDashboard() {
   const [error, setError] = useState(null);
   const [schedulingOrder, setSchedulingOrder] = useState(null); // Pedido sendo agendado
   const [scheduledData, setScheduledData] = useState({ date: '', location: '' });
+  const [editingOrder, setEditingOrder] = useState(null); // Pedido sendo editado
+  const [editFormData, setEditFormData] = useState({}); // Dados do formulário de edição
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -106,6 +108,43 @@ export default function AdminDashboard() {
     }
   };
 
+  const handleEditClick = (order) => {
+    setEditingOrder(order);
+    setEditFormData({
+      customerName: order.customerName,
+      phone: order.phone,
+      city: order.city,
+      product: order.product,
+      quantity: order.quantity,
+      totalPrice: order.totalPrice
+    });
+  };
+
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.patch(`/orders/admin/update/${editingOrder._id}`, editFormData);
+      
+      setOrders(orders.map(order => 
+        order._id === editingOrder._id ? response.data : order
+      ));
+      
+      setEditingOrder(null);
+      alert('Pedido atualizado com sucesso!');
+    } catch (err) {
+      console.error("Erro ao atualizar pedido:", err);
+      alert("Erro ao atualizar os detalhes do pedido.");
+    }
+  };
+
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData(prev => ({
+      ...prev,
+      [name]: name === 'quantity' || name === 'totalPrice' ? Number(value) : value
+    }));
+  };
+
   const getStatusCounts = () => {
     return {
       novo: orders.filter((o) => o.status === 'novo').length,
@@ -192,29 +231,37 @@ export default function AdminDashboard() {
                       )}
                       
                       {!order.isDeleted && (
-                        <button 
-                          className="delete-item-btn" 
-                          onClick={() => handleDeleteOrder(order._id)}
-                          title="Excluir Pedido"
-                        >
-                          🗑️
-                        </button>
-                      )}
+                        <>
+                          <button 
+                            className="delete-item-btn" 
+                            onClick={() => handleDeleteOrder(order._id)}
+                            title="Excluir Pedido"
+                          >
+                            🗑️
+                          </button>
 
-                      {!order.isDeleted && (
-                        <button 
-                          className="schedule-btn" 
-                          onClick={() => {
-                            setSchedulingOrder(order);
-                            setScheduledData({
-                              date: order.scheduledDeliveryDate ? new Date(order.scheduledDeliveryDate).toISOString().split('T')[0] : '',
-                              location: order.scheduledDeliveryLocation || ''
-                            });
-                          }}
-                          title="Agendar Entrega"
-                        >
-                          📅
-                        </button>
+                          <button 
+                            className="schedule-btn" 
+                            onClick={() => {
+                              setSchedulingOrder(order);
+                              setScheduledData({
+                                date: order.scheduledDeliveryDate ? new Date(order.scheduledDeliveryDate).toISOString().split('T')[0] : '',
+                                location: order.scheduledDeliveryLocation || ''
+                              });
+                            }}
+                            title="Agendar Entrega"
+                          >
+                            📅
+                          </button>
+
+                          <button 
+                            className="edit-order-btn" 
+                            onClick={() => handleEditClick(order)}
+                            title="Editar Detalhes"
+                          >
+                            ✏️
+                          </button>
+                        </>
                       )}
                       
                       {order.isDeleted && <span className="deleted-tag">EXCLUÍDO</span>}
@@ -357,6 +404,86 @@ export default function AdminDashboard() {
               <div className="modal-actions">
                 <button type="button" onClick={() => setSchedulingOrder(null)} className="btn-cancel">Cancelar</button>
                 <button type="submit" className="btn-save">Salvar Agendamento</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL DE EDIÇÃO DE PEDIDO */}
+      {editingOrder && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal wide-modal">
+            <h3>Editar Pedido</h3>
+            <p>Altere os detalhes do pedido de <strong>{editingOrder.customerName}</strong>.</p>
+            
+            <form onSubmit={handleEditSubmit}>
+              <div className="grid-form">
+                <div className="form-group">
+                  <label>Nome do Cliente:</label>
+                  <input 
+                    type="text" 
+                    name="customerName"
+                    value={editFormData.customerName}
+                    onChange={handleEditChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Telefone:</label>
+                  <input 
+                    type="text" 
+                    name="phone"
+                    value={editFormData.phone}
+                    onChange={handleEditChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Cidade:</label>
+                  <input 
+                    type="text" 
+                    name="city"
+                    value={editFormData.city}
+                    onChange={handleEditChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Total (R$):</label>
+                  <input 
+                    type="number" 
+                    step="0.01"
+                    name="totalPrice"
+                    value={editFormData.totalPrice}
+                    onChange={handleEditChange}
+                    required
+                  />
+                </div>
+                <div className="form-group full-width">
+                  <label>Produtos / Detalhes:</label>
+                  <textarea 
+                    name="product"
+                    value={editFormData.product}
+                    onChange={handleEditChange}
+                    required
+                  ></textarea>
+                </div>
+                <div className="form-group">
+                  <label>Quantidade Total:</label>
+                  <input 
+                    type="number" 
+                    name="quantity"
+                    value={editFormData.quantity}
+                    onChange={handleEditChange}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" onClick={() => setEditingOrder(null)} className="btn-cancel">Cancelar</button>
+                <button type="submit" className="btn-save">Salvar Alterações</button>
               </div>
             </form>
           </div>
