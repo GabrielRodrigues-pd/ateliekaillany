@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="footer">
       <div className="container footer-top">
         <div className="footer-brand">
-          <div className="logo">Kaillany Nunes Atelier</div>
+          <div className="logo">Kaillany Nunes Ateliê</div>
         </div>
 
         <nav>
