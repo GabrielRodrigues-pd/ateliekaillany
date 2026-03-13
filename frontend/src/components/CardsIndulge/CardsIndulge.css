@@ -352,40 +352,63 @@
   transform: translateY(0);
 }
 
-/* OUT OF STOCK STYLES */
+/* OUT OF STOCK STYLES - PREMIUM VERSION */
 .indulge-card.is-out-of-stock {
-  opacity: 0.85;
+  opacity: 0.95;
+  filter: grayscale(0.4);
+  pointer-events: none; /* Block clicking on the card itself */
 }
 
 .is-out-of-stock .card-image img {
-  filter: grayscale(0.8) contrast(0.8);
+  filter: grayscale(1) brightness(0.7);
+  transition: all 0.5s ease;
+}
+
+.is-out-of-stock .card-image::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 2;
 }
 
 .is-out-of-stock .card-price,
-.is-out-of-stock .card-title {
-  color: #888;
+.is-out-of-stock .card-title,
+.is-out-of-stock .card-tag {
+  color: #999 !important;
 }
 
 .sold-out-badge {
   position: absolute;
-  top: 15px;
-  right: -25px;
+  top: 20px;
+  right: 20px;
   background: #d32f2f;
   color: white;
-  padding: 5px 35px;
+  padding: 6px 14px;
   font-weight: 800;
   font-size: 11px;
-  transform: rotate(45deg);
-  z-index: 5;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  border-radius: 6px;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
   letter-spacing: 1px;
   text-transform: uppercase;
+  animation: pulseSoldOut 2s infinite;
+}
+
+@keyframes pulseSoldOut {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 }
 
 .out-of-stock-btn {
-  background-color: #eee !important;
-  color: #999 !important;
+  background-color: #f0f0f0 !important;
+  color: #bbb !important;
   cursor: not-allowed !important;
   box-shadow: none !important;
   transform: none !important;
+  border-color: #ddd !important;
 }
