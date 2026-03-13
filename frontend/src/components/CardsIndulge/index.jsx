@@ -7,7 +7,7 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, i
   const { addToCart } = useCart();
   
   const isTrio = categoria === "Trio de Ovos";
-  const isMini = categoria === "Ovos de Colher";
+  const isMini = categoria === "Colher 50g";
   const isTrufado = categoria === "Trufados";
   const availableSizes = prices && typeof prices === 'object' ? Object.keys(prices) : [];
   const hasMultiplePrices = availableSizes.length > 0;

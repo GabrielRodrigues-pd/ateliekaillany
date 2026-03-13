@@ -638,6 +638,7 @@ export default function AdminDashboard() {
                   <select name="category" value={productFormData.category} onChange={handleProductChange}>
                     <option value="Ovos de Colher">Ovos de Colher</option>
                     <option value="Trufados">Trufados</option>
+                    <option value="Colher 50g">Colher 50g</option>
                     <option value="Trio de Ovos">Trio de Ovos</option>
                     <option value="Infantil">Infantil</option>
                     <option value="Diversos">Diversos</option>
