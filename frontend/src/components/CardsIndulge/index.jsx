@@ -3,7 +3,7 @@ import { useCart } from "../../context/CartContext";
 import OptimizedImage from "../OptimizedImage";
 import "./CardsIndulge.css";
 
-function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices }) {
+function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, isAvailable = true }) {
   const { addToCart } = useCart();
   
   const isTrio = categoria === "Trio de Ovos";
@@ -56,6 +56,7 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
 
   const handleAddToCart = (e) => {
     e.preventDefault();
+    if (!isAvailable) return;
 
     let finalId = id;
     let finalTitle = title;
@@ -113,7 +114,7 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
 
   return (
     <>
-      <article className="indulge-card">
+      <article className={`indulge-card ${!isAvailable ? 'is-out-of-stock' : ''}`}>
         <div className="card-content">
           <span className="card-tag">{categoria}</span>
           <h3 className="card-title">{title}</h3>
@@ -123,7 +124,11 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
             <span className="card-price" aria-label={`Preço a partir de: ${formattedBasePrice}`}>
               {hasMultiplePrices ? `A partir de ${formattedBasePrice}` : formattedBasePrice}
             </span>
-            {hasOptions ? (
+            {!isAvailable ? (
+              <button disabled className="add-to-cart-btn out-of-stock-btn">
+                Esgotado
+              </button>
+            ) : hasOptions ? (
               <button
                 type="button"
                 onClick={() => setIsModalOpen(true)}
@@ -147,6 +152,7 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices })
 
         <div className="card-image">
           <OptimizedImage src={img} alt={alt || title} />
+          {!isAvailable && <div className="sold-out-badge">ESGOTADO</div>}
         </div>
       </article>
 

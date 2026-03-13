@@ -38,13 +38,10 @@ export default function Carrossel({ items }) {
         className="creations-swiper"
       >
         {safeItems.map((item, index) => (
-          <SwiperSlide key={`${item.title}-${index}`} className={`creation-slide ${!item.isAvailable ? 'is-out-of-stock' : ''}`}>
+          <SwiperSlide key={`${item.title}-${index}`} className="creation-slide">
             <div className="creative-card">
               <div className="card-image-wrapper">
                 <img src={item.image} alt={item.altText || item.title} />
-                {!item.isAvailable && (
-                  <div className="sold-out-badge">ESGOTADO</div>
-                )}
                 <div className="card-overlay">
                   <h3>{item.title}</h3>
                   <p>{item.description}</p>

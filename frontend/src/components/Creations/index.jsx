@@ -21,7 +21,6 @@ export default function Creations() {
             image: getImage(product.imageUrl),
             title: product.title,
             description: product.description,
-            isAvailable: product.isAvailable,
             altText: `${product.title} - ${product.description.substring(0, 50)}...`
           }));
         

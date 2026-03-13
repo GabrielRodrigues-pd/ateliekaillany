@@ -351,3 +351,41 @@
 .modal-add-btn:active {
   transform: translateY(0);
 }
+
+/* OUT OF STOCK STYLES */
+.indulge-card.is-out-of-stock {
+  opacity: 0.85;
+}
+
+.is-out-of-stock .card-image img {
+  filter: grayscale(0.8) contrast(0.8);
+}
+
+.is-out-of-stock .card-price,
+.is-out-of-stock .card-title {
+  color: #888;
+}
+
+.sold-out-badge {
+  position: absolute;
+  top: 15px;
+  right: -25px;
+  background: #d32f2f;
+  color: white;
+  padding: 5px 35px;
+  font-weight: 800;
+  font-size: 11px;
+  transform: rotate(45deg);
+  z-index: 5;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.out-of-stock-btn {
+  background-color: #eee !important;
+  color: #999 !important;
+  cursor: not-allowed !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
