@@ -59,7 +59,7 @@ Desenvolvi um Dashboard completo onde o lojista pode gerenciar pedidos por statu
 
 | Vitrine de Produtos | Painel Admin (Mobile) | Carrinho com Opções |
 | :---: | :---: | :---: |
-| ![Home]([https://www.awesomescreenshot.com/image/59267800?key=251c23f6d5b61d73f2a3669cbecf1cfc](https://camo.githubusercontent.com/5b013410786edc55b1e1dc05abf45d0b15b5309b7d56ac11b46f75b55ba7d696/68747470733a2f2f7777772e617765736f6d6573637265656e73686f742e636f6d2f6170692f76312f64657374696e6174696f6e2f696d6167652f73686f773f496d6167654b65793d746d2d31333739372d35313236382d6337383037613537303365373632333531356661366630613236306530636531)) | ![Admin](https://placehold.co/300x200?text=Dashboard+Mobile) | ![Cart](https://placehold.co/300x200?text=Carrinho+Dinamico) |
+| ![Home](https://camo.githubusercontent.com/5b013410786edc55b1e1dc05abf45d0b15b5309b7d56ac11b46f75b55ba7d696/68747470733a2f2f7777772e617765736f6d6573637265656e73686f742e636f6d2f6170692f76312f64657374696e6174696f6e2f696d6167652f73686f773f496d6167654b65793d746d2d31333739372d35313236382d6337383037613537303365373632333531356661366630613236306530636531) | ![Admin](https://placehold.co/300x200?text=Dashboard+Mobile) | ![Cart](https://placehold.co/300x200?text=Carrinho+Dinamico) |
 
 ---
 
