@@ -59,7 +59,7 @@ Desenvolvi um Dashboard completo onde o lojista pode gerenciar pedidos por statu
 
 | Vitrine de Produtos | Painel Admin (Mobile) | Carrinho com Opções |
 | :---: | :---: | :---: |
-| ![Home](https://placehold.co/300x200?text=Vitrine+Home) | ![Admin](https://placehold.co/300x200?text=Dashboard+Mobile) | ![Cart](https://placehold.co/300x200?text=Carrinho+Dinamico) |
+| ![Home](https://www.awesomescreenshot.com/video/50414896?key=8a59601465ce07ebec04cc061b1a81ed) | ![Admin](https://placehold.co/300x200?text=Dashboard+Mobile) | ![Cart](https://placehold.co/300x200?text=Carrinho+Dinamico) |
 
 ---
 
