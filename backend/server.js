@@ -17,7 +17,10 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middlewares de Segurança e Produção
-app.use(helmet()); // Adiciona headers de segurança
+app.use(helmet({
+  crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+  crossOriginEmbedderPolicy: false,
+})); // Adiciona headers de segurança ajustados para compatibilidade
 app.use(morgan('dev')); // Logging de requisições
 
 // Limitação de Taxa (Rate Limiting)

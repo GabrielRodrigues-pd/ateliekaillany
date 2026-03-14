@@ -92,7 +92,7 @@ function NavBar() {
               <GoogleLogin
                 onSuccess={handleLoginSuccess}
                 onError={() => console.log('Login Failed')}
-                useOneTap
+                // useOneTap - Desabilitado temporariamente pois causa crashes no navegador do Instagram (iOS Safari)
                 shape="pill"
                 size="medium"
                 text="signin"
