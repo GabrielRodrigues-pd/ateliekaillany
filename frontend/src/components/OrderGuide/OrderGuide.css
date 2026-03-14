@@ -1,32 +1,32 @@
 .order-guide {
-  padding: 80px 0;
+  padding: 100px 0;
   background-color: #fff;
 }
 
 .guide-header {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 80px;
 }
 
 .guide-eyebrow {
-  font-size: 12px;
-  letter-spacing: 0.12em;
+  font-size: 14px;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
   color: var(--primary, #d96a75);
-  font-weight: 600;
+  font-weight: 700;
   display: block;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
 .guide-header h2 {
-  font-size: 36px;
+  font-size: 42px;
   margin-bottom: 15px;
   color: var(--text-dark, #1f1f1f);
 }
 
 .guide-header p {
   color: var(--text-muted, #6b6b6b);
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .guide-grid {
@@ -45,45 +45,50 @@
 }
 
 .step-icon {
-  width: 80px;
-  height: 80px;
-  background-color: var(--bg-main, #f7e9de);
+  width: 90px;
+  height: 90px;
+  background-color: white; /* Changed to solid white to cover lines */
   color: var(--primary, #d96a75);
+  border: 4px solid var(--bg-main, #f7e9de); /* Added border for premium feel */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-  transition: transform 0.3s ease;
+  margin-bottom: 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 2; /* Increased z-index */
 }
 
 .guide-step:hover .step-icon {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
   background-color: var(--primary);
+  border-color: var(--primary);
   color: white;
+  box-shadow: 0 12px 30px rgba(217, 106, 117, 0.2);
 }
 
 .guide-step h3 {
-  font-size: 18px;
+  font-size: 20px;
   margin-bottom: 12px;
   color: var(--text-dark);
 }
 
 .guide-step p {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .step-connector {
   position: absolute;
-  top: 40px;
+  top: 45px; /* Centered relative to 90px icon */
   right: -50%;
   width: 100%;
   height: 2px;
-  background-color: var(--bg-main);
-  z-index: 0;
+  background-color: var(--bg-main, #f7e9de);
+  z-index: 1; /* Behind icons */
 }
 
 @media (max-width: 900px) {

@@ -3,6 +3,7 @@ import WhyChoose from "../components/WhyChoose";
 import IndulgeSection from "../components/Indulge-section";
 import Creations from "../components/Creations";
 import OrderGuide from "../components/OrderGuide";
+import FAQ from "../components/FAQ";
 import Testimonials from "../components/Testimonials";
 import CTA from "../components/CTA";
 import Footer from "../components/Footer";
@@ -16,6 +17,7 @@ export default function Home() {
       <OrderGuide />
       <Testimonials />
       <WhyChoose />
+      <FAQ />
       <CTA />
       <Footer />
     </>
