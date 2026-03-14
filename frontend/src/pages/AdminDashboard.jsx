@@ -616,6 +616,84 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {/* MODAL DE EDIÇÃO DE PEDIDO */}
+      {editingOrder && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal">
+            <h3>Editar Pedido</h3>
+            <p>Alterar detalhes do pedido de <strong>{editingOrder.customerName}</strong>.</p>
+            
+            <form onSubmit={handleEditSubmit}>
+              <div className="form-group">
+                <label>Nome do Cliente:</label>
+                <input 
+                  type="text" 
+                  name="customerName"
+                  value={editFormData.customerName || ''}
+                  onChange={handleEditChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Telefone:</label>
+                <input 
+                  type="text" 
+                  name="phone"
+                  value={editFormData.phone || ''}
+                  onChange={handleEditChange}
+                />
+              </div>
+              <div className="form-group">
+                <label>Cidade:</label>
+                <input 
+                  type="text" 
+                  name="city"
+                  value={editFormData.city || ''}
+                  onChange={handleEditChange}
+                />
+              </div>
+              <div className="form-group">
+                <label>Produto:</label>
+                <input 
+                  type="text" 
+                  name="product"
+                  value={editFormData.product || ''}
+                  onChange={handleEditChange}
+                  required
+                />
+              </div>
+              <div className="grid-form">
+                <div className="form-group">
+                  <label>Quantidade:</label>
+                  <input 
+                    type="number" 
+                    name="quantity"
+                    value={editFormData.quantity || 0}
+                    onChange={handleEditChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Valor Total (R$):</label>
+                  <input 
+                    type="number" 
+                    step="0.01"
+                    name="totalPrice"
+                    value={editFormData.totalPrice || 0}
+                    onChange={handleEditChange}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="modal-actions">
+                <button type="button" onClick={() => setEditingOrder(null)} className="btn-cancel">Cancelar</button>
+                <button type="submit" className="btn-save">Salvar Alterações</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* MODAL DE EDIÇÃO/CRIAÇÃO DE PRODUTO */}
       {(editingProduct || isAddingProduct) && (
         <div className="admin-modal-overlay">
