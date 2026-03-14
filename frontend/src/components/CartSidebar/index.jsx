@@ -110,7 +110,7 @@ export default function CartSidebar() {
     // 3. Add Total
     message += `\n💰 *Total do Pedido:* R$ ${cartTotal.toFixed(2)}\n`;
     message += `---------------------------------\n`;
-    message += `Por favor, confirmem o recebimento do pedido!`;
+    message += `*Acompanhamento:* Vou acompanhar o status do meu pedido pelo site na seção "Meus Pedidos"!`;
 
     // Encode message and open WhatsApp
     const encodedMessage = encodeURIComponent(message);
@@ -291,7 +291,7 @@ export default function CartSidebar() {
             <h3>Pedido Recebido!</h3>
             <p>
               Obrigado, <strong>{formData.nome}</strong>! <br />
-              Estamos te redirecionando para o WhatsApp para finalizar os detalhes.
+              Seu pedido foi registrado e você pode acompanhar o status em <strong>"Meus Pedidos"</strong>. Redirecionando para o WhatsApp...
             </p>
             <div className="success-loader-bar">
               <div className="loader-progress"></div>
