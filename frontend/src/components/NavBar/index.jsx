@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ShoppingCart, Package, LogOut, User as UserIcon } from "lucide-react";
+import { ShoppingCart, Package, LogOut, User as UserIcon, HelpCircle } from "lucide-react";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
 import { GoogleLogin } from "@react-oauth/google";
+import HelpModal from "../HelpModal";
 import "./style.css";
 
 function NavBar() {
@@ -11,6 +12,7 @@ function NavBar() {
   const { user, loginWithGoogle, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
 
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
@@ -101,6 +103,15 @@ function NavBar() {
           )}
 
           <button
+            className="help-nav-btn"
+            onClick={() => setIsHelpModalOpen(true)}
+            aria-label="Abrir ajuda"
+            title="Como usar o site"
+          >
+            <HelpCircle color="white" />
+          </button>
+
+          <button
             className="cart-btn"
             onClick={toggleCart}
             aria-label="Open cart"
@@ -113,6 +124,8 @@ function NavBar() {
           </button>
         </div>
       </div>
+      
+      {isHelpModalOpen && <HelpModal onClose={() => setIsHelpModalOpen(false)} />}
     </nav>
   );
 }
