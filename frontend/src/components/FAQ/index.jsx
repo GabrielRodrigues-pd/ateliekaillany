@@ -13,7 +13,7 @@ const faqData = [
   // },
   {
     question: "Até quando posso fazer meu pedido?",
-    answer: "Para garantir a máxima qualidade e frescor, pedimos que as encomendas sejam feitas até o dia 01 de abril!"
+    answer: "Os pedidos podem ser feitos até o dia 01 de abril ou até durar o estoque!"
   },
   {
     question: "Como posso acompanhar meu pedido?",
