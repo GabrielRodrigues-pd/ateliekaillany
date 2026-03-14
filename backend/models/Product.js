@@ -46,6 +46,11 @@ const productSchema = new mongoose.Schema({
     default: true,
     index: true
   },
+  isLowStock: {
+    type: Boolean,
+    default: false,
+    index: true
+  },
   createdAt: {
     type: Date,
     default: Date.now,

@@ -111,6 +111,7 @@ export default function IndulgeSection() {
               price={product.price}
               prices={product.prices}
               isAvailable={product.isAvailable}
+              isLowStock={product.isLowStock}
             />
           ))
         ) : (

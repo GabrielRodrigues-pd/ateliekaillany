@@ -26,7 +26,8 @@ export default function AdminDashboard() {
     filling: '',
     weight: '',
     imageUrl: '',
-    isAvailable: true
+    isAvailable: true,
+    isLowStock: false
   });
   const [isAddingProduct, setIsAddingProduct] = useState(false);
 
@@ -192,6 +193,7 @@ export default function AdminDashboard() {
       weight: product.weight || '',
       imageUrl: product.imageUrl || '',
       isAvailable: product.isAvailable !== undefined ? product.isAvailable : true,
+      isLowStock: product.isLowStock || false,
       prices: product.prices || {}
     });
   };
@@ -261,6 +263,16 @@ export default function AdminDashboard() {
       setProducts(products.map(p => p._id === product._id ? response.data : p));
     } catch (err) {
       alert('Erro ao mudar disponibilidade.');
+    }
+  };
+
+  const handleToggleLowStock = async (product) => {
+    try {
+      const newStatus = !product.isLowStock;
+      const response = await api.put(`/products/${product._id}`, { isLowStock: newStatus });
+      setProducts(products.map(p => p._id === product._id ? response.data : p));
+    } catch (err) {
+      alert('Erro ao mudar status de estoque baixo.');
     }
   };
 
@@ -499,6 +511,14 @@ export default function AdminDashboard() {
                               onClick={() => handleToggleAvailability(p)}
                             >
                               {p.isAvailable ? 'DISPONÍVEL' : 'ESGOTADO'}
+                            </button>
+                            <button 
+                              className={`stock-badge ${p.isLowStock ? 'low-stock-active' : 'low-stock-inactive'}`}
+                              style={{ marginLeft: '5px' }}
+                              onClick={() => handleToggleLowStock(p)}
+                              title="Indicar que está quase esgotando"
+                            >
+                              {p.isLowStock ? 'QUASE ESGOTADO' : 'ESTOQUE NORMAL'}
                             </button>
                           </td>
                           <td>
@@ -742,6 +762,12 @@ export default function AdminDashboard() {
                   <label>
                     <input type="checkbox" name="isAvailable" checked={productFormData.isAvailable} onChange={handleProductChange} />
                     Disponível para venda
+                  </label>
+                </div>
+                <div className="form-group checkbox-group">
+                  <label>
+                    <input type="checkbox" name="isLowStock" checked={productFormData.isLowStock} onChange={handleProductChange} />
+                    Quase Esgotado (Aviso no Front)
                   </label>
                 </div>
 

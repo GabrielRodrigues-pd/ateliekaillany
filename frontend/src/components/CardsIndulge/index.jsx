@@ -3,7 +3,7 @@ import { useCart } from "../../context/CartContext";
 import OptimizedImage from "../OptimizedImage";
 import "./CardsIndulge.css";
 
-function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, isAvailable = true }) {
+function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, isAvailable = true, isLowStock = false }) {
   const { addToCart } = useCart();
   
   const isTrio = categoria === "Trio de Ovos";
@@ -120,6 +120,12 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, i
           <span className="card-tag">{categoria}</span>
           <h3 className="card-title">{title}</h3>
           <p className="card-description">{descri}</p>
+          
+          {isAvailable && isLowStock && (
+            <div className="low-stock-alert-text">
+              ⚠️ Quase Esgotado! Garanta o seu.
+            </div>
+          )}
 
           <div className="card-footer">
             <span className="card-price" aria-label={`Preço a partir de: ${formattedBasePrice}`}>
