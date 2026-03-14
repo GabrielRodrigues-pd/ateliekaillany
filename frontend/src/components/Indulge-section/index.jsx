@@ -58,6 +58,8 @@ export default function IndulgeSection() {
             <option value="Todos">Todos</option>
             <option value="Colher">Ovos de Colher</option>
             <option value="Trufados">Trufados</option>
+            <option value="Tradicional">Tradicional</option>
+            <option value="Colher 50g">Ovo de Colher 50g</option>
             <option value="Trio de Ovos">Trio de ovos</option>
             <option value="Infantil">Infantil</option>
           </select>
