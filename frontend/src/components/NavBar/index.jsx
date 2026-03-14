@@ -44,7 +44,7 @@ function NavBar() {
         </button>
 
         <nav id="mobile-nav" className={`nav ${isMobileMenuOpen ? "open" : ""}`}>
-          <a href="/#home" onClick={closeMobileMenu}>Home</a>
+          <a href="/#como-pedir" onClick={closeMobileMenu}>Como pedir</a>
           <a href="/#produtos" onClick={closeMobileMenu}>Produtos</a>
           
           {user && (
