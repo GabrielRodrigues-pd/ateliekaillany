@@ -8,10 +8,12 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import { CartProvider } from "./context/CartContext";
 import CartSidebar from "./components/CartSidebar";
 import DeliveryModal from "./components/DeliveryModal";
+import InAppBrowserNotice from "./components/InAppBrowserNotice";
 
 function App() {
   return (
     <CartProvider>
+      <InAppBrowserNotice />
       <BrowserRouter>
         <main>
           <Routes>

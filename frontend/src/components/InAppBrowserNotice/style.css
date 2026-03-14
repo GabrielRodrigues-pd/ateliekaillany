@@ -1,0 +1,55 @@
+.in-app-notice {
+  background-color: #d96a75;
+  color: white;
+  padding: 12px 0;
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.notice-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.notice-text {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.notice-icon {
+  flex-shrink: 0;
+}
+
+.notice-text p {
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.notice-close {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.notice-close:hover {
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .notice-text p {
+    font-size: 13px;
+  }
+}
