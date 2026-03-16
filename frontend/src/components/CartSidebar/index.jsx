@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useCart } from "../../context/CartContext";
 import { useAuth } from "../../context/AuthContext";
-import { Trash2, CheckCircle } from "lucide-react";
+import { Trash2, CheckCircle, Package } from "lucide-react";
+import { Link } from "react-router-dom";
 import api from "../../services/api";
 import "./CartSidebar.css";
 
@@ -149,7 +150,16 @@ export default function CartSidebar() {
 
         <div className="cart-items">
           {cartItems.length === 0 ? (
-            <p className="empty-cart">Seu carrinho está vazio.</p>
+            <div className="empty-cart-container">
+              <p className="empty-cart">Seu carrinho está vazio.</p>
+              <Link 
+                to="/meus-pedidos"
+                className="view-orders-btn-cart"
+                onClick={toggleCart}
+              >
+                <Package size={18} /> Ver Meus Pedidos
+              </Link>
+            </div>
           ) : (
             cartItems.map((item) => (
               <div key={item.id} className="cart-item">
