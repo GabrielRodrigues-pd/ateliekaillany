@@ -30,6 +30,23 @@ export default function AdminDashboard() {
     isLowStock: false
   });
   const [isAddingProduct, setIsAddingProduct] = useState(false);
+  
+  const [filters, setFilters] = useState({
+    customer: '',
+    phone: '',
+    city: '',
+    product: '',
+    date: ''
+  });
+
+  const [appliedFilters, setAppliedFilters] = useState(filters);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setAppliedFilters(filters);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [filters]);
 
   const navigate = useNavigate();
 
@@ -312,11 +329,57 @@ export default function AdminDashboard() {
   const counts = getStatusCounts();
   const revenue = getRevenue();
   
-  // Categorized orders for separate tables
-  const newOrders = orders.filter((o) => o.status === 'novo');
-  const productionOrders = orders.filter((o) => o.status === 'em_producao');
-  const readyOrders = orders.filter((o) => o.status === 'pronto');
-  const deliveredOrders = orders.filter((o) => o.status === 'entregue');
+  // Filtering logic for orders
+  const filterOrders = (orderList) => {
+    return orderList.filter(order => {
+      const matchCustomer = order.customerName?.toLowerCase().includes(appliedFilters.customer.toLowerCase());
+      const matchPhone = order.phone?.toLowerCase().includes(appliedFilters.phone.toLowerCase());
+      const matchCity = order.city?.toLowerCase().includes(appliedFilters.city.toLowerCase());
+      const matchProduct = order.product?.toLowerCase().includes(appliedFilters.product.toLowerCase());
+      
+      let matchDate = true;
+      if (appliedFilters.date) {
+        const orderDate = new Date(order.createdAt).toISOString().split('T')[0];
+        matchDate = orderDate === appliedFilters.date;
+      }
+
+      return matchCustomer && matchPhone && matchCity && matchProduct && matchDate;
+    });
+  };
+
+  // Filtering logic for products
+  const filterProducts = (productList) => {
+    return productList.filter(p => {
+      const matchProduct = p.title?.toLowerCase().includes(appliedFilters.product.toLowerCase());
+      const matchCategory = p.category?.toLowerCase().includes(appliedFilters.product.toLowerCase()); // Searching in category too
+      return matchProduct || matchCategory;
+    });
+  };
+
+  const filteredNewOrders = filterOrders(orders.filter((o) => o.status === 'novo'));
+  const filteredProductionOrders = filterOrders(orders.filter((o) => o.status === 'em_producao'));
+  const filteredReadyOrders = filterOrders(orders.filter((o) => o.status === 'pronto'));
+  const filteredDeliveredOrders = filterOrders(orders.filter((o) => o.status === 'entregue'));
+  const filteredRecycleBin = filterOrders(orders);
+
+  const filteredProductsList = filterProducts(products);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilters(prev => ({ ...prev, [name]: value }));
+  };
+
+  const clearFilters = () => {
+    const emptyFilters = {
+      customer: '',
+      phone: '',
+      city: '',
+      product: '',
+      date: ''
+    };
+    setFilters(emptyFilters);
+    setAppliedFilters(emptyFilters);
+  };
 
   const renderOrderTable = (orderList, title, emptyMessage) => (
     <div className="table-section">
@@ -480,7 +543,24 @@ export default function AdminDashboard() {
           <>
             {activeTab === 'produtos' ? (
               <div className="table-section">
-                <h2 className="table-title">Gerenciar Estoque ({products.length})</h2>
+                <h2 className="table-title">Gerenciar Estoque ({filteredProductsList.length})</h2>
+                
+                <div className="filters-bar">
+                  <div className="filter-group">
+                    <label>Produto / Categoria</label>
+                    <input 
+                      type="text" 
+                      name="product" 
+                      placeholder="Buscar por nome ou categoria..." 
+                      value={filters.product}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <button className="clear-filters-btn" onClick={clearFilters} title="Limpar Filtros">
+                    Limpar
+                  </button>
+                </div>
+
                 <div className="table-wrapper">
                   <table className="orders-table">
                     <thead>
@@ -494,7 +574,7 @@ export default function AdminDashboard() {
                       </tr>
                     </thead>
                     <tbody>
-                      {products.map(p => (
+                      {filteredProductsList.map(p => (
                         <tr key={p._id}>
                           <td>
                             <img src={p.imageUrl} alt={p.title} className="admin-prod-thumb" />
@@ -578,19 +658,74 @@ export default function AdminDashboard() {
                   </div>
                 </div>
 
+                <div className="filters-bar">
+                  <div className="filter-group">
+                    <label>Cliente</label>
+                    <input 
+                      type="text" 
+                      name="customer" 
+                      placeholder="Filtrar por nome..." 
+                      value={filters.customer}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <div className="filter-group">
+                    <label>Telefone</label>
+                    <input 
+                      type="text" 
+                      name="phone" 
+                      placeholder="Filtrar por telefone..." 
+                      value={filters.phone}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <div className="filter-group">
+                    <label>Cidade</label>
+                    <input 
+                      type="text" 
+                      name="city" 
+                      placeholder="Filtrar por cidade..." 
+                      value={filters.city}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <div className="filter-group">
+                    <label>Produto</label>
+                    <input 
+                      type="text" 
+                      name="product" 
+                      placeholder="Filtrar por produto..." 
+                      value={filters.product}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <div className="filter-group">
+                    <label>Data</label>
+                    <input 
+                      type="date" 
+                      name="date" 
+                      value={filters.date}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <button className="clear-filters-btn" onClick={clearFilters} title="Limpar Filtros">
+                    Limpar
+                  </button>
+                </div>
+
                 {orders.length === 0 ? (
                   <div className="empty-state">Nenhum pedido encontrado nesta categoria.</div>
                 ) : (
                   <div className="tables-container">
                     {activeTab === 'ativos' ? (
                       <>
-                        {renderOrderTable(newOrders, "Pedidos Recebidos (Novos)", "Não há novos pedidos no momento.")}
-                        {renderOrderTable(productionOrders, "Pedidos em Produção", "Nenhum pedido em produção.")}
-                        {renderOrderTable(readyOrders, "Pronto para Entrega/Retirada", "Nenhum pedido aguardando retirada/entrega.")}
-                        {renderOrderTable(deliveredOrders, "Pedidos Entregues", "Nenhum pedido finalizado ainda.")}
+                        {renderOrderTable(filteredNewOrders, "Pedidos Recebidos (Novos)", "Não há novos pedidos no momento.")}
+                        {renderOrderTable(filteredProductionOrders, "Pedidos em Produção", "Nenhum pedido em produção.")}
+                        {renderOrderTable(filteredReadyOrders, "Pronto para Entrega/Retirada", "Nenhum pedido aguardando retirada/entrega.")}
+                        {renderOrderTable(filteredDeliveredOrders, "Pedidos Entregues", "Nenhum pedido finalizado ainda.")}
                       </>
                     ) : (
-                      renderOrderTable(orders, "Relatório de Cancelados e Excluídos", "Nenhum registro encontrado.")
+                      renderOrderTable(filteredRecycleBin, "Relatório de Cancelados e Excluídos", "Nenhum registro encontrado.")
                     )}
                   </div>
                 )}
