@@ -12,15 +12,15 @@ export default function CTA() {
 
         <div className="cta-actions">
           <a href="#produtos" className="btn-secondary cta-btn">Ver Catálogo</a>
-          <button 
+          <a 
+            href={`https://wa.me/5583996918173?text=${encodeURIComponent("Olá! Vim pelo site e gostaria de fazer uma encomenda no Ateliê Kaillany Nunes.")}`}
             className="btn-primary cta-btn whatsapp-btn"
-            onClick={() => {
-              const message = encodeURIComponent("Olá! Vim pelo site e gostaria de fazer uma encomenda no Ateliê Kaillany Nunes.");
-              window.open(`https://wa.me/5583996918173?text=${message}`, "_blank");
-            }}
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
-            {" Falar no WhatsApp"}
-          </button>
+            Falar no WhatsApp
+          </a>
         </div>
       </div>
 
