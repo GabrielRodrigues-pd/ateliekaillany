@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../services/api';
 import './AdminDashboard.css';
@@ -41,6 +41,30 @@ export default function AdminDashboard() {
 
   const [appliedFilters, setAppliedFilters] = useState(filters);
 
+  // Notification System State
+  const [notificationSettings, setNotificationSettings] = useState(() => {
+    const saved = localStorage.getItem('adminNotificationSettings');
+    return saved ? JSON.parse(saved) : {
+      enabled: true,
+      soundEnabled: true,
+      browserEnabled: true,
+      soundUrl: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'
+    };
+  });
+  const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const lastProcessedOrderIdRef = useRef(null);
+  const [browserPermission, setBrowserPermission] = useState(Notification.permission);
+
+  useEffect(() => {
+    localStorage.setItem('adminNotificationSettings', JSON.stringify(notificationSettings));
+  }, [notificationSettings]);
+
+  useEffect(() => {
+    if (notificationSettings.browserEnabled && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }, [notificationSettings.browserEnabled]);
+
   useEffect(() => {
     const timer = setTimeout(() => {
       setAppliedFilters(filters);
@@ -56,7 +80,81 @@ export default function AdminDashboard() {
     } else {
       fetchOrders();
     }
+
+    // Polling for new orders every 30 seconds
+    const pollInterval = setInterval(() => {
+      if (activeTab === 'ativos') {
+        checkForNewOrders();
+      }
+    }, 30000);
+
+    return () => clearInterval(pollInterval);
   }, [activeTab]);
+
+  const checkForNewOrders = async () => {
+    if (!notificationSettings.enabled) return;
+    console.log("Checking for new orders... Last ID:", lastProcessedOrderIdRef.current);
+
+    try {
+      const response = await api.get('/orders/admin/all');
+      const latestOrders = response.data.filter(o => !o.isDeleted && o.status !== 'cancelado');
+      
+      if (latestOrders.length > 0) {
+        const mostRecentOrder = latestOrders[0];
+        
+        // If we haven't set a last processed ID yet, initialize it
+        if (!lastProcessedOrderIdRef.current) {
+          console.log("Initializing lastOrderIdRef:", mostRecentOrder._id);
+          lastProcessedOrderIdRef.current = mostRecentOrder._id;
+          return;
+        }
+
+        // Check if there's a newer order
+        if (mostRecentOrder._id !== lastProcessedOrderIdRef.current) {
+          console.log("NEW ORDER DETECTED!", mostRecentOrder._id);
+          triggerNotification(mostRecentOrder);
+          lastProcessedOrderIdRef.current = mostRecentOrder._id;
+          // Refresh the list to show the new order
+          setOrders(latestOrders);
+        } else {
+          console.log("No new orders.");
+        }
+      }
+    } catch (err) {
+      console.error("Erro ao verificar novos pedidos:", err);
+    }
+  };
+
+  const handleRequestPermission = async () => {
+    const permission = await Notification.requestPermission();
+    setBrowserPermission(permission);
+    if (permission === 'granted') {
+      alert("Notificações autorizadas com sucesso!");
+    } else {
+      alert("Permissão de notificação: " + permission);
+    }
+  };
+
+  const triggerNotification = (order) => {
+    console.log("Triggering notification for order:", order._id);
+    if (notificationSettings.soundEnabled) {
+      const audio = new Audio(notificationSettings.soundUrl);
+      audio.play().catch(e => console.error("Erro ao reproduzir som:", e));
+    }
+
+    if (notificationSettings.browserEnabled && Notification.permission === 'granted') {
+      try {
+        new Notification('Novo Pedido Recebido! 🚀', {
+          body: `Cliente: ${order.customerName}\nProduto: ${order.product}`,
+          icon: '/favicon.ico'
+        });
+      } catch (e) {
+        console.error("Erro ao disparar notificação do navegador:", e);
+      }
+    } else {
+      console.log("Browser notifications disabled or permission not granted. Permission:", Notification.permission);
+    }
+  };
 
   const fetchOrders = async () => {
     setIsLoading(true);
@@ -74,6 +172,9 @@ export default function AdminDashboard() {
       }
 
       setOrders(data);
+      if (data.length > 0 && activeTab === 'ativos') {
+        lastProcessedOrderIdRef.current = data[0]._id;
+      }
       setIsLoading(false);
     } catch (err) {
       if (err.response && err.response.status === 401) {
@@ -526,6 +627,13 @@ export default function AdminDashboard() {
                 + Novo Ovo
               </button>
             )}
+            <button 
+              className="notification-settings-trigger" 
+              onClick={() => setShowNotificationModal(true)}
+              title="Configurações de Notificação"
+            >
+              🔔
+            </button>
             <button onClick={handleLogout} className="admin-logout-btn">Sair</button>
           </div>
         </div>
@@ -941,6 +1049,111 @@ export default function AdminDashboard() {
                 <button type="submit" className="btn-save">Salvar Produto</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showNotificationModal && (
+        <div className="admin-modal-overlay">
+          <div className="admin-modal">
+            <h3>Configurações de Notificação</h3>
+            <div className="notification-settings-content">
+              <div className="setting-row" style={{ marginBottom: '15px' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: '600' }}>
+                  <input 
+                    type="checkbox" 
+                    checked={notificationSettings.enabled} 
+                    onChange={(e) => setNotificationSettings({...notificationSettings, enabled: e.target.checked})}
+                    style={{ width: 'auto' }}
+                  />
+                  Ativar Sistema de Notificações
+                </label>
+              </div>
+              
+              <div className="setting-row" style={{ marginLeft: '20px', marginBottom: '15px', opacity: notificationSettings.enabled ? 1 : 0.5 }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                  <input 
+                    type="checkbox" 
+                    disabled={!notificationSettings.enabled}
+                    checked={notificationSettings.soundEnabled} 
+                    onChange={(e) => setNotificationSettings({...notificationSettings, soundEnabled: e.target.checked})}
+                    style={{ width: 'auto' }}
+                  />
+                  Alerta Sonoro
+                </label>
+              </div>
+
+              <div className="setting-row" style={{ marginLeft: '20px', marginBottom: '15px', opacity: (notificationSettings.enabled && notificationSettings.soundEnabled) ? 1 : 0.5 }}>
+                <label style={{ marginBottom: '5px', display: 'block', fontSize: '14px' }}>URL do Som MP3:</label>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <input 
+                    type="text" 
+                    disabled={!notificationSettings.enabled || !notificationSettings.soundEnabled}
+                    value={notificationSettings.soundUrl}
+                    onChange={(e) => setNotificationSettings({...notificationSettings, soundUrl: e.target.value})}
+                    placeholder="Link do arquivo MP3..."
+                    style={{ flex: 1, padding: '8px' }}
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => {
+                      const audio = new Audio(notificationSettings.soundUrl);
+                      audio.play().catch(err => alert("Erro ao tocar som. Verifique o link."));
+                    }}
+                    disabled={!notificationSettings.enabled || !notificationSettings.soundEnabled}
+                    style={{ padding: '8px 12px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer' }}
+                  >
+                    ▶️
+                  </button>
+                </div>
+              </div>
+
+              <div className="setting-row" style={{ marginLeft: '20px', marginBottom: '15px', opacity: notificationSettings.enabled ? 1 : 0.5 }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+                  <input 
+                    type="checkbox" 
+                    disabled={!notificationSettings.enabled}
+                    checked={notificationSettings.browserEnabled} 
+                    onChange={(e) => setNotificationSettings({...notificationSettings, browserEnabled: e.target.checked})}
+                    style={{ width: 'auto' }}
+                  />
+                  Notificações do Navegador
+                </label>
+                
+                <div style={{ marginLeft: '25px', marginTop: '5px', fontSize: '13px' }}>
+                  Permissão: 
+                  <span style={{ 
+                    fontWeight: 'bold', 
+                    marginLeft: '5px',
+                    color: browserPermission === 'granted' ? '#2e7d32' : (browserPermission === 'denied' ? '#c62828' : '#f57c00')
+                  }}>
+                    {browserPermission === 'granted' ? 'Autorizado' : (browserPermission === 'denied' ? 'Bloqueado' : 'Não Solicitado')}
+                  </span>
+                  
+                  {browserPermission !== 'granted' && (
+                    <button 
+                      type="button"
+                      onClick={handleRequestPermission}
+                      style={{ 
+                        marginLeft: '10px', 
+                        padding: '4px 8px', 
+                        fontSize: '11px', 
+                        background: '#128C7E', 
+                        color: 'white', 
+                        border: 'none', 
+                        borderRadius: '4px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      Autorizar no Chrome
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="modal-actions" style={{ marginTop: '20px' }}>
+              <button onClick={() => setShowNotificationModal(false)} className="btn-save">Fechar</button>
+            </div>
           </div>
         </div>
       )}
