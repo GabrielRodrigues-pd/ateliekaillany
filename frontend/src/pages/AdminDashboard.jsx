@@ -48,7 +48,7 @@ export default function AdminDashboard() {
       enabled: true,
       soundEnabled: true,
       browserEnabled: true,
-      soundUrl: 'https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3'
+      soundUrl: 'https://assets.mixkit.co/active_storage/sfx/2256/2256-preview.mp3'
     };
   });
   const [showNotificationModal, setShowNotificationModal] = useState(false);
