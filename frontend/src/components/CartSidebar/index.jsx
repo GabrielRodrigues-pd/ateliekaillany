@@ -20,6 +20,7 @@ export default function CartSidebar() {
   const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [whatsappUrl, setWhatsappUrl] = useState("");
   const [formData, setFormData] = useState({
     nome: "",
     contato: "",
@@ -112,9 +113,10 @@ export default function CartSidebar() {
     message += `---------------------------------\n`;
     message += `*Acompanhamento:* Vou acompanhar o status do meu pedido pelo site na seção "Meus Pedidos"!`;
 
-    // Encode message and open WhatsApp
+    // Encode message and prepare WhatsApp URL
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    setWhatsappUrl(url);
     
     // Finalize process
     setIsSubmitting(true);
@@ -124,12 +126,8 @@ export default function CartSidebar() {
       setIsSubmitting(false);
       setShowSuccessModal(true); // Exibe o modal de sucesso
       
-      // Limpa após um tempo e abre o WhatsApp
-      setTimeout(() => {
-        clearCart();
-        setShowSuccessModal(false);
-        window.open(whatsappUrl, "_blank");
-      }, 3000); // 3 segundos para ver a mensagem de sucesso
+      // Limpar carrinho após sucesso
+      clearCart();
     }, 1000);
   };
 
@@ -291,11 +289,25 @@ export default function CartSidebar() {
             <h3>Pedido Recebido!</h3>
             <p>
               Obrigado, <strong>{formData.nome}</strong>! <br />
-              Seu pedido foi registrado e você pode acompanhar o status em <strong>"Meus Pedidos"</strong>. Redirecionando para o WhatsApp...
+              Seu pedido foi registrado e você pode acompanhar o status em <strong>"Meus Pedidos"</strong>.
             </p>
-            <div className="success-loader-bar">
-              <div className="loader-progress"></div>
-            </div>
+            
+            <a 
+              href={whatsappUrl} 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              className="whatsapp-redirect-btn"
+              onClick={() => setShowSuccessModal(false)}
+            >
+              Enviar via WhatsApp
+            </a>
+            
+            <button 
+              className="close-success-btn" 
+              onClick={() => setShowSuccessModal(false)}
+            >
+              Fechar
+            </button>
           </div>
         </div>
       )}
