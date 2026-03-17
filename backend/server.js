@@ -24,19 +24,20 @@ app.use(helmet({
 app.use(morgan('dev')); // Logging de requisições
 
 // Limitação de Taxa (Rate Limiting)
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // limite de 100 requisições por IP
-  message: 'Muitas requisições vindas deste IP, tente novamente em 15 minutos.'
-});
-app.use('/api/', limiter);
-
 // CORS restrito (Whitelist)
 const corsOptions = {
   origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : '*',
   optionsSuccessStatus: 200
 };
 app.use(cors(corsOptions));
+
+// Limitação de Taxa (Rate Limiting)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 500, // Aumentado para 500 para suportar o polling do admin
+  message: 'Muitas requisições vindas deste IP, tente novamente em 15 minutos.'
+});
+app.use('/api/', limiter);
 
 app.use(express.json()); // Permite ler JSON no corpo das requisições
 
