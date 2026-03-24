@@ -6,12 +6,14 @@ import "./CardsIndulge.css";
 function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, isAvailable = true, isLowStock = false }) {
   const { addToCart } = useCart();
   
-  const isTrio = categoria === "Trio de Ovos";
-  const isMini = categoria === "Colher 50g";
-  const isTrufado = categoria === "Trufados";
+  const normalizedCategory = typeof categoria === 'string' ? categoria.trim().toLowerCase() : "";
+  const isTrio = normalizedCategory === "trio de ovos";
+  const isKitDegustacao = normalizedCategory === "kit degustação" || normalizedCategory === "kit degustacao";
+  const isMini = normalizedCategory === "colher 50g" || normalizedCategory === "ovo de colher 50g";
+  const isTrufado = normalizedCategory === "trufados";
   const availableSizes = prices && typeof prices === 'object' ? Object.keys(prices) : [];
   const hasMultiplePrices = availableSizes.length > 0;
-  const hasOptions = hasMultiplePrices || isTrio || isMini || isTrufado;
+  const hasOptions = hasMultiplePrices || isTrio || isMini || isTrufado || isKitDegustacao;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState(hasMultiplePrices ? availableSizes[0] : null);
@@ -19,6 +21,13 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, i
     flavor1: "",
     flavor2: "",
     flavor3: ""
+  });
+
+  const [selectedKitFlavors, setSelectedKitFlavors] = useState({
+    flavor1: "",
+    flavor2: "",
+    flavor3: "",
+    flavor4: ""
   });
 
   const flavorOptions = [
@@ -51,6 +60,10 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, i
 
   const handleFlavorChange = (field, value) => {
     setSelectedFlavors(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleKitFlavorChange = (field, value) => {
+    setSelectedKitFlavors(prev => ({ ...prev, [field]: value }));
   };
 
   const currentPrice = hasMultiplePrices ? prices[selectedSize] : price;
@@ -89,12 +102,23 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, i
       }
       finalId += `-[${selectedFlavors.flavor1}]`;
       finalTitle += ` - Sabor: ${selectedFlavors.flavor1}`;
+    } else if (isKitDegustacao) {
+      if (!selectedKitFlavors.flavor1 || !selectedKitFlavors.flavor2 || !selectedKitFlavors.flavor3 || !selectedKitFlavors.flavor4) {
+        alert("Por favor, selecione os 4 sabores para o Kit Degustação.");
+        return;
+      }
+      const flavorsStr = `${selectedKitFlavors.flavor1}, ${selectedKitFlavors.flavor2}, ${selectedKitFlavors.flavor3}, ${selectedKitFlavors.flavor4}`;
+      finalId += `-[${flavorsStr}]`;
+      finalTitle += ` - Sabores: ${flavorsStr}`;
     }
 
     addToCart({ id: finalId, title: finalTitle, price: currentPrice, img });
     
     if (isTrio || isMini || isTrufado) {
       setSelectedFlavors({ flavor1: "", flavor2: "", flavor3: "" });
+    }
+    if (isKitDegustacao) {
+      setSelectedKitFlavors({ flavor1: "", flavor2: "", flavor3: "", flavor4: "" });
     }
     setIsModalOpen(false);
   };
@@ -264,6 +288,52 @@ function CardsIndulge({ id, categoria, title, descri, img, alt, price, prices, i
                     <option value="" disabled>Selecione um Sabor</option>
                     {trufadoOptions.map((flavor) => (
                       <option key={`m-trufado-${flavor}`} value={flavor}>{flavor}</option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
+              {isKitDegustacao && (
+                <div className="modal-section card-flavors-selector">
+                  <span className="section-label">Escolha os 4 sabores:</span>
+                  <select
+                    value={selectedKitFlavors.flavor1}
+                    onChange={(e) => handleKitFlavorChange("flavor1", e.target.value)}
+                    className="flavor-select"
+                  >
+                    <option value="" disabled>Selecione o Sabor 1</option>
+                    {flavorOptions.map((flavor) => (
+                      <option key={`m-k1-${flavor}`} value={flavor}>{flavor}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={selectedKitFlavors.flavor2}
+                    onChange={(e) => handleKitFlavorChange("flavor2", e.target.value)}
+                    className="flavor-select"
+                  >
+                    <option value="" disabled>Selecione o Sabor 2</option>
+                    {flavorOptions.map((flavor) => (
+                      <option key={`m-k2-${flavor}`} value={flavor}>{flavor}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={selectedKitFlavors.flavor3}
+                    onChange={(e) => handleKitFlavorChange("flavor3", e.target.value)}
+                    className="flavor-select"
+                  >
+                    <option value="" disabled>Selecione o Sabor 3</option>
+                    {flavorOptions.map((flavor) => (
+                      <option key={`m-k3-${flavor}`} value={flavor}>{flavor}</option>
+                    ))}
+                  </select>
+                  <select
+                    value={selectedKitFlavors.flavor4}
+                    onChange={(e) => handleKitFlavorChange("flavor4", e.target.value)}
+                    className="flavor-select"
+                  >
+                    <option value="" disabled>Selecione o Sabor 4</option>
+                    {flavorOptions.map((flavor) => (
+                      <option key={`m-k4-${flavor}`} value={flavor}>{flavor}</option>
                     ))}
                   </select>
                 </div>
