@@ -27,7 +27,8 @@ export default function AdminDashboard() {
     weight: '',
     imageUrl: '',
     isAvailable: true,
-    isLowStock: false
+    isLowStock: false,
+    prices: {}
   });
   const [isAddingProduct, setIsAddingProduct] = useState(false);
   
@@ -329,7 +330,7 @@ export default function AdminDashboard() {
     try {
       // Basic validation: ensure prices Map doesn't have empty keys if hasMultiplePrices
       const cleanedPrices = {};
-      Object.entries(productFormData.prices).forEach(([w, p]) => {
+      Object.entries(productFormData.prices || {}).forEach(([w, p]) => {
         if (w.trim() && p > 0) {
           cleanedPrices[w.trim()] = p;
         }
@@ -629,7 +630,7 @@ export default function AdminDashboard() {
                 setEditingProduct(null);
                 setProductFormData({
                   title: '', description: '', price: 0, category: 'Ovos de Colher',
-                  filling: '', weight: '', imageUrl: '', isAvailable: true
+                  filling: '', weight: '', imageUrl: '', isAvailable: true, isLowStock: false, prices: {}
                 });
               }}>
                 + Novo Ovo
@@ -991,6 +992,7 @@ export default function AdminDashboard() {
                     <option value="Trio de Ovos">Trio de Ovos</option>
                     <option value="Infantil">Infantil</option>
                     <option value="Diversos">Diversos</option>
+                    <option value="Kit Degustação">Kit Degustação</option>
                   </select>
                 </div>
                 <div className="form-group">

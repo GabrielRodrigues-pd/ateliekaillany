@@ -16,10 +16,13 @@ export const getProducts = async (req, res) => {
   try {
     const { category, filling, sort } = req.query;
     
-    // Construir objeto de filtro
     let filter = {};
     if (category && category !== 'Todos') {
-      filter.category = category;
+      if (category === 'Colher 50g') {
+        filter.category = { $in: ['Colher 50g', 'Kit Degustação'] };
+      } else {
+        filter.category = category;
+      }
     }
     if (filling && filling !== 'Todos') {
       filter.filling = filling;
