@@ -53,15 +53,15 @@ export default function AdminDashboard() {
   });
   const [showNotificationModal, setShowNotificationModal] = useState(false);
   const lastProcessedOrderIdRef = useRef(null);
-  const [browserPermission, setBrowserPermission] = useState(Notification.permission);
+  const [browserPermission, setBrowserPermission] = useState('Notification' in window ? Notification.permission : 'default');
 
   useEffect(() => {
     localStorage.setItem('adminNotificationSettings', JSON.stringify(notificationSettings));
   }, [notificationSettings]);
 
   useEffect(() => {
-    if (notificationSettings.browserEnabled && Notification.permission === 'default') {
-      Notification.requestPermission();
+    if (notificationSettings.browserEnabled && 'Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission().catch(e => console.error(e));
     }
   }, [notificationSettings.browserEnabled]);
 
@@ -126,12 +126,20 @@ export default function AdminDashboard() {
   };
 
   const handleRequestPermission = async () => {
-    const permission = await Notification.requestPermission();
-    setBrowserPermission(permission);
-    if (permission === 'granted') {
-      alert("Notificações autorizadas com sucesso!");
-    } else {
-      alert("Permissão de notificação: " + permission);
+    if (!('Notification' in window)) {
+      alert("Seu navegador não suporta notificações.");
+      return;
+    }
+    try {
+      const permission = await Notification.requestPermission();
+      setBrowserPermission(permission);
+      if (permission === 'granted') {
+        alert("Notificações autorizadas com sucesso!");
+      } else {
+        alert("Permissão de notificação: " + permission);
+      }
+    } catch (e) {
+      console.error(e);
     }
   };
 
@@ -142,7 +150,7 @@ export default function AdminDashboard() {
       audio.play().catch(e => console.error("Erro ao reproduzir som:", e));
     }
 
-    if (notificationSettings.browserEnabled && Notification.permission === 'granted') {
+    if (notificationSettings.browserEnabled && 'Notification' in window && Notification.permission === 'granted') {
       try {
         new Notification('Novo Pedido Recebido! 🚀', {
           body: `Cliente: ${order.customerName}\nProduto: ${order.product}`,
@@ -152,7 +160,7 @@ export default function AdminDashboard() {
         console.error("Erro ao disparar notificação do navegador:", e);
       }
     } else {
-      console.log("Browser notifications disabled or permission not granted. Permission:", Notification.permission);
+      console.log("Browser notifications disabled or permission not granted.");
     }
   };
 

@@ -17,13 +17,10 @@
   width: 95%;
   margin: 0 auto;
   padding: 0 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
 .admin-main {
-  display: block; /* Override flex */
+  display: block;
 }
 
 .admin-header h1 {
@@ -646,6 +643,24 @@
 }
 
 @media (max-width: 768px) {
+  .header-content {
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px 0;
+  }
+  
+  .header-right {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 10px;
+  }
+  
+  .admin-tabs {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
   .grid-form {
     grid-template-columns: 1fr;
   }
