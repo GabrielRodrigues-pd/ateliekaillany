@@ -218,6 +218,11 @@ export default function AdminDashboard() {
     return new Date(dateString).toLocaleDateString('pt-BR', options);
   };
 
+  const formatJustDate = (dateString) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('pt-BR', { timeZone: 'UTC' });
+  };
+
   const formatPrice = (price) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
   };
@@ -526,7 +531,13 @@ export default function AdminDashboard() {
                     )}
                     {(order.scheduledDeliveryDate || order.scheduledDeliveryLocation) && (
                       <div className="scheduled-info-admin">
-                        📍 {order.scheduledDeliveryLocation} - {order.scheduledDeliveryDate ? formatDate(order.scheduledDeliveryDate) : 'Data não definida'}
+                        {order.scheduledDeliveryLocation && order.scheduledDeliveryDate ? (
+                          <>📍 {order.scheduledDeliveryLocation} - {formatJustDate(order.scheduledDeliveryDate)}</>
+                        ) : order.scheduledDeliveryLocation ? (
+                          <>📍 {order.scheduledDeliveryLocation}</>
+                        ) : (
+                          <>🗓️ Data de Entrega Prevista: {formatJustDate(order.scheduledDeliveryDate)}</>
+                        )}
                       </div>
                     )}
                   </td>

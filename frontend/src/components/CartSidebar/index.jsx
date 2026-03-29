@@ -24,6 +24,7 @@ export default function CartSidebar() {
   const [whatsappUrl, setWhatsappUrl] = useState("");
   const [formData, setFormData] = useState({
     nome: "",
+    dataEntrega: "",
     contato: "",
     endereco: "",
     cidade: "Emas - PB", // Default suggestion
@@ -85,6 +86,7 @@ export default function CartSidebar() {
         quantity: totalQuantity,
         city: formData.cidade,
         totalPrice: cartTotal,
+        scheduledDeliveryDate: formData.dataEntrega || null,
         userId: user ? (user.id || user._id) : null // Link order to user if logged in (safely)
       });
       console.log('Pedido salvo com sucesso para o usuário:', user ? (user.id || user._id) : 'Visitante');
@@ -98,6 +100,10 @@ export default function CartSidebar() {
     // 1. Build Customer Data Header
     let message = `*NOVO PEDIDO - ATELIÊ KAILLANY NUNES*\n\n`;
     message += `👤 *Nome:* ${formData.nome}\n`;
+    if (formData.dataEntrega) {
+      const [year, month, day] = formData.dataEntrega.split('-');
+      message += `📅 *Data de Entrega:* ${day}/${month}/${year}\n`;
+    }
     message += `📞 *Contato:* ${formData.contato}\n`;
     message += `📍 *Endereço:* ${formData.endereco}\n`;
     message += `🏙️ *Cidade:* ${formData.cidade}\n\n`;
@@ -231,6 +237,18 @@ export default function CartSidebar() {
                   value={formData.nome}
                   onChange={handleInputChange}
                   placeholder="Seu nome"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="dataEntrega">Data Prevista para Entrega *</label>
+                <input
+                  type="date"
+                  id="dataEntrega"
+                  name="dataEntrega"
+                  required
+                  value={formData.dataEntrega}
+                  onChange={handleInputChange}
                 />
               </div>
               
