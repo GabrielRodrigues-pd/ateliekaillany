@@ -345,12 +345,12 @@ export default function AdminDashboard() {
 
       if (editingProduct) {
         // Update
-        const response = await api.put(`/products/${editingProduct._id}`, finalData);
+        const response = await api.put(`/products/admin/${editingProduct._id}`, finalData);
         setProducts(products.map(p => p._id === editingProduct._id ? response.data : p));
         alert('Produto atualizado!');
       } else {
         // Create
-        const response = await api.post('/products', finalData);
+        const response = await api.post('/products/admin/', finalData);
         setProducts([response.data, ...products]);
         alert('Produto criado com sucesso!');
       }
@@ -391,7 +391,7 @@ export default function AdminDashboard() {
   const handleToggleAvailability = async (product) => {
     try {
       const newStatus = !product.isAvailable;
-      const response = await api.put(`/products/${product._id}`, { isAvailable: newStatus });
+      const response = await api.put(`/products/admin/${product._id}`, { isAvailable: newStatus });
       setProducts(products.map(p => p._id === product._id ? response.data : p));
     } catch (err) {
       alert('Erro ao mudar disponibilidade.');
@@ -401,7 +401,7 @@ export default function AdminDashboard() {
   const handleToggleLowStock = async (product) => {
     try {
       const newStatus = !product.isLowStock;
-      const response = await api.put(`/products/${product._id}`, { isLowStock: newStatus });
+      const response = await api.put(`/products/admin/${product._id}`, { isLowStock: newStatus });
       setProducts(products.map(p => p._id === product._id ? response.data : p));
     } catch (err) {
       alert('Erro ao mudar status de estoque baixo.');
@@ -411,7 +411,7 @@ export default function AdminDashboard() {
   const handleDeleteProduct = async (productId) => {
     if (!window.confirm('Excluir este produto permanentemente?')) return;
     try {
-      await api.delete(`/products/${productId}`);
+      await api.delete(`/products/admin/${productId}`);
       setProducts(products.filter(p => p._id !== productId));
     } catch (err) {
       alert('Erro ao excluir produto.');
