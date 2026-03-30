@@ -449,8 +449,12 @@ export default function AdminDashboard() {
       
       let matchDate = true;
       if (appliedFilters.date) {
-        const orderDate = new Date(order.createdAt).toISOString().split('T')[0];
-        matchDate = orderDate === appliedFilters.date;
+        if (!order.scheduledDeliveryDate) {
+          matchDate = false;
+        } else {
+          const orderDate = new Date(order.scheduledDeliveryDate).toISOString().split('T')[0];
+          matchDate = orderDate === appliedFilters.date;
+        }
       }
 
       return matchCustomer && matchPhone && matchCity && matchProduct && matchDate;
@@ -817,7 +821,7 @@ export default function AdminDashboard() {
                     />
                   </div>
                   <div className="filter-group">
-                    <label>Data</label>
+                    <label>Data de Entrega</label>
                     <input 
                       type="date" 
                       name="date" 
