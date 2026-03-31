@@ -34,18 +34,20 @@ export default function CartSidebar() {
   useEffect(() => {
     // Priority: Logged in user info
     if (user) {
-      setFormData(prev => ({
-        ...prev,
-        nome: user.name || prev.nome,
-        // We might not have phone from Google Auth usually
-      }));
+      setTimeout(() => {
+        setFormData(prev => ({
+          ...prev,
+          nome: user.name || prev.nome,
+          // We might not have phone from Google Auth usually
+        }));
+      }, 0);
     }
 
     const savedData = localStorage.getItem("atelieCustomerData");
     if (savedData) {
       try {
         const parsed = JSON.parse(savedData);
-        setFormData(prev => ({ ...prev, ...parsed }));
+        setTimeout(() => setFormData(prev => ({ ...prev, ...parsed })), 0);
       } catch (e) {
         console.error("Failed to parse saved customer data", e);
       }

@@ -1,8 +1,7 @@
 import "./CardsTestimon.css";
-import user from "../../assets/user.avif";
 import { Quote, Star } from "lucide-react";
 
-function CardsTestimon({ descri, name, subTexto }) {
+function CardsTestimon({ descri }) {
   return (
     <article className="testimonial-card">
       <div className="quote-icon-container">

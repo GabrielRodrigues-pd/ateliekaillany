@@ -11,11 +11,11 @@ export default function OptimizedImage({ src, alt, className = "", ...props }) {
 
   useEffect(() => {
     // Reset state if src changes
-    setIsLoaded(false);
+    setTimeout(() => setIsLoaded(false), 0);
     
     // Check if image is already loaded (from cache)
     if (imgRef.current && imgRef.current.complete) {
-      setIsLoaded(true);
+      setTimeout(() => setIsLoaded(true), 0);
     }
   }, [src]);
 

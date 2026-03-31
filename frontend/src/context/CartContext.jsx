@@ -1,6 +1,8 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { setCookie, getCookie, removeCookie } from "../utils/cookies";
 
+/* eslint-disable react-refresh/only-export-components */
+
 const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);

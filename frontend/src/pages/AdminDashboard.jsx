@@ -91,9 +91,10 @@ export default function AdminDashboard() {
     }, 30000);
 
     return () => clearInterval(pollInterval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
-  const checkForNewOrders = async () => {
+  async function checkForNewOrders() {
     if (!notificationSettings.enabled) return;
     console.log("Checking for new orders... Last ID:", lastProcessedOrderIdRef.current);
 
@@ -166,7 +167,7 @@ export default function AdminDashboard() {
     }
   };
 
-  const fetchOrders = async () => {
+  async function fetchOrders() {
     setIsLoading(true);
     try {
       const endpoint = activeTab === 'ativos' ? '/orders/admin/all' : '/orders/admin/history?includeDeleted=true';
@@ -303,13 +304,14 @@ export default function AdminDashboard() {
 
   // --- PRODUCT MANAGEMENT LOGIC ---
 
-  const fetchProducts = async () => {
+  async function fetchProducts() {
     setIsLoading(true);
     try {
       const response = await api.get('/products');
       setProducts(response.data);
       setIsLoading(false);
     } catch (err) {
+      console.error(err);
       setError('Falha ao carregar os produtos.');
       setIsLoading(false);
     }
@@ -395,6 +397,7 @@ export default function AdminDashboard() {
       const response = await api.put(`/products/admin/${product._id}`, { isAvailable: newStatus });
       setProducts(products.map(p => p._id === product._id ? response.data : p));
     } catch (err) {
+      console.error(err);
       alert('Erro ao mudar disponibilidade.');
     }
   };
@@ -405,6 +408,7 @@ export default function AdminDashboard() {
       const response = await api.put(`/products/admin/${product._id}`, { isLowStock: newStatus });
       setProducts(products.map(p => p._id === product._id ? response.data : p));
     } catch (err) {
+      console.error(err);
       alert('Erro ao mudar status de estoque baixo.');
     }
   };
@@ -415,6 +419,7 @@ export default function AdminDashboard() {
       await api.delete(`/products/admin/${productId}`);
       setProducts(products.filter(p => p._id !== productId));
     } catch (err) {
+      console.error(err);
       alert('Erro ao excluir produto.');
     }
   };
@@ -1196,7 +1201,7 @@ export default function AdminDashboard() {
                     type="button"
                     onClick={() => {
                       const audio = new Audio(notificationSettings.soundUrl);
-                      audio.play().catch(err => alert("Erro ao tocar som. Verifique o link."));
+                      audio.play().catch(() => alert("Erro ao tocar som. Verifique o link."));
                     }}
                     disabled={!notificationSettings.enabled || !notificationSettings.soundEnabled}
                     style={{ padding: '8px 12px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer' }}

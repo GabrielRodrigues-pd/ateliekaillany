@@ -1,18 +1,16 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { ExternalLink, X } from "lucide-react";
 import { isInAppBrowser } from "../../utils/browserDetection";
 import "./style.css";
 
 export default function InAppBrowserNotice() {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    // Show only if in-app browser and not manually closed in this session
-    const isClosed = sessionStorage.getItem("atelie_inapp_notice_closed");
-    if (isInAppBrowser() && !isClosed) {
-      setIsVisible(true);
+  const [isVisible, setIsVisible] = useState(() => {
+    if (typeof sessionStorage !== "undefined") {
+      const isClosed = sessionStorage.getItem("atelie_inapp_notice_closed");
+      return isInAppBrowser() && !isClosed;
     }
-  }, []);
+    return false;
+  });
 
   const handleClose = () => {
     setIsVisible(false);
