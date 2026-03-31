@@ -436,9 +436,9 @@ export default function AdminDashboard() {
   };
 
   const getRevenue = () => {
-    // Faturamento apenas de pedidos entregues (concluídos)
-    const entregues = orders.filter((o) => o.status === 'entregue');
-    return entregues.reduce((total, order) => total + (order.totalPrice || 0), 0);
+    // Faturamento de todos os pedidos ativos
+    const ativos = orders.filter((o) => o.status !== 'cancelado' && !o.isDeleted);
+    return ativos.reduce((total, order) => total + (order.totalPrice || 0), 0);
   };
 
   const counts = getStatusCounts();
@@ -783,7 +783,7 @@ export default function AdminDashboard() {
 
                   <div className="summary-card card-revenue">
                     <div className="card-info">
-                      <h3>Faturamento (Entregues)</h3>
+                      <h3>Faturamento Total</h3>
                       <p className="card-value revenue-text">{formatPrice(revenue)}</p>
                     </div>
                     <div className="card-icon">💰</div>

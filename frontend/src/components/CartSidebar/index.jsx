@@ -71,6 +71,9 @@ export default function CartSidebar() {
   const submitOrder = async (e) => {
     e.preventDefault();
 
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     // ---- NEW: Save customer data to localStorage for future orders ----
     localStorage.setItem("atelieCustomerData", JSON.stringify(formData));
 
@@ -126,8 +129,6 @@ export default function CartSidebar() {
     setWhatsappUrl(url);
     
     // Finalize process
-    setIsSubmitting(true);
-    
     setTimeout(() => {
       setIsCheckoutModalOpen(false);
       setIsSubmitting(false);
