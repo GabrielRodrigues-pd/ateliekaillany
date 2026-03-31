@@ -16,12 +16,12 @@
   background-size: cover;
   width: 320px !important; /* Fixed width for better 3D depth effect */
   height: 480px;
-  filter: blur(2px); /* Unfocused objects get blurry */
-  transition: filter 0.5s ease;
+  opacity: 0.5; /* Swapped from filter: blur for iOS performance */
+  transition: opacity 0.5s ease;
 }
 
 .swiper-slide-active.creation-slide {
-  filter: blur(0px); /* Active is sharp */
+  opacity: 1; /* Active is sharp/solid */
 }
 
 @media (min-width: 768px) {
