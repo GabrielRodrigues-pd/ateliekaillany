@@ -1,5 +1,6 @@
 .admin-dashboard {
   min-height: 100vh;
+  min-height: 100dvh;
   background-color: #f5f7fa;
   font-family: var(--font-primary);
 }
@@ -409,6 +410,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   background: rgba(0,0,0,0.6);
   backdrop-filter: blur(2px);
   display: flex;

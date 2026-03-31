@@ -9,6 +9,7 @@
 
 html {
   scroll-behavior: smooth;
+  overscroll-behavior-x: none; /* Previne voltar/avançar acidental no Safari mobile ao dar swipe horizontal */
 }
 
 /* CUSTOM SCROLLBAR */
@@ -54,7 +55,13 @@ h3 {
 
 a {
   text-decoration: none;
+  touch-action: manipulation;
 }
+
+button, input, select, textarea {
+  touch-action: manipulation; /* Remove o delay de 300ms no zoom duplo iOS/Android e alivia engine de toque */
+}
+
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,

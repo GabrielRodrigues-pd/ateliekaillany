@@ -207,6 +207,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 10000;
   display: flex;
@@ -358,6 +359,7 @@
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   background-color: rgba(0, 0, 0, 0.4);
   z-index: 20000;
   display: flex;

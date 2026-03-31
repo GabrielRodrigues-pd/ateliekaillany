@@ -5,7 +5,7 @@ import "./OptimizedImage.css";
  * A wrapper for standard <img> tags that provides a smooth blur-up 
  * loading effect and enforces lazy loading for better performance.
  */
-export default function OptimizedImage({ src, alt, className = "", ...props }) {
+export default function OptimizedImage({ src, alt, className = "", priority = false, ...props }) {
   const [isLoaded, setIsLoaded] = useState(false);
   const imgRef = useRef(null);
 
@@ -29,7 +29,8 @@ export default function OptimizedImage({ src, alt, className = "", ...props }) {
         ref={imgRef}
         src={src}
         alt={alt}
-        loading="lazy"
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
         decoding="async"
         className={`optimized-image ${isLoaded ? "loaded" : "loading"}`}
         onLoad={() => setIsLoaded(true)}

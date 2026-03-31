@@ -54,6 +54,19 @@ export default function CartSidebar() {
     }
   }, [user]);
 
+  const isAnyModalOpen = isCartOpen || isCheckoutModalOpen || showSuccessModal;
+
+  useEffect(() => {
+    if (isAnyModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isAnyModalOpen]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({

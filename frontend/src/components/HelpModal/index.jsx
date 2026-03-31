@@ -1,7 +1,15 @@
+import { useEffect } from "react";
 import { X, HelpCircle, LayoutGrid, User, ShoppingBag, CheckCircle } from "lucide-react";
 import "./HelpModal.css";
 
 export default function HelpModal({ onClose }) {
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
+
   const helpItems = [
     {
       icon: <LayoutGrid size={24} />,

@@ -28,6 +28,7 @@ export default function Hero() {
             <OptimizedImage
               src={img}
               alt="Ovo de Páscoa Artesanal Ateliê Kaillany Nunes"
+              priority={true}
             />
           </div>
         </div>
