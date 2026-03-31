@@ -1,12 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 import api from '../services/api';
 import './AdminDashboard.css';
 
 export default function AdminDashboard() {
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
-  const [activeTab, setActiveTab] = useState('ativos'); // 'ativos', 'cancelados', 'produtos'
+  const [activeTab, setActiveTab] = useState('ativos'); // 'ativos', 'cancelados', 'produtos', 'relatorios'
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -444,6 +445,25 @@ export default function AdminDashboard() {
   const counts = getStatusCounts();
   const revenue = getRevenue();
   
+  const generateReportData = () => {
+    // Extra filter just for safety, but data comes already clean
+    const validOrders = orders.filter(o => !o.isDeleted && o.status !== 'cancelado');
+    const productCounts = {};
+    validOrders.forEach(o => {
+      const p = o.product ? o.product.trim() : 'Outros';
+      productCounts[p] = (productCounts[p] || 0) + (o.quantity || 1);
+    });
+    
+    const data = Object.keys(productCounts).map(key => ({
+      name: key,
+      quantidade: productCounts[key]
+    }));
+    
+    return data.sort((a, b) => b.quantidade - a.quantidade);
+  };
+  
+  const reportData = generateReportData();
+  
   // Filtering logic for orders
   const filterOrders = (orderList) => {
     return orderList.filter(order => {
@@ -638,6 +658,12 @@ export default function AdminDashboard() {
               >
                 Lixeira
               </button>
+              <button 
+                className={`tab-btn ${activeTab === 'relatorios' ? 'active' : ''}`}
+                onClick={() => setActiveTab('relatorios')}
+              >
+                Relatórios
+              </button>
             </nav>
             {activeTab === 'produtos' && (
               <button className="add-product-btn" onClick={() => {
@@ -743,6 +769,53 @@ export default function AdminDashboard() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+              </div>
+            ) : activeTab === 'relatorios' ? (
+              <div className="reports-section">
+                <h2 className="table-title">Relatório de Vendas (Histórico T. / Ativos)</h2>
+                
+                <div className="reports-dashboard">
+                  <div className="reports-counters">
+                     <h3>Ranking de Produtos</h3>
+                     <div className="ranking-list">
+                       {reportData.map((item, index) => (
+                         <div key={item.name} className="ranking-item">
+                           <span className="ranking-pos">#{index + 1}</span>
+                           <span className="ranking-name">{item.name}</span>
+                           <span className="ranking-qtd">{item.quantidade} un.</span>
+                         </div>
+                       ))}
+                     </div>
+                  </div>
+                  
+                  <div className="reports-chart">
+                    <h3>Gráfico de Vendas (Top 10)</h3>
+                    <div className="chart-wrapper" style={{ width: '100%', height: '420px', overflowX: 'auto', overflowY: 'hidden' }}>
+                      <div style={{ minWidth: '500px', height: '100%' }}>
+                        <ResponsiveContainer>
+                          <BarChart data={reportData.slice(0, 10)} margin={{ top: 20, right: 30, left: 10, bottom: 100 }}>
+                            <CartesianGrid strokeDasharray="3 3" opacity={0.2} vertical={false} />
+                            <XAxis 
+                              dataKey="name" 
+                              angle={-45} 
+                              textAnchor="end" 
+                              interval={0} 
+                              tick={{ fill: 'var(--text-color)', fontSize: 11 }} 
+                              tickFormatter={(value) => value.length > 25 ? value.substring(0, 25) + '...' : value}
+                            />
+                            <YAxis allowDecimals={false} tick={{ fill: 'var(--text-color)' }} />
+                            <Tooltip 
+                              contentStyle={{ backgroundColor: 'var(--bg-glass)', borderColor: 'var(--accent-gold)', borderRadius: '12px' }}
+                              itemStyle={{ color: 'var(--accent-gold)', fontWeight: 'bold' }}
+                              cursor={{ fill: 'rgba(212, 175, 55, 0.1)' }}
+                            />
+                            <Bar dataKey="quantidade" fill="var(--accent-gold)" radius={[4, 4, 0, 0]} name="Qtd. Vendida" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (

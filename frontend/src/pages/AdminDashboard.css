@@ -767,3 +767,108 @@
     gap: 10px;
   }
 }
+
+/* ========================================= */
+/* REPORTS TAB (NEW ESTATÍSTICAS)            */
+/* ========================================= */
+
+.reports-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reports-dashboard {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 25px;
+  margin-top: 10px;
+}
+
+.reports-counters, .reports-chart {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  border: 1px solid #edf2f7;
+}
+
+.reports-counters h3, .reports-chart h3 {
+  font-size: 16px;
+  color: #333;
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* Scrollbar styling for ranking list */
+.ranking-list::-webkit-scrollbar { width: 6px; }
+.ranking-list::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+.ranking-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  background: #f8fafc;
+  border-radius: 8px;
+  transition: transform 0.2s, background 0.2s;
+  border-left: 4px solid var(--accent-gold);
+}
+
+.ranking-item:hover {
+  transform: translateX(5px);
+  background: #f1f5f9;
+}
+
+.ranking-pos {
+  font-weight: 800;
+  color: var(--accent-gold);
+  width: 35px;
+  font-size: 16px;
+}
+
+.ranking-name {
+  flex: 1;
+  font-weight: 600;
+  color: #334155;
+  font-size: 14px;
+}
+
+.ranking-qtd {
+  font-weight: 700;
+  color: var(--primary);
+  background: #ffe4e6;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+.chart-wrapper {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 20px 10px 10px 5px;
+  border: 1px solid #f1f5f9;
+}
+
+@media (max-width: 1024px) {
+  .reports-dashboard {
+    grid-template-columns: 1fr;
+  }
+}
