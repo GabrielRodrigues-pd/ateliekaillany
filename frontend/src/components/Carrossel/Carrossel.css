@@ -36,9 +36,10 @@
   height: 100%;
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15); /* Slightly lighter shadow */
   position: relative;
   background: var(--bg-main, #f7e9de);
+  will-change: transform; /* Hint to browser for smoother transitions */
 }
 
 .card-image-wrapper {
@@ -51,7 +52,8 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 1);
+  will-change: transform;
 }
 
 /* When the slide is active, slowly zoom the image for a premium feel */
