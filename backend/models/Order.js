@@ -31,6 +31,11 @@ const orderSchema = new mongoose.Schema({
     enum: ['novo', 'em_producao', 'pronto', 'entregue', 'cancelado'],
     default: 'novo'
   },
+  paymentStatus: {
+    type: String,
+    enum: ['pendente', 'pago', 'cancelado'],
+    default: 'pendente'
+  },
   cancellationReason: {
     type: String,
     default: ''

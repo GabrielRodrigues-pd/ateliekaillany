@@ -242,6 +242,18 @@ export default function AdminDashboard() {
     }
   };
 
+  const handlePaymentStatusChange = async (orderId, newStatus) => {
+    try {
+      await api.patch(`/orders/admin/payment/${orderId}`, { paymentStatus: newStatus });
+      setOrders(orders.map(order => 
+        order._id === orderId ? { ...order, paymentStatus: newStatus } : order
+      ));
+    } catch (err) {
+      console.error("Erro ao atualizar status de pagamento:", err);
+      alert("Não foi possível atualizar o status de pagamento. Tente novamente.");
+    }
+  };
+
   const handleScheduleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -542,6 +554,7 @@ export default function AdminDashboard() {
                 <th>Produto</th>
                 <th>Qtd</th>
                 <th>Total</th>
+                <th>Pagamento</th>
                 <th>Status</th>
                 <th>Ações</th>
               </tr>
@@ -572,6 +585,18 @@ export default function AdminDashboard() {
                   </td>
                   <td>{order.quantity}</td>
                   <td className="price-col">{formatPrice(order.totalPrice)}</td>
+                  <td>
+                    <select 
+                      className={`payment-select payment-${order.paymentStatus || 'pendente'}`}
+                      value={order.paymentStatus || 'pendente'}
+                      onChange={(e) => handlePaymentStatusChange(order._id, e.target.value)}
+                      disabled={order.isDeleted || order.status === 'cancelado'}
+                    >
+                      <option value="pendente">Pendente</option>
+                      <option value="pago">Pago</option>
+                      <option value="cancelado">Cancelado</option>
+                    </select>
+                  </td>
                   <td>
                     <span className={`status-badge status-${order.status}`}>
                       {order.status.replace('_', ' ').toUpperCase()}

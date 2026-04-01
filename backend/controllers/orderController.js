@@ -175,3 +175,30 @@ export const updateOrderAdmin = async (req, res) => {
     res.status(500).json({ message: 'Erro ao atualizar pedido', error: error.message });
   }
 };
+
+// Update payment status (Admin)
+export const updatePaymentStatus = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { paymentStatus } = req.body;
+
+    const validStatuses = ['pendente', 'pago', 'cancelado'];
+    if (!validStatuses.includes(paymentStatus)) {
+      return res.status(400).json({ message: 'Status de pagamento inválido' });
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(
+      id,
+      { paymentStatus },
+      { new: true }
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ message: 'Pedido não encontrado' });
+    }
+
+    res.status(200).json(updatedOrder);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao atualizar pagamento', error: error.message });
+  }
+};
