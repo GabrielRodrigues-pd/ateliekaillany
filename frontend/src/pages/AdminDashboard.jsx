@@ -7,7 +7,7 @@ import './AdminDashboard.css';
 export default function AdminDashboard() {
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]);
-  const [activeTab, setActiveTab] = useState('ativos'); // 'ativos', 'cancelados', 'produtos', 'relatorios'
+  const [activeTab, setActiveTab] = useState('ativos'); // 'ativos', 'cancelados', 'produtos', 'relatorios', 'producao'
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   
@@ -78,6 +78,9 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     if (activeTab === 'produtos') {
+      fetchProducts();
+    } else if (activeTab === 'producao') {
+      fetchOrders();
       fetchProducts();
     } else {
       fetchOrders();
@@ -469,6 +472,107 @@ export default function AdminDashboard() {
   
   const reportData = generateReportData();
   
+  const calculateProductionData = () => {
+    // Filtrar apenas pedidos ativos que precisam ser produzidos (novos e em_producao)
+    const validOrders = orders.filter(o => !o.isDeleted && (o.status === 'novo' || o.status === 'em_producao'));
+    
+    // Aplicar filtro de data se houver um selecionado
+    let filteredByDate = validOrders;
+    if (appliedFilters.date) {
+      filteredByDate = validOrders.filter(order => {
+        if (!order.scheduledDeliveryDate) return false;
+        const orderDate = new Date(order.scheduledDeliveryDate).toISOString().split('T')[0];
+        return orderDate === appliedFilters.date;
+      });
+    }
+
+    const production = {};
+
+    filteredByDate.forEach(order => {
+      // O campo order.product pode conter múltiplos itens: "1x Ovo Ferrero - 350g, 2x Ovo Ninho"
+      const items = (order.product || "").split(', ');
+      
+      items.forEach(itemStr => {
+        // Extrair quantidade e título do produto (ex: "1x Ovo Ferrero - 350g")
+        const match = itemStr.match(/^(\d+)x\s+(.+)$/);
+        if (!match) return;
+
+        const quantity = parseInt(match[1]);
+        const fullTitle = match[2].trim();
+        
+        // Tentar extrair o peso se houver um hífen (ex: "Ovo Ferrero - 350g")
+        let title = fullTitle;
+        let weight = "";
+        
+        if (fullTitle.includes(' - ')) {
+          const parts = fullTitle.split(' - ');
+          weight = parts.pop().trim();
+          title = parts.join(' - ').trim();
+        }
+
+        // Tentar encontrar o produto no catálogo para pegar a categoria real
+        const product = products.find(p => p.title.trim() === title.trim() || p.title.trim() === fullTitle.trim());
+        const category = product ? product.category : "Diversos";
+        
+        // Se o peso não foi extraído do título, tentar pegar o peso padrão do produto
+        if (!weight && product) {
+          weight = product.weight || "N/A";
+        }
+
+        // Regras de contagem de cascas baseadas nas ressalvas do usuário
+        let shellsPerUnit = 1;
+        let shellWeight = weight;
+        const catLower = category.toLowerCase();
+        
+        if (catLower.includes('colher')) {
+          shellsPerUnit = 1;
+          // Os pesos já vêm do pedido (50g, 150g, 250g, 350g)
+        } else if (catLower.includes('trufado')) {
+          shellsPerUnit = 2;
+          // Pesos: 150g e 250g
+        } else if (catLower.includes('tradicional')) {
+          shellsPerUnit = 2;
+          // Pesos: 50g, 150g, 250g, 350g
+        } else if (catLower.includes('trio')) {
+          shellsPerUnit = 3;
+          shellWeight = "50g"; // Trio de Ovos usa 3 cascas de 50g
+        } else if (catLower.includes('degustação') || catLower.includes('degustacao')) {
+          shellsPerUnit = 4;
+          shellWeight = "50g"; // Kit Degustação usa 4 cascas de 50g
+        } else if (catLower.includes('infantil')) {
+          shellsPerUnit = 1;
+          shellWeight = "150g"; // Infantil usa 1 casca de 150g
+        }
+
+        const key = `${category}|${shellWeight}`;
+        if (!production[key]) {
+          production[key] = {
+            category,
+            weight: shellWeight,
+            totalOrders: 0,
+            totalShells: 0,
+            details: []
+          };
+        }
+
+        production[key].totalOrders += quantity;
+        production[key].totalShells += (quantity * shellsPerUnit);
+        
+        const existingDetail = production[key].details.find(d => d.title === title);
+        if (existingDetail) {
+          existingDetail.qty += quantity;
+        } else {
+          production[key].details.push({ title, qty: quantity });
+        }
+      });
+    });
+
+    return Object.values(production).sort((a, b) => a.category.localeCompare(b.category));
+  };
+
+  const productionData = calculateProductionData();
+  const totalShellsNeeded = productionData.reduce((acc, curr) => acc + curr.totalShells, 0);
+  
   // Filtering logic for orders
   const filterOrders = (orderList) => {
     return orderList.filter(order => {
@@ -669,6 +773,12 @@ export default function AdminDashboard() {
               >
                 Relatórios
               </button>
+              <button 
+                className={`tab-btn ${activeTab === 'producao' ? 'active' : ''}`}
+                onClick={() => setActiveTab('producao')}
+              >
+                Produção
+              </button>
             </nav>
             {activeTab === 'produtos' && (
               <button className="add-product-btn" onClick={() => {
@@ -822,6 +932,76 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 </div>
+              </div>
+            ) : activeTab === 'producao' ? (
+              <div className="production-section">
+                <div className="production-header-info">
+                  <h2 className="table-title">Controle de Produção de Cascas</h2>
+                  <div className="production-summary-pill">
+                    Total de Cascas Necessárias: <strong>{totalShellsNeeded}</strong>
+                  </div>
+                </div>
+
+                <div className="filters-bar">
+                  <div className="filter-group">
+                    <label>Data de Entrega</label>
+                    <input 
+                      type="date" 
+                      name="date" 
+                      value={filters.date}
+                      onChange={handleFilterChange}
+                    />
+                  </div>
+                  <button className="clear-filters-btn" onClick={clearFilters} title="Limpar Filtro de Data">
+                    Ver Tudo
+                  </button>
+                  <p className="production-filter-tip">
+                    {appliedFilters.date 
+                      ? `Mostrando o que precisa ser produzido para entrega em ${formatJustDate(appliedFilters.date)}.`
+                      : "Mostrando tudo o que precisa ser produzido (Pedidos Novos e Em Produção)."}
+                  </p>
+                </div>
+
+                {productionData.length === 0 ? (
+                  <div className="empty-state">
+                    <p>Nenhuma casca pendente de produção para os critérios selecionados.</p>
+                  </div>
+                ) : (
+                  <div className="production-grid">
+                    <div className="table-wrapper">
+                      <table className="orders-table production-table">
+                        <thead>
+                          <tr>
+                            <th>Categoria / Tipo</th>
+                            <th>Peso da Casca</th>
+                            <th>Qtd. Pedidos</th>
+                            <th>Total de Cascas</th>
+                            <th>Detalhes dos Produtos</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {productionData.map((item, idx) => (
+                            <tr key={idx}>
+                              <td><strong>{item.category}</strong></td>
+                              <td><span className="weight-tag">{item.weight}</span></td>
+                              <td>{item.totalOrders} un.</td>
+                              <td className="total-shells-col">
+                                <span className="shell-count-badge">{item.totalShells}</span>
+                              </td>
+                              <td className="production-details-cell">
+                                {item.details.map((d, i) => (
+                                  <div key={i} className="prod-detail-item">
+                                    {d.qty}x {d.title}
+                                  </div>
+                                ))}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <>
