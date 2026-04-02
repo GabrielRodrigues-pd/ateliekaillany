@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, Rocket, ChefHat, Package, CheckCircle } from 'lucide-react';
 import api from '../services/api';
 import './AdminDashboard.css';
 
@@ -240,6 +240,20 @@ export default function AdminDashboard() {
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
+  };
+
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      const headerOffset = 100;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
   };
 
   const handleStatusChange = async (orderId, newStatus) => {
@@ -651,8 +665,8 @@ export default function AdminDashboard() {
     setAppliedFilters(emptyFilters);
   };
 
-  const renderOrderTable = (orderList, title, emptyMessage) => (
-    <div className="table-section">
+  const renderOrderTable = (orderList, title, emptyMessage, id) => (
+    <div className="table-section" id={id}>
       <h2 className="table-title">{title} ({orderList.length})</h2>
       {orderList.length === 0 ? (
         <div className="empty-state-small">{emptyMessage}</div>
@@ -1050,7 +1064,7 @@ export default function AdminDashboard() {
               <>
                 {/* Summary Cards */}
                 <div className="summary-cards">
-                  <div className="summary-card card-novo">
+                  <div className="summary-card card-novo clickable" onClick={() => scrollToSection('secao-novo')}>
                     <div className="card-info">
                       <h3>Pedidos Recebidos</h3>
                       <p className="card-value">{counts.novo}</p>
@@ -1058,7 +1072,7 @@ export default function AdminDashboard() {
                     <div className="card-icon">🚀</div>
                   </div>
                   
-                  <div className="summary-card card-producao">
+                  <div className="summary-card card-producao clickable" onClick={() => scrollToSection('secao-producao')}>
                     <div className="card-info">
                       <h3>Em Produção</h3>
                       <p className="card-value">{counts.em_producao}</p>
@@ -1066,7 +1080,7 @@ export default function AdminDashboard() {
                     <div className="card-icon">🍳</div>
                   </div>
 
-                  <div className="summary-card card-pronto">
+                  <div className="summary-card card-pronto clickable" onClick={() => scrollToSection('secao-pronto')}>
                     <div className="card-info">
                       <h3>Prontos p/ Entrega</h3>
                       <p className="card-value">{counts.pronto}</p>
@@ -1074,7 +1088,7 @@ export default function AdminDashboard() {
                     <div className="card-icon">🛍️</div>
                   </div>
 
-                  <div className="summary-card card-entregue">
+                  <div className="summary-card card-entregue clickable" onClick={() => scrollToSection('secao-entregue')}>
                     <div className="card-info">
                       <h3>Entregues</h3>
                       <p className="card-value">{counts.entregue}</p>
@@ -1163,10 +1177,10 @@ export default function AdminDashboard() {
                   <div className="tables-container">
                     {activeTab === 'ativos' ? (
                       <>
-                        {renderOrderTable(filteredNewOrders, "Pedidos Recebidos (Novos)", "Não há novos pedidos no momento.")}
-                        {renderOrderTable(filteredProductionOrders, "Pedidos em Produção", "Nenhum pedido em produção.")}
-                        {renderOrderTable(filteredReadyOrders, "Pronto para Entrega/Retirada", "Nenhum pedido aguardando retirada/entrega.")}
-                        {renderOrderTable(filteredDeliveredOrders, "Pedidos Entregues", "Nenhum pedido finalizado ainda.")}
+                        {renderOrderTable(filteredNewOrders, "Pedidos Recebidos (Novos)", "Não há novos pedidos no momento.", "secao-novo")}
+                        {renderOrderTable(filteredProductionOrders, "Pedidos em Produção", "Nenhum pedido em produção.", "secao-producao")}
+                        {renderOrderTable(filteredReadyOrders, "Pronto para Entrega/Retirada", "Nenhum pedido aguardando retirada/entrega.", "secao-pronto")}
+                        {renderOrderTable(filteredDeliveredOrders, "Pedidos Entregues", "Nenhum pedido finalizado ainda.", "secao-entregue")}
                       </>
                     ) : (
                       renderOrderTable(filteredRecycleBin, "Relatório de Cancelados e Excluídos", "Nenhum registro encontrado.")
@@ -1492,6 +1506,30 @@ export default function AdminDashboard() {
               <button onClick={() => setShowNotificationModal(false)} className="btn-save">Fechar</button>
             </div>
           </div>
+        </div>
+      )}
+
+      {activeTab === 'ativos' && !isLoading && (
+        <div className="floating-nav-panel">
+          <button onClick={() => scrollToSection('secao-novo')} title="Pedidos Novos">
+            <Rocket size={18} />
+            <span>Novos</span>
+          </button>
+          <button onClick={() => scrollToSection('secao-producao')} title="Pedidos em Produção">
+            <ChefHat size={18} />
+            <span>Produção</span>
+          </button>
+          <button onClick={() => scrollToSection('secao-pronto')} title="Pedidos Prontos">
+            <Package size={18} />
+            <span>Prontos</span>
+          </button>
+          <button onClick={() => scrollToSection('secao-entregue')} title="Pedidos Entregues">
+            <CheckCircle size={18} />
+            <span>Entregue</span>
+          </button>
+          <button className="scroll-top-btn" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} title="Voltar ao Topo">
+            ↑
+          </button>
         </div>
       )}
     </div>
