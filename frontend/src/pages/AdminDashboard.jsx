@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { Eye, EyeOff } from 'lucide-react';
 import api from '../services/api';
 import './AdminDashboard.css';
 
@@ -57,9 +58,18 @@ export default function AdminDashboard() {
   const lastProcessedOrderIdRef = useRef(null);
   const [browserPermission, setBrowserPermission] = useState('Notification' in window ? Notification.permission : 'default');
 
+  const [showRevenue, setShowRevenue] = useState(() => {
+    const saved = localStorage.getItem('adminShowRevenue');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+
   useEffect(() => {
     localStorage.setItem('adminNotificationSettings', JSON.stringify(notificationSettings));
   }, [notificationSettings]);
+
+  useEffect(() => {
+    localStorage.setItem('adminShowRevenue', JSON.stringify(showRevenue));
+  }, [showRevenue]);
 
   useEffect(() => {
     if (notificationSettings.browserEnabled && 'Notification' in window && Notification.permission === 'default') {
@@ -1074,8 +1084,19 @@ export default function AdminDashboard() {
 
                   <div className="summary-card card-revenue">
                     <div className="card-info">
-                      <h3>Faturamento Total</h3>
-                      <p className="card-value revenue-text">{formatPrice(revenue)}</p>
+                      <div className="card-title-row">
+                        <h3>Faturamento Total</h3>
+                        <button 
+                          className="toggle-revenue-btn" 
+                          onClick={() => setShowRevenue(!showRevenue)}
+                          title={showRevenue ? "Ocultar valor" : "Mostrar valor"}
+                        >
+                          {showRevenue ? <EyeOff size={16} /> : <Eye size={16} />}
+                        </button>
+                      </div>
+                      <p className="card-value revenue-text">
+                        {showRevenue ? formatPrice(revenue) : 'R$ •••••'}
+                      </p>
                     </div>
                     <div className="card-icon">💰</div>
                   </div>
