@@ -1,5 +1,6 @@
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination, Autoplay, EffectCoverflow } from "swiper/modules";
+import OptimizedImage from "../OptimizedImage";
 
 import "swiper/css";
 import "swiper/css/pagination";
@@ -8,8 +9,9 @@ import "swiper/css/effect-coverflow";
 import "./Carrossel.css";
 
 export default function Carrossel({ items }) {
-  // Duplicating items to ensure infinite loop always has enough cards, even if `items` array is small
-  const safeItems = items && items.length > 0 ? [...items, ...items, ...items] : [];
+  // Swiper handles loop internally. No need to triplicate items manually unless the count is very small (< 4).
+  // With 15 items confirmed, the normal items array is perfect.
+  const safeItems = items && items.length > 0 ? items : [];
 
   return (
     <div className="carousel-wrapper">
@@ -41,7 +43,10 @@ export default function Carrossel({ items }) {
           <SwiperSlide key={`${item.title}-${index}`} className="creation-slide">
             <div className="creative-card">
               <div className="card-image-wrapper">
-                <img src={item.image} alt={item.altText || item.title} />
+                <OptimizedImage 
+                  src={item.image} 
+                  alt={item.altText || item.title} 
+                />
                 <div className="card-overlay">
                   <h3>{item.title}</h3>
                   <p>{item.description}</p>

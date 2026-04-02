@@ -245,6 +245,18 @@ export default function AdminDashboard() {
     }
   };
 
+  const handlePaymentStatusChange = async (orderId, newStatus) => {
+    try {
+      await api.patch(`/orders/admin/payment/${orderId}`, { paymentStatus: newStatus });
+      setOrders(orders.map(order => 
+        order._id === orderId ? { ...order, paymentStatus: newStatus } : order
+      ));
+    } catch (err) {
+      console.error("Erro ao atualizar status de pagamento:", err);
+      alert("Não foi possível atualizar o status de pagamento. Tente novamente.");
+    }
+  };
+
   const handleScheduleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -640,12 +652,10 @@ export default function AdminDashboard() {
             <thead>
               <tr>
                 <th>Data</th>
-                <th>Cliente</th>
-                <th>Telefone</th>
-                <th>Cidade</th>
+                <th>Cliente / Contato</th>
                 <th>Produto</th>
-                <th>Qtd</th>
-                <th>Total</th>
+                <th>Qtd / Total</th>
+                <th>Pagamento</th>
                 <th>Status</th>
                 <th>Ações</th>
               </tr>
@@ -653,12 +663,15 @@ export default function AdminDashboard() {
             <tbody>
               {orderList.map((order) => (
                 <tr key={order._id} className={order.isDeleted ? 'row-deleted' : ''}>
-                  <td>{formatDate(order.createdAt)}</td>
-                  <td>{order.customerName}</td>
-                  <td>{order.phone}</td>
-                  <td>{order.city}</td>
+                  <td style={{ fontSize: '12px' }}>{formatDate(order.createdAt)}</td>
                   <td>
-                    {order.product}
+                    <div style={{ fontWeight: '700' }}>{order.customerName}</div>
+                    <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>
+                      📞 {order.phone} | 📍 {order.city}
+                    </div>
+                  </td>
+                  <td>
+                    <div style={{ fontSize: '13px', fontWeight: '500' }}>{order.product}</div>
                     {order.cancellationReason && (
                       <div className="cancel-reason-admin">Motivo: {order.cancellationReason}</div>
                     )}
@@ -669,17 +682,33 @@ export default function AdminDashboard() {
                         ) : order.scheduledDeliveryLocation ? (
                           <>📍 {order.scheduledDeliveryLocation}</>
                         ) : (
-                          <>🗓️ Data de Entrega Prevista: {formatJustDate(order.scheduledDeliveryDate)}</>
+                          <>🗓️ Entrega: {formatJustDate(order.scheduledDeliveryDate)}</>
                         )}
                       </div>
                     )}
                   </td>
-                  <td>{order.quantity}</td>
-                  <td className="price-col">{formatPrice(order.totalPrice)}</td>
                   <td>
-                    <span className={`status-badge status-${order.status}`}>
-                      {order.status.replace('_', ' ').toUpperCase()}
-                    </span>
+                    <div style={{ fontSize: '12px', color: '#666' }}>{order.quantity}x</div>
+                    <div className="price-col" style={{ fontSize: '14px' }}>{formatPrice(order.totalPrice)}</div>
+                  </td>
+                  <td>
+                    <select 
+                      className={`payment-select payment-${order.paymentStatus || 'pendente'}`}
+                      value={order.paymentStatus || 'pendente'}
+                      onChange={(e) => handlePaymentStatusChange(order._id, e.target.value)}
+                      disabled={order.isDeleted || order.status === 'cancelado'}
+                    >
+                      <option value="pendente">Pendente</option>
+                      <option value="pago">Pago</option>
+                      <option value="cancelado">Cancelado</option>
+                    </select>
+                  </td>
+                  <td>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                      <span className={`status-badge status-${order.status}`}>
+                        {order.status.replace('_', ' ').toUpperCase()}
+                      </span>
+                    </div>
                   </td>
                   <td>
                     <div className="actions-cell">
@@ -838,11 +867,10 @@ export default function AdminDashboard() {
                   <table className="orders-table">
                     <thead>
                       <tr>
-                        <th>Imagem</th>
-                        <th>Ovo / Produto</th>
-                        <th>Categoria</th>
+                        <th>Produto</th>
+                        <th>Categoria / Info</th>
                         <th>Preço</th>
-                        <th>Status</th>
+                        <th>Disponibilidade</th>
                         <th>Ações</th>
                       </tr>
                     </thead>
@@ -850,34 +878,39 @@ export default function AdminDashboard() {
                       {filteredProductsList.map(p => (
                         <tr key={p._id}>
                           <td>
-                            <img src={p.imageUrl} alt={p.title} className="admin-prod-thumb" />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                              <img src={p.imageUrl} alt={p.title} className="admin-prod-thumb" style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover' }} />
+                              <strong>{p.title}</strong>
+                            </div>
                           </td>
                           <td>
-                            <strong>{p.title}</strong>
-                            <div className="admin-prod-meta">{p.weight} | {p.filling}</div>
+                            <div style={{ fontWeight: '600', fontSize: '12px' }}>{p.category}</div>
+                            <div style={{ fontSize: '11px', color: '#666' }}>{p.weight} | {p.filling}</div>
                           </td>
-                          <td>{p.category}</td>
                           <td className="price-col">{formatPrice(p.price)}</td>
                           <td>
-                            <button 
-                              className={`stock-badge ${p.isAvailable ? 'in-stock' : 'out-of-stock'}`}
-                              onClick={() => handleToggleAvailability(p)}
-                            >
-                              {p.isAvailable ? 'DISPONÍVEL' : 'ESGOTADO'}
-                            </button>
-                            <button 
-                              className={`stock-badge ${p.isLowStock ? 'low-stock-active' : 'low-stock-inactive'}`}
-                              style={{ marginLeft: '5px' }}
-                              onClick={() => handleToggleLowStock(p)}
-                              title="Indicar que está quase esgotando"
-                            >
-                              {p.isLowStock ? 'QUASE ESGOTADO' : 'ESTOQUE NORMAL'}
-                            </button>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                              <button 
+                                className={`stock-badge ${p.isAvailable ? 'in-stock' : 'out-of-stock'}`}
+                                onClick={() => handleToggleAvailability(p)}
+                                style={{ padding: '2px 6px', fontSize: '10px' }}
+                              >
+                                {p.isAvailable ? 'DISPONÍVEL' : 'ESGOTADO'}
+                              </button>
+                              <button 
+                                className={`stock-badge ${p.isLowStock ? 'low-stock-active' : 'low-stock-inactive'}`}
+                                onClick={() => handleToggleLowStock(p)}
+                                title="Indicar que está quase esgotando"
+                                style={{ padding: '2px 6px', fontSize: '10px' }}
+                              >
+                                {p.isLowStock ? 'QUASE ESGOTADO' : 'NORMAL'}
+                              </button>
+                            </div>
                           </td>
                           <td>
                             <div className="actions-cell">
-                              <button className="edit-order-btn" onClick={() => handleEditProductClick(p)}>✏️</button>
-                              <button className="delete-item-btn" onClick={() => handleDeleteProduct(p._id)}>🗑️</button>
+                              <button className="edit-order-btn" onClick={() => handleEditProductClick(p)} title="Editar">✏️</button>
+                              <button className="delete-item-btn" onClick={() => handleDeleteProduct(p._id)} title="Excluir">🗑️</button>
                             </div>
                           </td>
                         </tr>

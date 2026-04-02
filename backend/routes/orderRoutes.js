@@ -1,5 +1,5 @@
 import express from 'express';
-import { getOrders, createOrder, updateOrderStatus, getUserOrders, cancelOrder, deleteOrder, getAdminOrders, updateDeliverySchedule, updateOrderAdmin } from '../controllers/orderController.js';
+import { getOrders, createOrder, updateOrderStatus, getUserOrders, cancelOrder, deleteOrder, getAdminOrders, updateDeliverySchedule, updateOrderAdmin, updatePaymentStatus } from '../controllers/orderController.js';
 import authAdmin from '../middleware/authAdmin.js';
 import authUser from '../middleware/auth.js';
 
@@ -24,6 +24,9 @@ router.patch('/admin/update/:id', authAdmin, updateOrderAdmin);
 
 // DELETE /api/orders/admin/delete/:id - Soft delete order
 router.delete('/admin/delete/:id', authAdmin, deleteOrder);
+
+// PATCH /api/orders/admin/payment/:id - Update payment status
+router.patch('/admin/payment/:id', authAdmin, updatePaymentStatus);
 
 
 // --- CUSTOMER ROUTES ---
