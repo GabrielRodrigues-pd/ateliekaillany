@@ -1112,3 +1112,43 @@ html {
   }
 }
 
+
+/* ========================================= */
+/* REVENUE REPORT TABLE                     */
+/* ========================================= */
+
+.revenue-report-section {
+  background: white;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  border: 1px solid #edf2f7;
+  margin-bottom: 40px;
+}
+
+.total-revenue-badge {
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.2);
+}
+
+.total-revenue-badge span {
+  font-family: inherit;
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.price-col {
+  font-weight: 700;
+  color: var(--primary);
+  font-family: "Courier New", Courier, monospace;
+}
+
+tfoot tr td {
+  border-top: 2px solid #edf2f7 !important;
+  color: #1e293b;
+  text-transform: uppercase;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+

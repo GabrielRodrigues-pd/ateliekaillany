@@ -492,15 +492,21 @@ export default function AdminDashboard() {
   const generateReportData = () => {
     // Extra filter just for safety, but data comes already clean
     const validOrders = orders.filter(o => !o.isDeleted && o.status !== 'cancelado');
-    const productCounts = {};
+    const productDataMap = {};
+    
     validOrders.forEach(o => {
       const p = o.product ? o.product.trim() : 'Outros';
-      productCounts[p] = (productCounts[p] || 0) + (o.quantity || 1);
+      if (!productDataMap[p]) {
+        productDataMap[p] = { quantidade: 0, faturamento: 0 };
+      }
+      productDataMap[p].quantidade += (o.quantity || 1);
+      productDataMap[p].faturamento += (o.totalPrice || 0);
     });
     
-    const data = Object.keys(productCounts).map(key => ({
+    const data = Object.keys(productDataMap).map(key => ({
       name: key,
-      quantidade: productCounts[key]
+      quantidade: productDataMap[key].quantidade,
+      faturamento: productDataMap[key].faturamento
     }));
     
     return data.sort((a, b) => b.quantidade - a.quantidade);
@@ -949,7 +955,9 @@ export default function AdminDashboard() {
                 
                 <div className="reports-dashboard">
                   <div className="reports-counters">
+                    <div className="card-title-row">
                      <h3>Ranking de Produtos</h3>
+                    </div>
                      <div className="ranking-list">
                        {reportData.map((item, index) => (
                          <div key={item.name} className="ranking-item">
@@ -987,6 +995,55 @@ export default function AdminDashboard() {
                         </ResponsiveContainer>
                       </div>
                     </div>
+                  </div>
+                </div>
+
+                <div className="revenue-report-section" style={{ marginTop: '30px' }}>
+                  <div className="table-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                    <h3 className="table-title" style={{ border: 'none', padding: 0 }}>Detalhamento Financeiro (Faturamento)</h3>
+                    <div className="total-revenue-badge" style={{ background: 'var(--primary)', color: 'white', padding: '8px 16px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <strong>Total:</strong>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <span>{showRevenue ? formatPrice(revenue) : 'R$ •••••'}</span>
+                        <button 
+                          onClick={() => setShowRevenue(!showRevenue)}
+                          style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: 0, opacity: 0.8, display: 'flex' }}
+                        >
+                          {showRevenue ? <EyeOff size={14} /> : <Eye size={14} />}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="table-wrapper">
+                    <table className="orders-table">
+                      <thead>
+                        <tr>
+                          <th>Produto</th>
+                          <th style={{ textAlign: 'center' }}>Quantidade Vendida</th>
+                          <th style={{ textAlign: 'right' }}>Faturamento (R$)</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {reportData.map((item) => (
+                          <tr key={item.name}>
+                            <td><strong>{item.name}</strong></td>
+                            <td style={{ textAlign: 'center' }}>{item.quantidade} un.</td>
+                            <td style={{ textAlign: 'right' }} className="price-col">
+                              {showRevenue ? formatPrice(item.faturamento) : 'R$ •••••'}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr style={{ background: '#f8fafc', fontWeight: 'bold' }}>
+                          <td colSpan="2">TOTAL CONSOLIDADO</td>
+                          <td style={{ textAlign: 'right' }} className="price-col">
+                            {showRevenue ? formatPrice(revenue) : 'R$ •••••'}
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
                   </div>
                 </div>
               </div>
@@ -1094,25 +1151,6 @@ export default function AdminDashboard() {
                       <p className="card-value">{counts.entregue}</p>
                     </div>
                     <div className="card-icon">✅</div>
-                  </div>
-
-                  <div className="summary-card card-revenue">
-                    <div className="card-info">
-                      <div className="card-title-row">
-                        <h3>Faturamento Total</h3>
-                        <button 
-                          className="toggle-revenue-btn" 
-                          onClick={() => setShowRevenue(!showRevenue)}
-                          title={showRevenue ? "Ocultar valor" : "Mostrar valor"}
-                        >
-                          {showRevenue ? <EyeOff size={16} /> : <Eye size={16} />}
-                        </button>
-                      </div>
-                      <p className="card-value revenue-text">
-                        {showRevenue ? formatPrice(revenue) : 'R$ •••••'}
-                      </p>
-                    </div>
-                    <div className="card-icon">💰</div>
                   </div>
                 </div>
 
