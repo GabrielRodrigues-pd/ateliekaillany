@@ -6,7 +6,7 @@ import ovoNinhoNutella from "../assets/ovoNinhoNutella.jpeg";
 import ovoNinhoMorango from "../assets/ovoNinhoMorango.png";
 import ovoDoisAmores from "../assets/ovoDoisAmores.png";
 import sacolinha from "../assets/sacolinha.png";
-import ovoBrownie from "../assets/ovoBrownie.png";
+import ovoBrownie from "../assets/ovoBrownie.jpeg";
 import ovoFerrero from "../assets/ovoFerrero.png";
 import ovoCasinha from "../assets/ovoCasinha.png";
 import ovoTrufado from "../assets/ovoTrufado.png";
