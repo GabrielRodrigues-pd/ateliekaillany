@@ -1,7 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { Eye, EyeOff, Rocket, ChefHat, Package, CheckCircle } from 'lucide-react';
+import { 
+  Eye, EyeOff, Rocket, ChefHat, Package, CheckCircle, 
+  LayoutDashboard, ShoppingBag, Trash2, BarChart3, 
+  Wrench, Bell, LogOut, Search, Settings, Shield, HelpCircle,
+  Menu, X, Edit, Calendar
+} from 'lucide-react';
 import api from '../services/api';
 import './AdminDashboard.css';
 
@@ -55,6 +60,7 @@ export default function AdminDashboard() {
     };
   });
   const [showNotificationModal, setShowNotificationModal] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const lastProcessedOrderIdRef = useRef(null);
   const [browserPermission, setBrowserPermission] = useState('Notification' in window ? Notification.permission : 'default');
 
@@ -245,7 +251,7 @@ export default function AdminDashboard() {
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
-      const headerOffset = 100;
+      const headerOffset = 90; // Topbar height
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -253,6 +259,8 @@ export default function AdminDashboard() {
         top: offsetPosition,
         behavior: 'smooth'
       });
+      // Close sidebar if on mobile
+      setIsSidebarOpen(false);
     }
   };
 
@@ -672,564 +680,575 @@ export default function AdminDashboard() {
   };
 
   const renderOrderTable = (orderList, title, emptyMessage, id) => (
-    <div className="table-section" id={id}>
-      <h2 className="table-title">{title} ({orderList.length})</h2>
-      {orderList.length === 0 ? (
-        <div className="empty-state-small">{emptyMessage}</div>
-      ) : (
-        <div className="table-wrapper">
-          <table className="orders-table">
-            <thead>
-              <tr>
-                <th>Data</th>
-                <th>Cliente / Contato</th>
-                <th>Produto</th>
-                <th>Qtd / Total</th>
-                <th>Pagamento</th>
-                <th>Status</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {orderList.map((order) => (
-                <tr key={order._id} className={order.isDeleted ? 'row-deleted' : ''}>
-                  <td style={{ fontSize: '12px' }}>{formatDate(order.createdAt)}</td>
-                  <td>
-                    <div style={{ fontWeight: '700' }}>{order.customerName}</div>
-                    <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>
-                      📞 {order.phone} | 📍 {order.city}
-                    </div>
-                  </td>
-                  <td>
-                    <div style={{ fontSize: '13px', fontWeight: '500' }}>{order.product}</div>
-                    {order.cancellationReason && (
-                      <div className="cancel-reason-admin">Motivo: {order.cancellationReason}</div>
-                    )}
-                    {(order.scheduledDeliveryDate || order.scheduledDeliveryLocation) && (
-                      <div className="scheduled-info-admin">
-                        {order.scheduledDeliveryLocation && order.scheduledDeliveryDate ? (
-                          <>📍 {order.scheduledDeliveryLocation} - {formatJustDate(order.scheduledDeliveryDate)}</>
-                        ) : order.scheduledDeliveryLocation ? (
-                          <>📍 {order.scheduledDeliveryLocation}</>
-                        ) : (
-                          <>🗓️ Entrega: {formatJustDate(order.scheduledDeliveryDate)}</>
-                        )}
+    <div className="table-section-modern" id={id}>
+      <div className="section-header">
+        <h2 className="section-title">{title} ({orderList.length})</h2>
+      </div>
+      
+      <div className="table-card shadow-sm">
+        {orderList.length === 0 ? (
+          <div className="empty-state-modern">
+            <Package size={32} opacity={0.2} />
+            <p>{emptyMessage}</p>
+          </div>
+        ) : (
+          <div className="table-wrapper">
+            <table className="modern-table">
+              <thead>
+                <tr>
+                  <th>Info Pedido</th>
+                  <th>Cliente / Contato</th>
+                  <th>Produto / Entrega</th>
+                  <th>Total</th>
+                  <th>Pagamento</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {orderList.map((order) => (
+                  <tr key={order._id} className={order.isDeleted ? 'row-deleted' : ''}>
+                    <td>
+                      <div className="order-id">#{order._id?.substring(0, 6)}</div>
+                      <div className="order-date">{formatDate(order.createdAt)}</div>
+                    </td>
+                    <td>
+                      <span className="customer-name">{order.customerName}</span>
+                      <div className="customer-sub">
+                         {order.phone} | {order.city}
                       </div>
-                    )}
-                  </td>
-                  <td>
-                    <div style={{ fontSize: '12px', color: '#666' }}>{order.quantity}x</div>
-                    <div className="price-col" style={{ fontSize: '14px' }}>{formatPrice(order.totalPrice)}</div>
-                  </td>
-                  <td>
-                    <select 
-                      className={`payment-select payment-${order.paymentStatus || 'pendente'}`}
-                      value={order.paymentStatus || 'pendente'}
-                      onChange={(e) => handlePaymentStatusChange(order._id, e.target.value)}
-                      disabled={order.isDeleted || order.status === 'cancelado'}
-                    >
-                      <option value="pendente">Pendente</option>
-                      <option value="pago">Pago</option>
-                      <option value="cancelado">Cancelado</option>
-                    </select>
-                  </td>
-                  <td>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                      <span className={`status-badge status-${order.status}`}>
+                    </td>
+                    <td>
+                      <div className="product-item-name">{order.product}</div>
+                      {order.cancellationReason && (
+                        <div className="cancel-reason-text">Motivo: {order.cancellationReason}</div>
+                      )}
+                      {(order.scheduledDeliveryDate || order.scheduledDeliveryLocation) && (
+                        <div className="scheduled-badge">
+                          {order.scheduledDeliveryLocation && order.scheduledDeliveryDate ? (
+                            <>📍 {order.scheduledDeliveryLocation} - {formatJustDate(order.scheduledDeliveryDate)}</>
+                          ) : order.scheduledDeliveryLocation ? (
+                            <>📍 {order.scheduledDeliveryLocation}</>
+                          ) : (
+                            <>🗓️ {formatJustDate(order.scheduledDeliveryDate)}</>
+                          )}
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <div className="qty-label">{order.quantity}x</div>
+                      <div className="price-col">{formatPrice(order.totalPrice)}</div>
+                    </td>
+                    <td>
+                      <select 
+                        className={`payment-select payment-${order.paymentStatus || 'pendente'}`}
+                        value={order.paymentStatus || 'pendente'}
+                        onChange={(e) => handlePaymentStatusChange(order._id, e.target.value)}
+                        disabled={order.isDeleted || order.status === 'cancelado'}
+                      >
+                        <option value="pendente">Pendente</option>
+                        <option value="pago">Pago</option>
+                        <option value="cancelado">Cancelado</option>
+                      </select>
+                    </td>
+                    <td>
+                      <span className={`status-badge-modern status-${order.status}`}>
                         {order.status.replace('_', ' ').toUpperCase()}
                       </span>
-                    </div>
-                  </td>
-                  <td>
-                    <div className="actions-cell">
-                      {order.status !== 'cancelado' && !order.isDeleted && (
-                        <select 
-                          className="status-select"
-                          value={order.status}
-                          onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                        >
-                          <option value="novo">Novo</option>
-                          <option value="em_producao">Em Produção</option>
-                          <option value="pronto">Pronto p/ Entrega</option>
-                          <option value="entregue">Entregue</option>
-                        </select>
-                      )}
-                      
-                      {!order.isDeleted && (
-                        <>
-                          <button 
-                            className="delete-item-btn" 
-                            onClick={() => handleDeleteOrder(order._id)}
-                            title="Excluir Pedido"
+                    </td>
+                    <td>
+                      <div className="actions-cell">
+                        {order.status !== 'cancelado' && !order.isDeleted && (
+                          <select 
+                            className="status-select"
+                            value={order.status}
+                            onChange={(e) => handleStatusChange(order._id, e.target.value)}
                           >
-                            🗑️
-                          </button>
-
-                          <button 
-                            className="schedule-btn" 
-                            onClick={() => {
+                            <option value="novo">Novo</option>
+                            <option value="em_producao">Produção</option>
+                            <option value="pronto">Pronto</option>
+                            <option value="entregue">Entrega</option>
+                          </select>
+                        )}
+                        
+                        {!order.isDeleted && (
+                          <>
+                            <button className="icon-action-btn" onClick={() => handleEditClick(order)} title="Editar"><Edit size={16} /></button>
+                            <button className="icon-action-btn" onClick={() => {
                               setSchedulingOrder(order);
                               setScheduledData({
                                 date: order.scheduledDeliveryDate ? new Date(order.scheduledDeliveryDate).toISOString().split('T')[0] : '',
                                 location: order.scheduledDeliveryLocation || ''
                               });
-                            }}
-                            title="Agendar Entrega"
-                          >
-                            📅
-                          </button>
-
-                          <button 
-                            className="edit-order-btn" 
-                            onClick={() => handleEditClick(order)}
-                            title="Editar Detalhes"
-                          >
-                            ✏️
-                          </button>
-                        </>
-                      )}
-                      
-                      {order.isDeleted && <span className="deleted-tag">EXCLUÍDO</span>}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                            }} title="Agendar"><Calendar size={16} /></button>
+                            <button className="icon-action-btn delete" onClick={() => handleDeleteOrder(order._id)} title="Excluir"><Trash2 size={16} /></button>
+                          </>
+                        )}
+                        
+                        {order.isDeleted && <span className="deleted-tag">EXCLUÍDO</span>}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
     </div>
   );
 
   return (
-    <div className="admin-dashboard">
-      <header className="admin-header">
-        <div className="admin-container header-content">
-          <h1>Painel de Pedidos</h1>
-          <div className="header-right">
-            <nav className="admin-tabs">
+    <>
+      <div className="admin-layout">
+        {isSidebarOpen && <div className="sidebar-overlay" onClick={() => setIsSidebarOpen(false)}></div>}
+        {/* SIDEBAR */}
+        <aside className={`admin-sidebar ${isSidebarOpen ? 'mobile-open' : ''}`}>
+          <div className="sidebar-logo">
+            <Rocket size={32} />
+            <h2>Ateliê Controller</h2>
+          </div>
+          
+          <nav className="sidebar-nav">
+            <div className="nav-section">
+              <span className="section-label">Geral</span>
               <button 
-                className={`tab-btn ${activeTab === 'ativos' ? 'active' : ''}`}
+                className={`sidebar-btn ${activeTab === 'ativos' ? 'active' : ''}`}
                 onClick={() => setActiveTab('ativos')}
               >
-                Ativos
+                <LayoutDashboard size={20} />
+                Dashboard
               </button>
               <button 
-                className={`tab-btn ${activeTab === 'produtos' ? 'active' : ''}`}
-                onClick={() => setActiveTab('produtos')}
-              >
-                Produtos
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'cancelados' ? 'active' : ''}`}
-                onClick={() => setActiveTab('cancelados')}
-              >
-                Lixeira
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'relatorios' ? 'active' : ''}`}
+                className={`sidebar-btn ${activeTab === 'relatorios' ? 'active' : ''}`}
                 onClick={() => setActiveTab('relatorios')}
               >
+                <BarChart3 size={20} />
                 Relatórios
               </button>
               <button 
-                className={`tab-btn ${activeTab === 'producao' ? 'active' : ''}`}
+                className={`sidebar-btn ${activeTab === 'producao' ? 'active' : ''}`}
                 onClick={() => setActiveTab('producao')}
               >
+                <ChefHat size={20} />
                 Produção
               </button>
-            </nav>
-            {activeTab === 'produtos' && (
-              <button className="add-product-btn" onClick={() => {
-                setIsAddingProduct(true);
-                setEditingProduct(null);
-                setProductFormData({
-                  title: '', description: '', price: 0, category: 'Ovos de Colher',
-                  filling: '', weight: '', imageUrl: '', isAvailable: true, isLowStock: false, prices: {}
-                });
-              }}>
-                + Novo Ovo
+            </div>
+
+            <div className="nav-section">
+              <span className="section-label">Ferramentas</span>
+              <button 
+                className={`sidebar-btn ${activeTab === 'produtos' ? 'active' : ''}`}
+                onClick={() => setActiveTab('produtos')}
+              >
+                <ShoppingBag size={20} />
+                Produtos
               </button>
-            )}
-            <button 
-              className="notification-settings-trigger" 
-              onClick={() => setShowNotificationModal(true)}
-              title="Configurações de Notificação"
-            >
-              🔔
+              <button 
+                className={`sidebar-btn ${activeTab === 'cancelados' ? 'active' : ''}`}
+                onClick={() => setActiveTab('cancelados')}
+              >
+                <Trash2 size={20} />
+                Lixeira
+              </button>
+            </div>
+
+            <div className="nav-section">
+              <span className="section-label">Suporte</span>
+              <button 
+                className="sidebar-btn" 
+                onClick={() => setShowNotificationModal(true)}
+              >
+                <Bell size={20} />
+                Notificações
+              </button>
+              <button className="sidebar-btn" onClick={() => alert('Configurações em breve')}>
+                <Settings size={20} />
+                Ajustes
+              </button>
+            </div>
+          </nav>
+
+          <div className="sidebar-footer">
+            <button onClick={handleLogout} className="logout-button">
+              <LogOut size={20} />
+              Sair
             </button>
-            <button onClick={handleLogout} className="admin-logout-btn">Sair</button>
           </div>
-        </div>
-      </header>
+        </aside>
 
-      <main className="admin-main admin-container">
-        {isLoading ? (
-          <div className="loading-state">
-            <div className="loader"></div>
-            <p>Carregando...</p>
-          </div>
-        ) : error ? (
-          <div className="error-state">{error}</div>
-        ) : (
-          <>
-            {activeTab === 'produtos' ? (
-              <div className="table-section">
-                <h2 className="table-title">Gerenciar Estoque ({filteredProductsList.length})</h2>
-                
-                <div className="filters-bar">
-                  <div className="filter-group">
-                    <label>Produto / Categoria</label>
-                    <input 
-                      type="text" 
-                      name="product" 
-                      placeholder="Buscar por nome ou categoria..." 
-                      value={filters.product}
-                      onChange={handleFilterChange}
-                    />
-                  </div>
-                  <button className="clear-filters-btn" onClick={clearFilters} title="Limpar Filtros">
-                    Limpar
-                  </button>
+        {/* MAIN CONTENT AREA */}
+        <div className="admin-content-wrapper">
+          {/* TOPBAR */}
+          <header className="admin-topbar">
+            <div className="topbar-left">
+              <button className="menu-toggle-btn" onClick={() => setIsSidebarOpen(true)}>
+                <Menu size={24} />
+              </button>
+            </div>
+            <div className="search-container">
+              <Search className="search-icon" size={18} />
+              <input 
+                type="text" 
+                name="product" 
+                placeholder="Buscar produtos, clientes ou pedidos..." 
+                value={filters.product}
+                onChange={handleFilterChange}
+              />
+              {Object.values(filters).some(v => v !== '') && (
+                <button className="clear-filter-btn" onClick={clearFilters} title="Limpar Filtros">
+                  <X size={14} />
+                  Limpar
+                </button>
+              )}
+            </div>
+            
+            <div className="topbar-actions">
+              <div className="user-profile">
+                <div className="user-info">
+                  <span className="user-name">Kaillany Souza</span>
+                  <span className="user-role">Administradora</span>
                 </div>
-
-                <div className="table-wrapper">
-                  <table className="orders-table">
-                    <thead>
-                      <tr>
-                        <th>Produto</th>
-                        <th>Categoria / Info</th>
-                        <th>Preço</th>
-                        <th>Disponibilidade</th>
-                        <th>Ações</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {filteredProductsList.map(p => (
-                        <tr key={p._id}>
-                          <td>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                              <img src={p.imageUrl} alt={p.title} className="admin-prod-thumb" style={{ width: '40px', height: '40px', borderRadius: '4px', objectFit: 'cover' }} />
-                              <strong>{p.title}</strong>
-                            </div>
-                          </td>
-                          <td>
-                            <div style={{ fontWeight: '600', fontSize: '12px' }}>{p.category}</div>
-                            <div style={{ fontSize: '11px', color: '#666' }}>{p.weight} | {p.filling}</div>
-                          </td>
-                          <td className="price-col">{formatPrice(p.price)}</td>
-                          <td>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                              <button 
-                                className={`stock-badge ${p.isAvailable ? 'in-stock' : 'out-of-stock'}`}
-                                onClick={() => handleToggleAvailability(p)}
-                                style={{ padding: '2px 6px', fontSize: '10px' }}
-                              >
-                                {p.isAvailable ? 'DISPONÍVEL' : 'ESGOTADO'}
-                              </button>
-                              <button 
-                                className={`stock-badge ${p.isLowStock ? 'low-stock-active' : 'low-stock-inactive'}`}
-                                onClick={() => handleToggleLowStock(p)}
-                                title="Indicar que está quase esgotando"
-                                style={{ padding: '2px 6px', fontSize: '10px' }}
-                              >
-                                {p.isLowStock ? 'QUASE ESGOTADO' : 'NORMAL'}
-                              </button>
-                            </div>
-                          </td>
-                          <td>
-                            <div className="actions-cell">
-                              <button className="edit-order-btn" onClick={() => handleEditProductClick(p)} title="Editar">✏️</button>
-                              <button className="delete-item-btn" onClick={() => handleDeleteProduct(p._id)} title="Excluir">🗑️</button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <div className="user-avatar">KS</div>
               </div>
-            ) : activeTab === 'relatorios' ? (
-              <div className="reports-section">
-                <h2 className="table-title">Relatório de Vendas (Histórico T. / Ativos)</h2>
-                
-                <div className="reports-dashboard">
-                  <div className="reports-counters">
-                    <div className="card-title-row">
-                     <h3>Ranking de Produtos</h3>
-                    </div>
-                     <div className="ranking-list">
-                       {reportData.map((item, index) => (
-                         <div key={item.name} className="ranking-item">
-                           <span className="ranking-pos">#{index + 1}</span>
-                           <span className="ranking-name">{item.name}</span>
-                           <span className="ranking-qtd">{item.quantidade} un.</span>
-                         </div>
-                       ))}
-                     </div>
-                  </div>
-                  
-                  <div className="reports-chart">
-                    <h3>Gráfico de Vendas (Top 10)</h3>
-                    <div className="chart-wrapper" style={{ width: '100%', height: '420px', overflowX: 'auto', overflowY: 'hidden' }}>
-                      <div style={{ minWidth: '500px', height: '100%' }}>
-                        <ResponsiveContainer>
-                          <BarChart data={reportData.slice(0, 10)} margin={{ top: 20, right: 30, left: 10, bottom: 100 }}>
-                            <CartesianGrid strokeDasharray="3 3" opacity={0.2} vertical={false} />
-                            <XAxis 
-                              dataKey="name" 
-                              angle={-45} 
-                              textAnchor="end" 
-                              interval={0} 
-                              tick={{ fill: 'var(--text-color)', fontSize: 11 }} 
-                              tickFormatter={(value) => value.length > 25 ? value.substring(0, 25) + '...' : value}
-                            />
-                            <YAxis allowDecimals={false} tick={{ fill: 'var(--text-color)' }} />
-                            <Tooltip 
-                              contentStyle={{ backgroundColor: 'var(--bg-glass)', borderColor: 'var(--accent-gold)', borderRadius: '12px' }}
-                              itemStyle={{ color: 'var(--accent-gold)', fontWeight: 'bold' }}
-                              cursor={{ fill: 'rgba(212, 175, 55, 0.1)' }}
-                            />
-                            <Bar dataKey="quantidade" fill="var(--accent-gold)" radius={[4, 4, 0, 0]} name="Qtd. Vendida" />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+            </div>
+          </header>
 
-                <div className="revenue-report-section" style={{ marginTop: '30px' }}>
-                  <div className="table-header-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                    <h3 className="table-title" style={{ border: 'none', padding: 0 }}>Detalhamento Financeiro (Faturamento)</h3>
-                    <div className="total-revenue-badge" style={{ background: 'var(--primary)', color: 'white', padding: '8px 16px', borderRadius: '10px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                      <strong>Total:</strong>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <span>{showRevenue ? formatPrice(revenue) : 'R$ •••••'}</span>
-                        <button 
-                          onClick={() => setShowRevenue(!showRevenue)}
-                          style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: 0, opacity: 0.8, display: 'flex' }}
-                        >
-                          {showRevenue ? <EyeOff size={14} /> : <Eye size={14} />}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <div className="table-wrapper">
-                    <table className="orders-table">
-                      <thead>
-                        <tr>
-                          <th>Produto</th>
-                          <th style={{ textAlign: 'center' }}>Quantidade Vendida</th>
-                          <th style={{ textAlign: 'right' }}>Faturamento (R$)</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {reportData.map((item) => (
-                          <tr key={item.name}>
-                            <td><strong>{item.name}</strong></td>
-                            <td style={{ textAlign: 'center' }}>{item.quantidade} un.</td>
-                            <td style={{ textAlign: 'right' }} className="price-col">
-                              {showRevenue ? formatPrice(item.faturamento) : 'R$ •••••'}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                      <tfoot>
-                        <tr style={{ background: '#f8fafc', fontWeight: 'bold' }}>
-                          <td colSpan="2">TOTAL CONSOLIDADO</td>
-                          <td style={{ textAlign: 'right' }} className="price-col">
-                            {showRevenue ? formatPrice(revenue) : 'R$ •••••'}
-                          </td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  </div>
-                </div>
+          <main className="admin-main-content">
+            {isLoading ? (
+              <div className="loading-state">
+                <div className="loader"></div>
+                <p>Carregando...</p>
               </div>
-            ) : activeTab === 'producao' ? (
-              <div className="production-section">
-                <div className="production-header-info">
-                  <h2 className="table-title">Controle de Produção de Cascas</h2>
-                  <div className="production-summary-pill">
-                    Total de Cascas Necessárias: <strong>{totalShellsNeeded}</strong>
-                  </div>
-                </div>
-
-                <div className="filters-bar">
-                  <div className="filter-group">
-                    <label>Data de Entrega</label>
-                    <input 
-                      type="date" 
-                      name="date" 
-                      value={filters.date}
-                      onChange={handleFilterChange}
-                    />
-                  </div>
-                  <button className="clear-filters-btn" onClick={clearFilters} title="Limpar Filtro de Data">
-                    Ver Tudo
-                  </button>
-                  <p className="production-filter-tip">
-                    {appliedFilters.date 
-                      ? `Mostrando o que precisa ser produzido para entrega em ${formatJustDate(appliedFilters.date)}.`
-                      : "Mostrando tudo o que precisa ser produzido (Pedidos Novos e Em Produção)."}
-                  </p>
-                </div>
-
-                {productionData.length === 0 ? (
-                  <div className="empty-state">
-                    <p>Nenhuma casca pendente de produção para os critérios selecionados.</p>
-                  </div>
-                ) : (
-                  <div className="production-grid">
-                    <div className="table-wrapper">
-                      <table className="orders-table production-table">
-                        <thead>
-                          <tr>
-                            <th>Categoria / Tipo</th>
-                            <th>Peso da Casca</th>
-                            <th>Qtd. Pedidos</th>
-                            <th>Total de Cascas</th>
-                            <th>Detalhes dos Produtos</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {productionData.map((item, idx) => (
-                            <tr key={idx}>
-                              <td><strong>{item.category}</strong></td>
-                              <td><span className="weight-tag">{item.weight}</span></td>
-                              <td>{item.totalOrders} un.</td>
-                              <td className="total-shells-col">
-                                <span className="shell-count-badge">{item.totalShells}</span>
-                              </td>
-                              <td className="production-details-cell">
-                                {item.details.map((d, i) => (
-                                  <div key={i} className="prod-detail-item">
-                                    {d.qty}x {d.title}
-                                  </div>
-                                ))}
-                              </td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                )}
-              </div>
+            ) : error ? (
+              <div className="error-state">{error}</div>
             ) : (
-              <>
-                {/* Summary Cards */}
-                <div className="summary-cards">
-                  <div className="summary-card card-novo clickable" onClick={() => scrollToSection('secao-novo')}>
-                    <div className="card-info">
-                      <h3>Pedidos Recebidos</h3>
-                      <p className="card-value">{counts.novo}</p>
+              <div className="dashboard-content animate-in">
+                {activeTab === 'produtos' ? (
+                  <div className="table-section-modern">
+                    <div className="section-header">
+                      <h2 className="section-title">Gerenciar Estoque ({filteredProductsList.length})</h2>
+                      <button className="add-product-btn-modern" onClick={() => {
+                        setIsAddingProduct(true);
+                        setEditingProduct(null);
+                        setProductFormData({
+                          title: '', description: '', price: 0, category: 'Ovos de Colher',
+                          filling: '', weight: '', imageUrl: '', isAvailable: true, isLowStock: false, prices: {}
+                        });
+                      }}>
+                        + Novo Ovo
+                      </button>
                     </div>
-                    <div className="card-icon">🚀</div>
-                  </div>
-                  
-                  <div className="summary-card card-producao clickable" onClick={() => scrollToSection('secao-producao')}>
-                    <div className="card-info">
-                      <h3>Em Produção</h3>
-                      <p className="card-value">{counts.em_producao}</p>
+                    
+                    <div className="table-card shadow-sm">
+                      <div className="table-wrapper">
+                        <table className="modern-table">
+                          <thead>
+                            <tr>
+                              <th>Produto</th>
+                              <th>Categoria / Info</th>
+                              <th>Preço</th>
+                              <th>Disponibilidade</th>
+                              <th>Ações</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {filteredProductsList.map(p => (
+                              <tr key={p._id}>
+                                <td>
+                                  <div className="product-table-info">
+                                    <img src={p.imageUrl} alt={p.title} className="modern-prod-thumb" />
+                                    <strong>{p.title}</strong>
+                                  </div>
+                                </td>
+                                <td>
+                                  <span className="customer-name">{p.category}</span>
+                                  <div className="customer-sub">{p.weight} | {p.filling}</div>
+                                </td>
+                                <td className="price-col">{formatPrice(p.price)}</td>
+                                <td>
+                                  <div className="stock-controls">
+                                    <button 
+                                      className={`stock-badge-modern ${p.isAvailable ? 'available' : 'unavailable'}`}
+                                      onClick={() => handleToggleAvailability(p)}
+                                    >
+                                      {p.isAvailable ? 'DISPONÍVEL' : 'ESGOTADO'}
+                                    </button>
+                                  </div>
+                                </td>
+                                <td>
+                                  <div className="actions-cell">
+                                    <button className="icon-action-btn" onClick={() => handleEditProductClick(p)} title="Editar">✏️</button>
+                                    <button className="icon-action-btn delete" onClick={() => handleDeleteProduct(p._id)} title="Excluir">🗑️</button>
+                                  </div>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                    <div className="card-icon">🍳</div>
                   </div>
-
-                  <div className="summary-card card-pronto clickable" onClick={() => scrollToSection('secao-pronto')}>
-                    <div className="card-info">
-                      <h3>Prontos p/ Entrega</h3>
-                      <p className="card-value">{counts.pronto}</p>
+                ) : activeTab === 'relatorios' ? (
+                  <div className="reports-section-modern">
+                    <h2 className="section-title">Relatório de Vendas (Histórico T. / Ativos)</h2>
+                    
+                    <div className="reports-grid">
+                      <div className="ranking-card shadow-sm">
+                        <div className="card-header">
+                          <h3>Ranking de Produtos</h3>
+                        </div>
+                        <div className="ranking-list">
+                          {reportData.map((item, index) => (
+                            <div key={item.name} className="ranking-item">
+                              <span className="ranking-pos">{index + 1}</span>
+                              <span className="ranking-name">{item.name}</span>
+                              <span className="ranking-qtd">{item.quantidade} un.</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                      
+                      <div className="chart-card shadow-sm">
+                        <h3>Gráfico de Vendas (Top 10)</h3>
+                        <div className="chart-wrapper">
+                          <ResponsiveContainer>
+                            <BarChart data={reportData.slice(0, 10)} margin={{ top: 20, right: 30, left: 10, bottom: 80 }}>
+                              <CartesianGrid strokeDasharray="3 3" opacity={0.1} vertical={false} />
+                              <XAxis 
+                                dataKey="name" 
+                                angle={-45} 
+                                textAnchor="end" 
+                                interval={0} 
+                                tick={{ fill: '#64748b', fontSize: 11 }} 
+                                tickFormatter={(value) => value.length > 20 ? value.substring(0, 20) + '...' : value}
+                              />
+                              <YAxis allowDecimals={false} tick={{ fill: '#64748b' }} />
+                              <Tooltip 
+                                contentStyle={{ backgroundColor: 'white', border: 'none', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)' }}
+                                cursor={{ fill: 'rgba(217, 106, 117, 0.05)' }}
+                              />
+                              <Bar dataKey="quantidade" fill="var(--primary)" radius={[6, 6, 0, 0]} name="Qtd. Vendida" />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </div>
                     </div>
-                    <div className="card-icon">🛍️</div>
-                  </div>
 
-                  <div className="summary-card card-entregue clickable" onClick={() => scrollToSection('secao-entregue')}>
-                    <div className="card-info">
-                      <h3>Entregues</h3>
-                      <p className="card-value">{counts.entregue}</p>
+                    <div className="finance-table-card shadow-sm">
+                      <div className="card-header-flex">
+                        <h3 className="card-subtitle">Detalhamento Financeiro</h3>
+                        <div className="total-badge-modern">
+                          <div className="total-info">
+                            <span>FATURAMENTO TOTAL</span>
+                            <strong>{showRevenue ? formatPrice(revenue) : 'R$ •••••'}</strong>
+                          </div>
+                          <button onClick={() => setShowRevenue(!showRevenue)} className="toggle-view-btn">
+                            {showRevenue ? <EyeOff size={16} /> : <Eye size={16} />}
+                          </button>
+                        </div>
+                      </div>
+                      
+                      <div className="table-wrapper">
+                        <table className="modern-table">
+                          <thead>
+                            <tr>
+                              <th>Produto</th>
+                              <th style={{ textAlign: 'center' }}>Qtd. Vendida</th>
+                              <th style={{ textAlign: 'right' }}>Faturamento (R$)</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {reportData.map((item) => (
+                              <tr key={item.name}>
+                                <td><strong>{item.name}</strong></td>
+                                <td style={{ textAlign: 'center' }}>{item.quantidade} un.</td>
+                                <td style={{ textAlign: 'right' }} className="price-col">
+                                  {showRevenue ? formatPrice(item.faturamento) : 'R$ •••••'}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
                     </div>
-                    <div className="card-icon">✅</div>
                   </div>
-                </div>
+                ) : activeTab === 'producao' ? (
+                  <div className="production-section-modern">
+                    <div className="section-header">
+                      <h2 className="section-title">Controle de Produção de Cascas</h2>
+                      <div className="total-shells-pill">
+                        Meta Global: <strong>{totalShellsNeeded}</strong> cascas
+                      </div>
+                    </div>
 
-                <div className="filters-bar">
-                  <div className="filter-group">
-                    <label>Cliente</label>
-                    <input 
-                      type="text" 
-                      name="customer" 
-                      placeholder="Filtrar por nome..." 
-                      value={filters.customer}
-                      onChange={handleFilterChange}
-                    />
-                  </div>
-                  <div className="filter-group">
-                    <label>Telefone</label>
-                    <input 
-                      type="text" 
-                      name="phone" 
-                      placeholder="Filtrar por telefone..." 
-                      value={filters.phone}
-                      onChange={handleFilterChange}
-                    />
-                  </div>
-                  <div className="filter-group">
-                    <label>Cidade</label>
-                    <input 
-                      type="text" 
-                      name="city" 
-                      placeholder="Filtrar por cidade..." 
-                      value={filters.city}
-                      onChange={handleFilterChange}
-                    />
-                  </div>
-                  <div className="filter-group">
-                    <label>Produto</label>
-                    <input 
-                      type="text" 
-                      name="product" 
-                      placeholder="Filtrar por produto..." 
-                      value={filters.product}
-                      onChange={handleFilterChange}
-                    />
-                  </div>
-                  <div className="filter-group">
-                    <label>Data de Entrega</label>
-                    <input 
-                      type="date" 
-                      name="date" 
-                      value={filters.date}
-                      onChange={handleFilterChange}
-                    />
-                  </div>
-                  <button className="clear-filters-btn" onClick={clearFilters} title="Limpar Filtros">
-                    Limpar
-                  </button>
-                </div>
+                    <div className="filters-row shadow-sm">
+                      <div className="filter-item">
+                        <label>Data de Entrega</label>
+                        <input 
+                          type="date" 
+                          name="date" 
+                          value={filters.date}
+                          onChange={handleFilterChange}
+                          className="modern-input"
+                        />
+                      </div>
+                      <button className="clear-filter-btn" onClick={clearFilters}>
+                        <X size={14} />
+                        Ver Tudo
+                      </button>
+                      <span className="filter-description">
+                        {appliedFilters.date 
+                          ? `Produção para entrega em ${formatJustDate(appliedFilters.date)}.`
+                          : "Mostrando todos os pedidos novos e em produção."}
+                      </span>
+                    </div>
 
-                {orders.length === 0 ? (
-                  <div className="empty-state">Nenhum pedido encontrado nesta categoria.</div>
+                    <div className="production-card shadow-sm">
+                      <div className="table-wrapper">
+                        <table className="modern-table production-table">
+                          <thead>
+                            <tr>
+                              <th>Categoria / Tipo</th>
+                              <th>Peso da Casca</th>
+                              <th>Qtd. Pedidos</th>
+                              <th>Total de Cascas</th>
+                              <th>Detalhes</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {productionData.map((item, idx) => (
+                              <tr key={idx}>
+                                <td><strong>{item.category}</strong></td>
+                                <td><span className="modern-weight-badge">{item.weight}</span></td>
+                                <td>{item.totalOrders} un.</td>
+                                <td>
+                                  <span className="shell-count-number">{item.totalShells}</span>
+                                </td>
+                                <td className="production-details-cell">
+                                  {item.details.map((d, i) => (
+                                    <div key={i} className="prod-detail-item">
+                                      {d.qty}x {d.title}
+                                    </div>
+                                  ))}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
                 ) : (
-                  <div className="tables-container">
-                    {activeTab === 'ativos' ? (
-                      <>
-                        {renderOrderTable(filteredNewOrders, "Pedidos Recebidos (Novos)", "Não há novos pedidos no momento.", "secao-novo")}
-                        {renderOrderTable(filteredProductionOrders, "Pedidos em Produção", "Nenhum pedido em produção.", "secao-producao")}
-                        {renderOrderTable(filteredReadyOrders, "Pronto para Entrega/Retirada", "Nenhum pedido aguardando retirada/entrega.", "secao-pronto")}
-                        {renderOrderTable(filteredDeliveredOrders, "Pedidos Entregues", "Nenhum pedido finalizado ainda.", "secao-entregue")}
-                      </>
+                  <>
+                    {/* Summary Cards */}
+                    <div className="metric-cards-grid">
+                      <div className="metric-card metric-novo clickable" onClick={() => scrollToSection('secao-novo')}>
+                        <div className="metric-icon"><Rocket size={24} /></div>
+                        <div className="metric-info">
+                          <h3>Pedidos Novos</h3>
+                          <p className="metric-value">{counts.novo}</p>
+                          <span className="metric-status">Aguardando início</span>
+                        </div>
+                      </div>
+                      
+                      <div className="metric-card metric-producao clickable" onClick={() => scrollToSection('secao-producao')}>
+                        <div className="metric-icon"><ChefHat size={24} /></div>
+                        <div className="metric-info">
+                          <h3>Em Produção</h3>
+                          <p className="metric-value">{counts.em_producao}</p>
+                          <span className="metric-status">Cozinha ativa</span>
+                        </div>
+                      </div>
+
+                      <div className="metric-card metric-pronto clickable" onClick={() => scrollToSection('secao-pronto')}>
+                        <div className="metric-icon"><Package size={24} /></div>
+                        <div className="metric-info">
+                          <h3>Prontos</h3>
+                          <p className="metric-value">{counts.pronto}</p>
+                          <span className="metric-status">Pronto p/ entrega</span>
+                        </div>
+                      </div>
+
+                      <div className="metric-card metric-entregue clickable" onClick={() => scrollToSection('secao-entregue')}>
+                        <div className="metric-icon"><CheckCircle size={24} /></div>
+                        <div className="metric-info">
+                          <h3>Entregues</h3>
+                          <p className="metric-value">{counts.entregue}</p>
+                          <span className="metric-status">Meta atingida</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="filters-bar-modern shadow-sm">
+                      <div className="filter-group">
+                        <label>Cliente</label>
+                        <input 
+                          type="text" 
+                          name="customer" 
+                          placeholder="Nome..." 
+                          value={filters.customer}
+                          onChange={handleFilterChange}
+                        />
+                      </div>
+                      <div className="filter-group">
+                        <label>Telefone</label>
+                        <input 
+                          type="text" 
+                          name="phone" 
+                          placeholder="Filtro..." 
+                          value={filters.phone}
+                          onChange={handleFilterChange}
+                        />
+                      </div>
+                      <div className="filter-group">
+                        <label>Cidade</label>
+                        <input 
+                          type="text" 
+                          name="city" 
+                          placeholder="Filtro..." 
+                          value={filters.city}
+                          onChange={handleFilterChange}
+                        />
+                      </div>
+                      <div className="filter-group">
+                        <label>Entrega</label>
+                        <input 
+                          type="date" 
+                          name="date" 
+                          value={filters.date}
+                          onChange={handleFilterChange}
+                        />
+                      </div>
+                      <button className="clear-filter-btn" onClick={clearFilters}>Limpar</button>
+                    </div>
+
+                    {orders.length === 0 ? (
+                      <div className="empty-state-modern">
+                        <Package size={48} opacity={0.2} />
+                        <p>Nenhum pedido encontrado nesta categoria.</p>
+                      </div>
                     ) : (
-                      renderOrderTable(filteredRecycleBin, "Relatório de Cancelados e Excluídos", "Nenhum registro encontrado.")
+                      <div className="tables-container-modern">
+                        {activeTab === 'ativos' ? (
+                          <>
+                            {renderOrderTable(filteredNewOrders, "Pedidos Recebidos (Novos)", "Não há novos pedidos no momento.", "secao-novo")}
+                            {renderOrderTable(filteredProductionOrders, "Pedidos em Produção", "Nenhum pedido em produção.", "secao-producao")}
+                            {renderOrderTable(filteredReadyOrders, "Pronto para Entrega/Retirada", "Nenhum pedido aguardando retirada/entrega.", "secao-pronto")}
+                            {renderOrderTable(filteredDeliveredOrders, "Pedidos Entregues", "Nenhum pedido finalizado ainda.", "secao-entregue")}
+                          </>
+                        ) : (
+                          renderOrderTable(filteredRecycleBin, "Relatório de Cancelados e Excluídos", "Nenhum registro encontrado.")
+                        )}
+                      </div>
                     )}
-                  </div>
+                  </>
                 )}
-              </>
+              </div>
             )}
-          </>
-        )}
-      </main>
+          </main>
+        </div>
+      </div>
 
       {/* MODAL DE AGENDAMENTO */}
       {schedulingOrder && (
@@ -1249,7 +1268,7 @@ export default function AdminDashboard() {
                 />
               </div>
               <div className="form-group">
-                <label>Local de Entrega (Ponto de Encontro):</label>
+                <label>Ponto de Encontro:</label>
                 <input 
                   type="text" 
                   placeholder="Ex: Praça Central, Posto X..."
@@ -1271,8 +1290,8 @@ export default function AdminDashboard() {
       {editingOrder && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
-            <h3>Editar Pedido</h3>
-            <p>Alterar detalhes do pedido de <strong>{editingOrder.customerName}</strong>.</p>
+            <h3>Editar Detalhes</h3>
+            <p>Alterar informações do pedido de <strong>{editingOrder.customerName}</strong>.</p>
             
             <form onSubmit={handleEditSubmit}>
               <div className="form-group">
@@ -1285,26 +1304,28 @@ export default function AdminDashboard() {
                   required
                 />
               </div>
-              <div className="form-group">
-                <label>Telefone:</label>
-                <input 
-                  type="text" 
-                  name="phone"
-                  value={editFormData.phone || ''}
-                  onChange={handleEditChange}
-                />
+              <div className="grid-form">
+                <div className="form-group">
+                  <label>Telefone:</label>
+                  <input 
+                    type="text" 
+                    name="phone"
+                    value={editFormData.phone || ''}
+                    onChange={handleEditChange}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Cidade:</label>
+                  <input 
+                    type="text" 
+                    name="city"
+                    value={editFormData.city || ''}
+                    onChange={handleEditChange}
+                  />
+                </div>
               </div>
               <div className="form-group">
-                <label>Cidade:</label>
-                <input 
-                  type="text" 
-                  name="city"
-                  value={editFormData.city || ''}
-                  onChange={handleEditChange}
-                />
-              </div>
-              <div className="form-group">
-                <label>Produto:</label>
+                <label>Produto(s):</label>
                 <input 
                   type="text" 
                   name="product"
@@ -1338,7 +1359,7 @@ export default function AdminDashboard() {
               </div>
               <div className="modal-actions">
                 <button type="button" onClick={() => setEditingOrder(null)} className="btn-cancel">Cancelar</button>
-                <button type="submit" className="btn-save">Salvar Alterações</button>
+                <button type="submit" className="btn-save">Confirmar Alterações</button>
               </div>
             </form>
           </div>
@@ -1408,22 +1429,26 @@ export default function AdminDashboard() {
                   <p className="form-help">Utilize esta seção para ovos que possuem tamanhos diferentes (Ex: 250g, 350g).</p>
                   
                   <div className="prices-list">
-                    {Object.entries(productFormData.prices).map(([weight, price], index) => (
+                    {Object.entries(productFormData.prices).sort().map(([weight, price], index) => (
                       <div key={index} className="price-row">
                         <input 
                           type="text" 
-                          placeholder="Peso (ex: 250g)" 
+                          placeholder="Ex: 250g" 
                           value={weight} 
                           onChange={(e) => handlePriceRowChange(weight, e.target.value, price)}
                         />
-                        <input 
-                          type="number" 
-                          placeholder="Preço (R$)" 
-                          value={price} 
-                          step="0.01"
-                          onChange={(e) => handlePriceRowChange(weight, weight, Number(e.target.value))}
-                        />
-                        <button type="button" className="remove-price-btn" onClick={() => removePriceRow(weight)}>✕</button>
+                        <div className="price-input-wrapper" style={{ position: 'relative' }}>
+                          <span style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', fontSize: '0.8rem', color: 'var(--admin-text-muted)' }}>R$</span>
+                          <input 
+                            type="number" 
+                            placeholder="0,00" 
+                            value={price} 
+                            step="0.01"
+                            style={{ paddingLeft: '32px' }}
+                            onChange={(e) => handlePriceRowChange(weight, weight, Number(e.target.value))}
+                          />
+                        </div>
+                        <button type="button" className="remove-price-btn" onClick={() => removePriceRow(weight)} title="Remover">✕</button>
                       </div>
                     ))}
                   </div>
@@ -1445,102 +1470,86 @@ export default function AdminDashboard() {
       {showNotificationModal && (
         <div className="admin-modal-overlay">
           <div className="admin-modal">
-            <h3>Configurações de Notificação</h3>
+            <h3>Notificações</h3>
+            <p>Configure os alertas do sistema para não perder novos pedidos.</p>
+            
             <div className="notification-settings-content">
-              <div className="setting-row" style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer', fontWeight: '600' }}>
+              <div className="form-group checkbox-group">
+                <label>
                   <input 
                     type="checkbox" 
                     checked={notificationSettings.enabled} 
                     onChange={(e) => setNotificationSettings({...notificationSettings, enabled: e.target.checked})}
-                    style={{ width: 'auto' }}
                   />
-                  Ativar Sistema de Notificações
+                  Ativar Sistema de Alertas
                 </label>
               </div>
               
-              <div className="setting-row" style={{ marginLeft: '20px', marginBottom: '15px', opacity: notificationSettings.enabled ? 1 : 0.5 }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+              <div className={`form-group checkbox-group ${!notificationSettings.enabled ? 'disabled-setting' : ''}`}>
+                <label>
                   <input 
                     type="checkbox" 
                     disabled={!notificationSettings.enabled}
                     checked={notificationSettings.soundEnabled} 
                     onChange={(e) => setNotificationSettings({...notificationSettings, soundEnabled: e.target.checked})}
-                    style={{ width: 'auto' }}
                   />
-                  Alerta Sonoro
+                  Alerta Sonoro (MP3)
                 </label>
               </div>
 
-              <div className="setting-row" style={{ marginLeft: '20px', marginBottom: '15px', opacity: (notificationSettings.enabled && notificationSettings.soundEnabled) ? 1 : 0.5 }}>
-                <label style={{ marginBottom: '5px', display: 'block', fontSize: '14px' }}>URL do Som MP3:</label>
-                <div style={{ display: 'flex', gap: '10px' }}>
+              <div className="form-group">
+                <label>Link do MP3:</label>
+                <div className="price-row">
                   <input 
                     type="text" 
                     disabled={!notificationSettings.enabled || !notificationSettings.soundEnabled}
                     value={notificationSettings.soundUrl}
                     onChange={(e) => setNotificationSettings({...notificationSettings, soundUrl: e.target.value})}
-                    placeholder="Link do arquivo MP3..."
-                    style={{ flex: 1, padding: '8px' }}
+                    placeholder="https://exemplo.com/som.mp3"
                   />
                   <button 
                     type="button"
+                    className="icon-action-btn"
                     onClick={() => {
                       const audio = new Audio(notificationSettings.soundUrl);
                       audio.play().catch(() => alert("Erro ao tocar som. Verifique o link."));
                     }}
                     disabled={!notificationSettings.enabled || !notificationSettings.soundEnabled}
-                    style={{ padding: '8px 12px', background: '#f0f0f0', border: '1px solid #ddd', borderRadius: '6px', cursor: 'pointer' }}
                   >
                     ▶️
                   </button>
                 </div>
               </div>
 
-              <div className="setting-row" style={{ marginLeft: '20px', marginBottom: '15px', opacity: notificationSettings.enabled ? 1 : 0.5 }}>
-                <label style={{ display: 'flex', alignItems: 'center', gap: '10px', cursor: 'pointer' }}>
+              <div className="form-group checkbox-group">
+                <label>
                   <input 
                     type="checkbox" 
                     disabled={!notificationSettings.enabled}
                     checked={notificationSettings.browserEnabled} 
                     onChange={(e) => setNotificationSettings({...notificationSettings, browserEnabled: e.target.checked})}
-                    style={{ width: 'auto' }}
                   />
-                  Notificações do Navegador
+                  Desktop Push Notifications
                 </label>
                 
-                <div style={{ marginLeft: '25px', marginTop: '5px', fontSize: '13px' }}>
-                  Permissão: 
-                  <span style={{ 
-                    fontWeight: 'bold', 
-                    marginLeft: '5px',
-                    color: browserPermission === 'granted' ? '#2e7d32' : (browserPermission === 'denied' ? '#c62828' : '#f57c00')
-                  }}>
-                    {browserPermission === 'granted' ? 'Autorizado' : (browserPermission === 'denied' ? 'Bloqueado' : 'Não Solicitado')}
-                  </span>
+                <div className="permission-status" style={{ paddingLeft: '40px', marginTop: '-5px' }}>
+                  <small>Status: <strong style={{ color: browserPermission === 'granted' ? '#22c55e' : '#ef4444' }}>
+                    {browserPermission === 'granted' ? 'Autorizado' : (browserPermission === 'denied' ? 'Bloqueado' : 'Aguardando')}
+                  </strong></small>
                   
                   {browserPermission !== 'granted' && (
                     <button 
                       type="button"
                       onClick={handleRequestPermission}
-                      style={{ 
-                        marginLeft: '10px', 
-                        padding: '4px 8px', 
-                        fontSize: '11px', 
-                        background: '#128C7E', 
-                        color: 'white', 
-                        border: 'none', 
-                        borderRadius: '4px',
-                        cursor: 'pointer'
-                      }}
+                      style={{ marginLeft: '10px', fontSize: '0.65rem', padding: '2px 6px', borderRadius: '6px', background: '#e2e8f0', border: 'none', cursor: 'pointer' }}
                     >
-                      Autorizar no Chrome
+                      Solicitar Permissão
                     </button>
                   )}
                 </div>
               </div>
             </div>
-            <div className="modal-actions" style={{ marginTop: '20px' }}>
+            <div className="modal-actions">
               <button onClick={() => setShowNotificationModal(false)} className="btn-save">Fechar</button>
             </div>
           </div>
@@ -1570,6 +1579,6 @@ export default function AdminDashboard() {
           </button>
         </div>
       )}
-    </div>
+    </>
   );
 }
